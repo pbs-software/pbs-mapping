@@ -4769,31 +4769,6 @@ makeProps <- function(pdata, breaks, propName = "col",
 }
 
 #==============================================================================
-makeTopography <- function (data, func=NULL) 
-{
-	if (!is.data.frame(data) || length(data) < 3) {
-		stop("'data' must be a data frame with at least three columns.\n") }
-	N  <- nrow(data)
-	X  <- signif(data[[1]],8); Y  <- signif(data[[2]],8)
-	ID <- complex(length.out=N,real=X,imaginary=Y)
-	temp <- split(data[[3]], ID)
-	if (is.null(func)) func <- function(x){mean(x,na.rm=TRUE)} # mean value
-	z1  <- unlist(sapply(temp,func,simplify=FALSE))
-	id <- as.complex(names(z1))
-	x1 <- Re(id); y1 <- Im(id)
-	x  <- sort(unique(x1)); nr <- length(x);
-	y  <- sort(unique(y1)); nc <- length(y);
-	zid <- complex(len=nr*nc,real=rep(x,each=nc),imaginary=rep(y,nr))
-	zvec <- rep(NA,nr*nc); names(zvec) <- zid
-	zvec[names(z1)] <- z1
-	z  <- matrix(zvec,nrow=nr,byrow=TRUE)
-	result <- list()
-	result$x <- x; result$y <- y; 
-	result$z <- z
-	return(result)
-}
-
-#==============================================================================
 plotLines <- function(polys, xlim = NULL, ylim = NULL, projection = FALSE,
                       plt = c(0.11, 0.98, 0.12, 0.88), polyProps = NULL,
                       lty = NULL, col = NULL, bg = 0, axes = TRUE,
@@ -5510,4 +5485,31 @@ importShapefile <- function (fn, readDBF = TRUE, projection = NULL, zone = NULL)
   title (main=main, sub=sub, xlab=xlab, ylab=ylab) # cannot add dots - conflicts with formal arguments
   invisible(NULL);
 }
+
+#makeTopography-------------------------2009-07-30
+# Make topography data suitable for contourLines().
+#-----------------------------------------------RH
+makeTopography <- function (dat, digits=2, func=NULL) {
+	if (!is.data.frame(dat) || length(dat) < 3) {
+		stop("'dat' must be a data frame with at least three columns.\n") }
+	N   = nrow(dat)
+	X   = round(dat[[1]],digits); Y  = round(dat[[2]],digits)
+	ID  = complex(length.out=N,real=X,imaginary=Y)
+	tmp = split(dat[[3]], ID)
+	if (is.null(func)) func = function(x){mean(x,na.rm=TRUE)} # mean value
+	z1  = unlist(sapply(tmp,func,simplify=FALSE))
+	id  = as.complex(names(z1))
+	x1  = Re(id); y1 = Im(id)
+	x   = sort(unique(x1)); y = sort(unique(y1)) 
+	nr  = length(x); nc = length(y); nz=nr*nc
+	z   = matrix(NA,nrow=nr,ncol=nc,dimnames=list(x,y))
+	for (i in x) { # populate matrix row by row
+		xx=as.character(i); zx=is.element(x1,i)
+		yy=as.character(y1[zx])
+		zz=z1[zx]; z[xx,yy]=zz  }
+	result = list()
+	result$x = x; result$y = y; result$z = z
+	return(result) }
+
+
 
