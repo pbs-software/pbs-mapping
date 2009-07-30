@@ -1,0 +1,56 @@
+\documentclass[letter]{article}
+%\VignetteIndexEntry{Introduction to PBSmapping}
+%\VignettePackage{PBSmapping}
+
+% For colors
+\usepackage{color}
+\definecolor{red}{rgb}{0.8039216,0.2156863,0}
+\definecolor{green}{rgb}{0, 1, 0}
+\definecolor{blue}{rgb}{0, 0, 1}
+
+% Definitions
+\newcommand{\slan}{{\tt S}}
+\newcommand{\rlan}{{\tt R}}
+\newcommand{\pbsm}{{\tt PBSmapping}}
+\newcommand{\pbsmap}{{\it PBS Mapping}}
+\newcommand{\tcl}{{\tt Tcl/Tk}}
+\newcommand{\code}[1]{{\tt #1}}
+\newcommand{\ital}[1]{{\it #1}}
+\newcommand{\bold}[1]{{\bf #1}}
+\newcommand{\under}[1]{{\underline {#1}}}
+\newcommand{\red}[1]{{\textcolor{red} {#1}}}
+
+\usepackage{verbatim}
+\usepackage{hyperref}
+
+% Keep on one page
+\textheight 9.0in \topmargin -1.0in
+
+\begin{document}
+
+\title{Introduction to PBSmapping}
+\author{Jon Schnute, Nick Boers, Rowan Haigh, and Alex Couture-Beil}
+\maketitle
+
+\section{What is \pbsm{}?}
+
+\pbsm{} contains software designed to facilitate the compilation and analysis of fishery data, particularly data referenced by spatial coordinates. Our research stems from experiences with information on Canada's Pacific groundfish fisheries compiled at the Pacific Biological Station (PBS). Despite its origins in fishery data analysis, our software has broad applicability. The package \pbsm{} extends the R language to include two-dimensional plotting features similar to those commonly available in a Geographic Information System (GIS). Embedded C code speeds algorithms from computational geometry, such as finding polygons that contain specified point events or converting between longitude-latitude and Universal Transverse Mercator (UTM) coordinates. Recent versions of \pbsm{} take advantage of features in other R packages, such as {\tt maptools} and {\tt deldir}.
+
+\section{What is PBS?}
+
+The initials \bold{PBS} refer to the Pacific Biological Station, a major fisheries laboratory operated by by Fisheries and Oceans Canada on the Pacific coast in Nanaimo, British Columbia, Canada. For more information, see:\\
+\url{http://www.pac.dfo-mpo.gc.ca/sci/pbs/}.
+
+\section{Where is the User's Guide?}
+
+The R directory \code{.../library/PBSmapping/doc} includes a complete User's Guide \code{PBSmapping-UG.pdf}. To use this package effectively, please consult the Guide.
+
+\section{Demos}
+
+\pbsm{} includes ten demos that appear as figures in the User's Guide. To see them, run the function \code{.PBSfigs()}. More generally, a user can view all demos available from locally installed packages with the function \code{runDemos()} in our related (and recommended) package \code{PBSmodelling}.
+
+\vspace*{4ex} \noindent {\bf \Large Reference}
+
+\vspace*{2ex} \noindent Schnute, J.T., Boers, N.M., Haigh, R., and Couture-Beil, A. 2008. PBS Mapping 2.57: User's Guide -- revised from \ital{Canadian Technical Report of Fisheries and Aquatic Sciences} \bold{2549}: vi + 118 p.
+
+\end{document}
