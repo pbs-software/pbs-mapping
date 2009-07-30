@@ -1,0 +1,41 @@
+PBSfig01		Map of the world projected in longitude-latitude
+			coordinates.  Red vertical lines show boundaries
+			for the 60 UTM zones, with explicit labels for
+			zones 1 to 9.  A black line indicates the prime
+			meridian.  The PolySet `nepacLL' lies within the
+			clipping boundary shown as a blue rectangle.
+PBSfig02		Shoreline data in longitude-latitude coordinates
+			for the northeastern Pacific Ocean.  Vertical red
+			lines display UTM boundaries.  A vertical dotted
+			line indicates the central meridian of zone 6.
+PBSfig03		Shoreline data for the northeastern Pacific
+			Ocean, projected in UTM coordinates.  Vertical
+			lines display UTM boundaries.  A vertical dotted
+			line indicates the central meridian of zone 6.
+PBSfig04		Vancouver Island as captured in our PolySet nepacLL
+			(left) and the result of passing it into thinPolys
+			with a tolerance of five kilometres (right).
+PBSfig05		Example of the joinPolys logic operations. Panels A
+			and B display the first and second PolySets,
+			respectively. Panels C to F illustrate the difference,
+			intersection, union, and exclusive-or operations,
+			respectively. 
+PBSfig06		Contourlines in Queen Charlotte Sound. Constructed 
+			from R's contourLines() output and converted to a 
+			PBS PolySet using convCP().
+PBSfig07		Tracks for 45 tows performed during the 2001
+			longspine thornyhead survey along the west
+			coast of Vancouver Island.  A colour indicates
+			the depth stratum for each tow.
+PBSfig08		Areas (in square kilometers) of selected islands
+			in the southern Strait of Georgia.
+PBSfig09		Portrayal of `surveyData' from Pacific ocean
+			perch surveys in the central coast region of
+			British Columbia from 1966-89.  Colours
+			portray the mean catch per unit effort within
+			each grid cell.  Circles show locations of
+			individual tows.
+PBSfig10		Proof of Pythagoras' Theorem.  Four blue
+			triangles plus the yellow square and the
+			green square equal four blue triangles plus
+			the red square.
