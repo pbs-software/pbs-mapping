@@ -7,11 +7,13 @@
   seafloor topography data.
 }
 \usage{
-makeTopography (data, func=NULL)
+makeTopography (dat, digits=2, func=NULL)
 }
 \arguments{
-  \item{data}{data frame with three optionally-named columns: \code{X},
+  \item{dat}{data frame with three optionally-named columns: \code{X},
     \code{Y}, and \code{Z}.  The columns must appear in that order.}
+  \item{digits}{integer indicating the precision to be used by the function
+    \code{round} on (X,Y) values.}
   \item{func}{function to summarize Z if (X,Y) points are duplicated. 
     Defaults to \code{mean()} if no function is specified.}
 }
@@ -33,15 +35,14 @@ makeTopography (data, func=NULL)
 }
 \value{
   List with elements \code{x}, \code{y}, and \code{z}.  \code{x} and
-  \code{y} are vectors, while \code{z} is a matrix.
+  \code{y} are vectors, while \code{z} is a matrix with rownames \code{x}
+  and colnames \code{y}.
   \code{\link{contour}} and \code{\link{contourLines}} expect data
   conforming to this list format.
 }
 \seealso{
-  \code{\link{contour}},
-  \code{\link{contourLines}},
-  \code{\link{convCP}},
-  \code{\link{read.table}}.
+  \code{graphics::contour}, \code{grDevices::contourLines},
+  \code{\link{convCP}}.
 }
 \examples{
 #--- Example 1: Sample data frame and conversion.
