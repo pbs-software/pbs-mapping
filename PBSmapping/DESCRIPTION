@@ -1,7 +1,7 @@
 Package: PBSmapping
-Version: 2.59.01
-Date: 2009-07-30
-Title: PBS Mapping 2.59
+Version: 2.59.02
+Date: 2010-01-07
+Title: Mapping Fisheries Data and Spatial Analysis Tools
 Author: Jon T. Schnute <Jon.Schnute@dfo-mpo.gc.ca>, Nicholas Boers,
         Rowan Haigh <Rowan.Haigh@dfo-mpo.gc.ca>, and Alex Couture-Beil.
 Maintainer: Jon Schnute <Jon.Schnute@dfo-mpo.gc.ca>
@@ -21,3 +21,5 @@ Description: This software has evolved from fisheries research
         PBSmapping-UG.pdf. To use this package effectively, please 
         consult the guide.
 License: GPL (>= 2)
+Packaged: 0000-00-00 16:55:01 UTC; this_line_replaced_by_packing_or_building_binary
+
