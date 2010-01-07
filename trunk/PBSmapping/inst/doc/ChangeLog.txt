@@ -1,5 +1,8 @@
 PBSmapping Changes
 ==================
+2.59.02  2010-01-07  Rowan
+  - Added new function 'addBubbles' created by Denis Chabot.
+
 2.59.01  2009-07-30  Rowan
   - Modified 'makeTopography()' to handle large output matrices better.
 	Introduced a precision argument to increase the speed of calculations for debugging and draft quality.
