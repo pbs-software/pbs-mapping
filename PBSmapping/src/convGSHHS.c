@@ -38,6 +38,7 @@
 #include <string.h>
 #include <R.h>
 #include <Rdefines.h>
+#include <errno.h>
 #include "globals.h"
 #include "floating.h"
 #include "polygons.h"
