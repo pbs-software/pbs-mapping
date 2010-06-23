@@ -1,6 +1,11 @@
 PBSmapping Changes
 ==================
 
+2.60.8  2010-06-22  Jon
+  - Fixed bug related to clipping, found by Denis Chabot
+  - Nick Boers found that "polygons.c" should have *inVerts > 0 in sutherlandHodgmanPolygonClip
+  - Replaced "polygons.c" with the corrected version 
+
 2.60  2010-04-27  Jon
   - New version number, consistent with package building scheme
   - Added "#include <errno.h>" to "convGSHHS.c", based on a message from Brian Ripley

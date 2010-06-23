@@ -1,5 +1,5 @@
 /*=============================================================================
-  Copyright (C) 2003-2008  Fisheries and Oceans Canada
+  Copyright (C) 2003-2010  Fisheries and Oceans Canada
 
   This file is part of PBS Mapping.
 
@@ -60,6 +60,8 @@
       - updated for PBSINT type
     22 Jan 2008 [Rowan Haigh]
       - removed convexHull(), sortPointList(), and rightTurn()
+    22 Jun 2010 [Nicholas Boers]
+      - require *inVerts > 0 in sutherlandHodgmanPolygonClip
   ---------------------------------------------------------------------------*/
 
 #include <string.h>
@@ -176,8 +178,10 @@ sutherlandHodgmanPolygonClip(double *inX, double *inY, PBSINT *inPOS,
  
   *outVerts = 0;
 
-  sX = inX[(*inVerts) - 1];
-  sY = inY[(*inVerts) - 1];
+  if (*inVerts > 0) {
+    sX = inX[(*inVerts) - 1];
+    sY = inY[(*inVerts) - 1];
+  }
   
   /* Idea:
      - add p and any intersections on each iteration of the loop
@@ -315,10 +319,10 @@ clipPolygon(double *inX, double *inY, PBSINT *inPOS, PBSINT inVerts,
     sutherlandHodgmanPolygonClip(tempX, tempY, tempOLD, &tempVerts,
                                  outX, outY, outOLD, outVerts,
                                  limits, e, polygons);
+
     /* sutherlandHodgmanPolygonClip() returns whether or not it was
        successful using tempOutVerts:
        -1 on insufficient memory allocated to tempOut* */
-
     if ((*outVerts) == -1) {
       free(tempX);
       free(tempY);
