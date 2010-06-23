@@ -1,5 +1,5 @@
 #==============================================================================
-# Copyright (C) 2003-2008  Fisheries and Oceans Canada
+# Copyright (C) 2003-2010  Fisheries and Oceans Canada
 # Nanaimo, British Columbia
 # This file is part of PBS Mapping.
 #
@@ -5309,7 +5309,7 @@ thinPolys <- function(polys, tol = 1, filter = 3)
   }
 }
 
-#2008-07-16---------------------------------------
+#importShapefile------------------------2010-06-01
 # importShapefile (Nick Boers)
 # This function has several slow parts:
 # 1) conversion of the matrix (verts) to X and Y columns in a data frame
@@ -5318,7 +5318,7 @@ thinPolys <- function(polys, tol = 1, filter = 3)
 #   Nick's loop to extract data from 'shapeList' has been replaced
 #     by Rowan's series of 'sapply' calls.
 #   Rowan added check for polygons with 0 vertices.
-#-------------------------------------------------
+#--------------------------------------------NB/RH
 importShapefile <- function (fn, readDBF = TRUE, projection = NULL, zone = NULL)
 {
 	# initialization
@@ -5438,15 +5438,18 @@ importShapefile <- function (fn, readDBF = TRUE, projection = NULL, zone = NULL)
 	attr(df,"parent.child") = PC
 	attr(df,"shpType") = shpType
 	prjFile <- paste(fn, ".prj", sep="")
-	if (file.exists(prjFile)) prj=scan(prjFile,what="character",quiet=TRUE)
+	if (file.exists(prjFile)) {
+		prj=scan(prjFile,what="character",quiet=TRUE)
+		prj=prj[!is.element(prj,"")][1]
+		if (length(prj)==0 || is.na(prj) || is.null(prj)) prj="Unknown" }
 	else prj="Unknown"
 	attr(df,"prj") = prj
 	xmlFile <- paste(fn, ".shp.xml", sep="")
 	if (file.exists(xmlFile)) {
 		xml=readLines(xmlFile); attr(df,"xml") = xml }
 
-	if (substring(prj,1,3)=="GEO") proj="LL"
-	else if (substring(prj,1,4)=="PROJ" && regexpr("UTM",prj)>0) proj="UTM"
+	if (regexpr("GEO",prj)>0 | regexpr("Degree",prj)>0) proj="LL"
+	else if (regexpr("PROJ",prj)>0 && regexpr("UTM",prj)>0) proj="UTM"
 	else proj=1
 	attr(df,"projection")=proj
 
@@ -5456,8 +5459,8 @@ importShapefile <- function (fn, readDBF = TRUE, projection = NULL, zone = NULL)
 		attr(df, "zone") <- zone
 	if (!is.null(projection))
 		attr(df,"projection")=projection
-	return (df)
-}
+	return (df) }
+#----------------------------------importShapefile
 
 #2008-08-25----------------------------------NB/RH
 # 'projection' should equal "LL" (for longitude/latitude),

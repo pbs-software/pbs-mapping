@@ -1,5 +1,7 @@
 PBSmapping Changes
 ==================
+2.61  2010-06-23  Rowan
+  - Revised 'importShapefile' to fix a small bug associated with reading a shapefile's projection. (RH 6/1)
 
 2.60.8  2010-06-22  Jon
   - Fixed bug related to clipping, found by Denis Chabot
