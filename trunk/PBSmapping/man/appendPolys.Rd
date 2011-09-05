@@ -19,9 +19,13 @@ appendPolys (polys, mat, PID = NULL, SID = NULL, isHole = FALSE)
     hole.}
 }
 \details{
+  If the \code{PID} argument is \code{NULL}, the appended polygon's
+  \code{PID} will be one greater than the maximum within \code{polys}
+  (if defined); otherwise, it will be 1.
+  
   If \code{polys} contains an \code{SID} column and the \code{SID}
   argument equals \code{NULL}, this function uses the next available
-  \code{SID}.
+  \code{SID} for the corresponding \code{PID}.
 
   If \code{polys} does not contain an \code{SID} column and the
   caller passes an \code{SID} argument, all existing polygons will
