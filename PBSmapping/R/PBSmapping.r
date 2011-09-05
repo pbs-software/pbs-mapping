@@ -2548,7 +2548,7 @@ appendPolys <- function(polys, mat, PID = NULL, SID = NULL, isHole = FALSE)
 
   # get SID; only set it if there exists an SID column
   if (is.null(SID) && !is.null(polys) && is.element("SID", names(polys))) {
-    curSIDs <- polys(polys$PID == PID, "SID")
+    curSIDs <- polys[polys$PID == PID, "SID"];
     if (!is.null(curSIDs) && (length(curSIDs) > 0)) {
       SID <- max(curSIDs) + 1;
     } else {
