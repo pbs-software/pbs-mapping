@@ -1,5 +1,15 @@
 PBSmapping Changes
 ==================
+Authors: JTS = Jon T. Schnute           RH  = Rowan Haigh
+         NB  = Nicholas Boers           ACB = Alex Couture-Beil
+
+2.62  2011-09-08  Authors
+  - Bumped up the version number to distinguish the revisions under way from the version currently on CRAN. (RH 9/8)
+  - Fixed a bug in appendPolys() and update the function's documentation. (NB 9/5)
+	Within appendPolys(), a reference to polys used parentheses rather than brackets causing R 
+	to look for a non-existent polys function rather than the argument.
+	The documentation for the function was also updated to clarify the determination of the polygon's PID.
+
 2.61  2010-06-23  Rowan
   - Revised 'importShapefile' to fix a small bug associated with reading a shapefile's projection. (RH 6/1)
 
