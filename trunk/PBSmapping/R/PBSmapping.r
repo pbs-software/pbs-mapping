@@ -5323,6 +5323,10 @@ importShapefile <- function (fn, readDBF = TRUE, projection = NULL, zone = NULL)
 {
 	# initialization
 	.checkRDeps("importShapefile", c("maptools", "foreign"))
+	# call to normalizePath added to perform ~ expansion; otherwise,
+	# pathnames beginning with a ~ fail in the later call to
+	# Rshapeget
+	fn <- normalizePath(fn, mustWork=F)
 	fn <- .getBasename(fn, "shp")
 
 	# test for the required '.shx' file
