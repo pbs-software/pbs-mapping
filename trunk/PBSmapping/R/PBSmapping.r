@@ -79,18 +79,18 @@ PBSprint <- FALSE;
       ticksMinor <- pretty(c(0, diff(ticks)[1]));
       ticksMinor <- (sort(rep(ticks, length(ticksMinor))) +
                      rep(ticksMinor, length(ticks)));
-      
+
       # filter them for anything on the extents
       ticks <- ticks[ticks > lim[[i]][1] & ticks < lim[[i]][2]];
       ticksMinor <-
         ticksMinor[ticksMinor > lim[[i]][1] & ticksMinor < lim[[i]][2]];
-      
+
       if (!tckLab[i]) {
         tickLabels <- FALSE;
       } else {
         tickLabels <- as.character(ticks);
       }
-      
+
       # plot the axis
       # major ticks
       axis(side = i, at = ticks, labels = tickLabels, tck = tck[i],
@@ -115,7 +115,7 @@ PBSprint <- FALSE;
   # each list element is the function to apply to X and then Y
   tests <- list(tl=c(min, max), tr=c(max, max),
                 bl=c(min, min), br=c(max, min));
-  
+
   for (c in names(corners)) {
     # do we need to add a corner point? check whether a point is already in the
     # corner
@@ -130,7 +130,7 @@ PBSprint <- FALSE;
       # for those polys with an X on the boundary, which ones have a Y
       # that is the min/max? get their PIDs
       PIDsA <- polysA[polysA$Y == ((tests[[c]])[2])[[1]](polysA$Y), "PID"]
-    
+
     polysB <- polys[polys$Y == (corners[[c]])[2], ]
     if (nrow(polysB) > 0)
       PIDsB <- polysB[polysB$X == ((tests[[c]])[1])[[1]](polysB$X), "PID"]
@@ -161,7 +161,7 @@ PBSprint <- FALSE;
 "Unable to determine the appropriate polygon to close corner ", c, ".", sep=""))
       cand <- cand[shortest]
     }
-    
+
     # add corner point
     newPoly <- polys[polys$PID == cand, ]
     polys <- polys[polys$PID != cand, ]
@@ -208,7 +208,7 @@ PBSprint <- FALSE;
   polyProps <- .validatePolyProps(polyProps, parCols = relevantProps);
   if (is.character(polyProps))
     stop(paste("Invalid PolyData 'polyProps'.\n", polyProps, sep=""));
-  
+
   # at this point, 'data' has:
   # (!isEventData): PID, (optional SID), X, Y, and label columns
   # (isEventData):  EID, X, Y, and label columns
@@ -225,7 +225,7 @@ PBSprint <- FALSE;
   if (!is.null(col))  parValues[["col"]]  <- col;
   if (!is.null(font)) parValues[["font"]] <- font;
   if (!is.null(pch))  parValues[["pch"]]  <- pch;
-  
+
   # make basic 'polyProps' if necessary
   if (is.null(polyProps)) {
     if (isEventData) {
@@ -251,7 +251,7 @@ PBSprint <- FALSE;
   if (length(parValues) > 1)
     polyProps <- .addProps(type = type, polyProps = polyProps, parValues);
   polyPropsReturn <- polyProps;
-    
+
   # reduce data to IDs found in 'polyProps'
   if (isEventData) {
     data <- data.frame(data[is.element(data$EID, unique(polyProps$EID)), ]);
@@ -298,7 +298,7 @@ PBSprint <- FALSE;
   for (c in names(data)) {
     d <- (data[[c]]);
     p <- (as.list(polyProps[polyProps$props == c, propColumns]));
-    
+
     if (feature == "labels") {
       text(x = d$X, y = d$Y, labels = as.character(d$label),
            cex = p$cex, col = p$col, font = p$font, ...);
@@ -307,7 +307,7 @@ PBSprint <- FALSE;
               cex = p$cex, col = p$col, pch = p$pch, ...);
     }
   }
-  
+
   return (polyPropsReturn);
 }
 
@@ -338,7 +338,7 @@ PBSprint <- FALSE;
     }
   }
   param <- newParam;
-  
+
   if (type == "e") {
     polyProps$IDX <- polyProps$EID;
   } else if (type == "p") {
@@ -350,7 +350,7 @@ PBSprint <- FALSE;
   }
 
   uIDX <- unique(polyProps$IDX);
-  
+
   for (c in names(param)) {
     # add it if it isn't NULL
     if (!is.null(param[[c]])) {
@@ -398,44 +398,44 @@ PBSprint <- FALSE;
       && ((attr(polys, "projection") == "UTM")
           || (attr(polys, "projection") == 1))) {
     len <- nrow(polys)
-    
+
     D <- c(sqrt((polys$X[1:(len-1)] - polys$X[2:len])^2
                  + (polys$Y[1:(len-1)] - polys$Y[2:len])^2),
             0);
-    
+
   }
   # calculate distance for LL
   else if (!is.null(attr(polys, "projection"))
            && !is.na(attr(polys, "projection"))
            && (attr(polys, "projection") == "LL")) {
-    # Equatorial radius 6,378.14 km 
-    # Polar radius 6,356.78 km 
-    # Mean radius 6,371.3 km 
-    # Sources: 
+    # Equatorial radius 6,378.14 km
+    # Polar radius 6,356.78 km
+    # Mean radius 6,371.3 km
+    # Sources:
     #   http://en.wikipedia.org/wiki/Earth
     #   http://en.wikipedia.org/wiki/Earth_radius
     R <- 6371.3;
-    
+
     # degrees to radians
-    polys[, c("X", "Y")] <- polys[, c("X", "Y")] * pi / 180.0 
+    polys[, c("X", "Y")] <- polys[, c("X", "Y")] * pi / 180.0
     len <- nrow(polys)
-    
+
     # Source:
     #   http://www.census.gov/cgi-bin/geo/gisfaq?Q5.1
     # Algorithm originally in pseudocode.
     s0 <- 1:(len - 1);  # 's' for 's'hift
     s1 <- 2:len;        # (s0 + 1;)
-    
+
     dlon <- polys$X[s1] - polys$X[s0];   # dlon = lon2 - lon1
     dlat <- polys$Y[s1] - polys$Y[s0];   # dlat = lat2 - lat1
     cosPolysY <- cos(polys$Y);
     # a = (sin(dlat/2))^2 + cos(lat1) * cos(lat2) * (sin(dlon/2))^2
     a <- (sin(dlat / 2))^2 + cosPolysY[s0] * cosPolysY[s1] *
       (sin(dlon / 2))^2;
-    # c = 2 * arcsin(min(1, sqrt(a))) 
+    # c = 2 * arcsin(min(1, sqrt(a)))
     a <- sqrt(a);
     a[a > 1] <- 1;
-    cc <- 2 * asin(a); 
+    cc <- 2 * asin(a);
     # d = R * c
     D <- c(R * cc, 0);
   }
@@ -445,7 +445,7 @@ PBSprint <- FALSE;
 "Invalid projection attribute.  Supported projections include \"LL\",",
 "\"UTM\", and 1.\n"));
   }
-  
+
   return (D);
 }
 
@@ -464,7 +464,7 @@ PBSprint <- FALSE;
   # The extra time to compute the real memory requirements makes doing so
   # not worth it.
   outCapacity <- nrow(polys);
-  
+
   # create the data structure that the C functions expect
   # Using $<col> notation seems faster than [, "col"] notation.
   if (!is.element("SID", names(polys))) {
@@ -473,7 +473,7 @@ PBSprint <- FALSE;
     inID <- c(polys$PID, polys$SID, polys$POS);
   }
   inXY <- c(polys$X, polys$Y);
-  
+
   # call the C function
   results <- .C("calcOrientation",
                 inID = as.integer(inID),
@@ -498,7 +498,7 @@ PBSprint <- FALSE;
 "file a bug report.\n",
                sep = "\n"));
   }
-  
+
   # determine the number of rows in the result
   outRows <- as.vector(results$outRows);
 
@@ -510,11 +510,11 @@ PBSprint <- FALSE;
 
     if (!is.element("SID", names(polys)))
       d$SID <- NULL;
-    
+
     invisible(d);
   } else {
     invisible(NULL);
-  } 
+  }
 }
 
 #==============================================================================
@@ -549,7 +549,7 @@ PBSprint <- FALSE;
   msg <- paste(
 "The data's 'projection' attribute (", projPolyStr, ") differs from the\n",
 "projection of the plot region (", projMapStr, ").\n", sep="");
-  
+
   if (xor(is.null(projectionPlot), is.null(projectionPoly))) {
     warning(msg);
   } else if ((!is.null(projectionPlot) && !is.null(projectionPoly)) &&
@@ -617,7 +617,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
   }
   inXY <- c(polys$X, polys$Y);
   limits <- c(xlim, ylim);
-  
+
   # call the C function
   results <- .C("clip",
                 inID = as.integer(inID),
@@ -662,7 +662,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
     # remove "SID" column if not in input
     if (!is.element("SID", names(polys)))
       d$SID <- NULL;
-    
+
     # change oldPOSs of -1 to NA to meet specs.
     d$oldPOS[d$oldPOS == -1] <- NA;
 
@@ -671,7 +671,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
     if (keepExtra)
       d <- merge(x = d, y = pdata, all.x = TRUE,
                  by = intersect(c("PID", "SID"), names(d)));
-    
+
     # restore the attributes
     attributes(d) <- c(attributes(d), attrValues);
 
@@ -774,7 +774,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
     d$SID <- NULL;
   }
 
-  return (d);  
+  return (d);
 }
 
 #==============================================================================
@@ -839,7 +839,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
 {
   polyRange <- c(range(polys$X), range(polys$Y))
   ptsRange <- c(range(pts$X), range(pts$Y))
-  
+
   # set "toFix" based on points outside the PolySet
   toFixPts <- c(ptsRange[1] < polyRange[1],
                 ptsRange[2] > polyRange[2],
@@ -855,7 +855,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
   # to compensate for rounding error
 
   toFix <- toFixPts | toFixLim
-  
+
   # if nothing to fix, return
   if (!any(toFix))
     return (polys)
@@ -909,9 +909,9 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
 
     polys <- rbind(polys, newPoly)
   }
-  
+
   polys <- polys[order(polys$PID), ]
-  
+
   return (polys);
 }
 
@@ -974,14 +974,14 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
   if ((lenx < 2) || (leny < 2)) {
     return (NULL);
   }
-  
+
   # determine "addSID"
   if (is.element("SID", names(polys))) {
     res$addSID <- TRUE;
   } else {
     res$addSID <- FALSE;
   }
-  
+
   # determine "byrow"
   if (lenx == 2 && leny == 2) {
     # special case: only one polygon; byrow does not matter
@@ -1006,7 +1006,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
 
   res$projection <- attr(polys, "projection");
   res$zone <- attr(polys, "zone");
-  
+
   if (fullValidation) {
     t <- makeGrid(x = res$x, y = res$y, byrow = res$byrow,
                   addSID = res$addSID, projection = res$projection,
@@ -1015,7 +1015,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
       return (NULL);
     }
   }
-  
+
   return (res);
 }
 
@@ -1080,7 +1080,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
   if (is.null(projection))
     stop(
 "'projection' argument must not equal NULL.\n");
-  
+
   # if projection isn't NA, adjust for the aspect ratio; in this section
   # we must indirectly set plt/pin via mai/mar if possible; if that doesn't
   # work, we must set them directly
@@ -1119,7 +1119,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
         toMove <- (diff(plt[1:2]) - pinX/par()$fin[1]) / 2;
         plt[1:2] <- plt[1:2] + c(toMove, -toMove);
       }
-            
+
       # set the plot region indirectly via mai/mar
       # mai: (bottom, left, top, right)
       # fin: (width, height)
@@ -1128,7 +1128,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
       # too large.
       par(mai=c(par()$fin[2]*plt[3], par()$fin[1]*plt[1],
             par()$fin[2]*(1-plt[4]), par()$fin[1]*(1-plt[2])));
-      
+
       # verify that it set OK; if not, set it directly via plt
       parPlt <- signif(as.double(par()$plt), digits=5);
       locPlt <- signif(as.double(plt), digits=5);
@@ -1137,7 +1137,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
     }
   # if projection is NA, continue at this point with no changes to
   # the plot region
-   
+
   # must set 'usr' again because changing the other par() parameters changes it
   par(usr = c(xlim, ylim));
 
@@ -1153,12 +1153,12 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
   # ... which I tried first
   if (is.null(unlist(sel.polys)))
     return (NA)
-  
+
   # lapply's are slower in S-PLUS than R; the next line is a bottle-neck
   # in S-PLUS (while having minimal impact on R runtime)
   lenPolys <- lapply(sel.polys, "length")
   nPolys <- length(lenPolys)
-  
+
   # create a vector T, F, ..., T
   TFT <- rep(c(TRUE, FALSE), length.out=(nPolys * 2) - 1)
 
@@ -1238,7 +1238,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
 
   inRows <- nrow(polys);
   outCapacity <- 2 * inRows;
-  
+
   # create the data structure that the C function expects
   if (!is.element("SID", names(polys))) {
     inID <- c(polys$PID, integer(length = inRows));
@@ -1280,7 +1280,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
 "Unable to rollup the polygons, as one or more children did not have a",
 "parent.\n"));
   }
-  
+
   # determine the number of rows in the result
   outRows <- as.vector(results$outRows);
 
@@ -1291,10 +1291,10 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
                     POS = results$outID[(2*outCapacity+1):(2*outCapacity+outRows)],
                     X = results$outXY[1:outRows],
                     Y = results$outXY[(outCapacity+1):(outCapacity+outRows)]);
-    
+
     if (!is.element("SID", names(polys)) || rollupMode == 1)
       d$SID <- NULL;
-    
+
     # restore the attributes
     attributes(d) <- c(attributes(d), attrValues);
 
@@ -1348,9 +1348,9 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
   # of 'polyProps'
   if (isType == "points")
     legalNames <- setdiff(legalNames, c("cex", "pch"));
-  
+
   par(dots[intersect(names(dots), legalNames)]);
-  
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # PART 2: set 'projection' and 'labelprojection' to the appropriate values
   #  Since we validate here, it's unnecessary to validate when this function
@@ -1360,7 +1360,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
   # to NA within this function (to mean unprojected)
   if (is.null(projection) || is.na(projection))
     projection <- FALSE;
-  
+
   if (is.logical(projection)) {
     if (projection) {
       if (!is.null(attr(polys, "projection"))) {
@@ -1417,7 +1417,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
     polys <- .validateXYData(polys);
     if (is.character(polys)) stop(paste("Invalid PolySet.\n", polys, sep=""));
   }
-  
+
   # detect limits if necessary
   if (is.null(xlim)) xlim <- range(polys$X);
   if (is.null(ylim)) ylim <- range(polys$Y);
@@ -1461,7 +1461,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
     polygon(x = c(xlim[1], xlim[2], xlim[2], xlim[1]),
             y = c(ylim[1], ylim[1], ylim[2], ylim[2]),
             col = bg, border = 0);
-  
+
   # plot PolySet 'polys'
   if (!is.null(polys)) {
     if (isType == "polygons") {
@@ -1561,14 +1561,14 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
         return(paste("Unexpected class (", class(data)[1], ").\n", sep=""));
       }
     }
-    
+
     # ensure all the required columns exist in the PolySet
     if (!is.null(requiredCols) &&
         !all(is.element(requiredCols, names(data)))) {
       return(paste("One or more of the required columns is missing.\n",
       "Required columns: ", paste(requiredCols, collapse = ", "), ".\n", sep=""));
     }
-    
+
     # ensure all the required attributes exists in the PolySet
     if (!is.null(requiredAttr) &&
         !all(is.element(requiredAttr, names(attributes(data))))) {
@@ -1613,11 +1613,11 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
         keys <- .createIDs(data, cols=presentCols);
       } else {
         # paste the columns together
-        exprStr <- paste("paste(", 
+        exprStr <- paste("paste(",
                    paste(paste("data$", presentCols, sep=""), collapse=", "),");", sep="");
         keys <- eval(parse(text=exprStr));
       }
-      
+
       # at this point, 'keys' is a vector
       if (any(duplicated(keys))) {
         return(paste("The 'key' for each record is not unique.\n",
@@ -1646,11 +1646,11 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
       # outer/inner contour indices
       idxOuter <- rep(!holes, times=((idxLast-idxFirst)+1))
       idxInner <- !idxOuter;
-      
+
       # POS[i] < POS[i+1]?
       lt <- c(data$POS[1:(nrow(data)-1)] < data$POS[2:(nrow(data))], FALSE);
-      
-      # check outer contours; change last vertex of each polygon to 
+
+      # check outer contours; change last vertex of each polygon to
       # what we expect for valid outer contours
       lt[idxLast] <- TRUE;
       # check for any that aren't in order
@@ -1660,11 +1660,11 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
         j[idxInner] <- FALSE;
         # add 1 because it's actually the next row that break it
         j <- which(j) + 1;
-        
+
         return(paste("POS column must contain increasing values for outer contours.\n",
-        "Offending rows: ", paste(j, collapse=", "), ".\n",  sep=""));        
+        "Offending rows: ", paste(j, collapse=", "), ".\n",  sep=""));
       }
-      
+
       # check inner contours; change last vertex of each polygon to what
       # we expect for valid inner contours
       lt[idxLast] <- FALSE;
@@ -1675,11 +1675,11 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
         j[idxOuter] <- FALSE;
         # do not add 1
         j <- which(j);
-        
+
         return(paste("POS column must contain decreasing values for inner contours.\n",
-        "Offending rows: ", paste(j, collapse=", "), ".\n",  sep=""));        
+        "Offending rows: ", paste(j, collapse=", "), ".\n",  sep=""));
       }
-    }    
+    }
   } else {
     return(paste("The object must be either a matrix or a data frame.\n"));
   }
@@ -1790,7 +1790,7 @@ addLabels <- function(data, xlim = NULL, ylim = NULL, polyProps = NULL,
                       cex = NULL, col = NULL, font = NULL, ...)
 {
   # performs the validation below when we know what type of data we have
-  
+
   # load the limits, so we can clip before plotting
   if (is.null(xlim))
     xlim <- options()$map.xlim;
@@ -1806,14 +1806,14 @@ addLabels <- function(data, xlim = NULL, ylim = NULL, polyProps = NULL,
     projectionData <- attr(data, "projection");
   } else {
     projectionData <- attr(polys, "projection");
-  }    
+  }
   .checkProjection(projectionPlot, projectionData);
   zoneData <- attr(data, "zone");
-  
+
   # assume PolyData
   EventData <- FALSE;
   type <- "p";
-  
+
   # test for PolyData/EventData
   if (!any(is.element(names(data), c("PID", "EID")))) {
     stop(
@@ -1832,20 +1832,20 @@ addLabels <- function(data, xlim = NULL, ylim = NULL, polyProps = NULL,
       stop(
 "When 'data' is EventData, the 'placement' attribute must equal \"DATA\".\n");
     }
-    
+
     data <- .validateEventData(data);
     if (is.character(data))
       stop(paste("Invalid EventData 'data'.\n", data, sep=""));
     EventData <- TRUE;
     type <- "e";
-  } 
+  }
   # otherwise, PolyData...
   else {
     data <- .validatePolyData(data);
     if (is.character(data))
       stop(paste("Invalid PolyData 'data'.\n", data, sep=""));
   }
-  
+
   # if placement is 'DATA', test for 'X'/'Y' columns (they might possibly
   # be missing at this point if 'data' is PolyData)
   if (placement == "DATA") {
@@ -1873,7 +1873,7 @@ addLabels <- function(data, xlim = NULL, ylim = NULL, polyProps = NULL,
       stop(
 "Since 'data' contains an SID field, 'polys' must as well.\n");
     }
-    
+
     # at this point, placement != DATA, 'data' has label column, and 'polys'
     # is a valid PolySet
 
@@ -1881,7 +1881,7 @@ addLabels <- function(data, xlim = NULL, ylim = NULL, polyProps = NULL,
     # need to calculate X/Y for PIDs/SIDs that appear in 'data')
     polys <- polys[is.element(paste(polys$PID, polys$SID),
                               unique(paste(data$PID, data$SID))), ];
-    
+
     # 'polys': PolySet >> PolyData
     if (placement == "CENTROID") {
       polys <- calcCentroid(polys, rollup = rollup);
@@ -1898,7 +1898,7 @@ addLabels <- function(data, xlim = NULL, ylim = NULL, polyProps = NULL,
 
     # at this point, 'polys' is PolyData with X/Y columns; merge label column
     # from 'data' with PolyData 'polys'
-    
+
     data <- merge(data,
                   polys,
                   by=intersect(intersect(names(data), names(polys)),
@@ -1933,7 +1933,7 @@ addLabels <- function(data, xlim = NULL, ylim = NULL, polyProps = NULL,
     # add projection and zone
     attr(data, "projection") <- projectionData;
     attr(data, "zone") <- zoneData;
-    
+
     # add to the class attribute
     if (EventData && !is.EventData(data, fullValidation = FALSE)) {
       class(data) <- c("EventData", class(data));
@@ -1941,7 +1941,7 @@ addLabels <- function(data, xlim = NULL, ylim = NULL, polyProps = NULL,
       class(data) <- c("PolyData", class(data));
     }
   }
-  
+
   invisible (data);
 }
 
@@ -1976,7 +1976,7 @@ addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
     warning("All vertices were clipped: no polylines to plot.\n");
     return (NULL);
   }
-  
+
   # validate the polyProps argument
   polyProps <- .validatePolyProps(polyProps, parCols = c("col", "lty"));
   if (is.character(polyProps))
@@ -1988,7 +1988,7 @@ addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
     stop(
 "No polygons to plot since 'polyProps' contains SIDs but 'polys' does not.\n");
   }
-    
+
   # build values for 'polyProps'
   parValues <- list(col = 1, lty = par("lty"));
   # don't replace attributes already in 'polyProps' with default values
@@ -2004,7 +2004,7 @@ addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   if (length(parValues) > 0)
     polyProps <- .addProps(type = "p", polyProps = polyProps, parValues);
   polyPropsReturn <- polyProps;
-  
+
   # create an index for the properties
   polyProps$props <- paste(polyProps$col, polyProps$lty);
 
@@ -2015,7 +2015,7 @@ addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
 
   polyProps$IDs <- .createIDs(polyProps, col=c("PID", "SID"), fastIDdig);
   polyPropsIdx <- split(polyProps$IDs, polyProps$props);
-  
+
   # reduce before split
   parCols <- c("col", "lty");
   toSplit <- polyProps[!duplicated(polyProps$props), c(parCols, "props")];
@@ -2036,7 +2036,7 @@ addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
     # separate lines with NAs for plotting
     new.x <- .insertNAs(polyx, polyPropsIdx[[prop]]);
     new.y <- .insertNAs(polyy, polyPropsIdx[[prop]]);
-    
+
     lines(x = new.x, y = new.y, col = col, lty = lty, ...);
   }
 
@@ -2044,7 +2044,7 @@ addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   if (!is.null(polyPropsReturn) &&
       !is.PolyData(polyPropsReturn, fullValidation = FALSE))
     class(polyPropsReturn) <- c("PolyData", class(polyPropsReturn));
-  
+
   invisible(polyPropsReturn);
 }
 
@@ -2087,7 +2087,7 @@ addPoints <- function(data, xlim = NULL, ylim = NULL, polyProps = NULL,
 "for plotting only.\n",
                   sep = "\n"));
   }
-  
+
   # is it event data? -- validate it here
   isEventData <- FALSE;
   type <- "p";
@@ -2104,15 +2104,15 @@ addPoints <- function(data, xlim = NULL, ylim = NULL, polyProps = NULL,
     if (is.character(data))
       stop(paste("Invalid PolyData 'data'.\n", data, sep=""));
     # does the PolyData have X and Y columns?
-    if (any(!is.element(c("X", "Y"), names(data)))) 
+    if (any(!is.element(c("X", "Y"), names(data))))
       stop(
 "'data' must contain columns 'X' and 'Y'.\n");
   }
-  
+
   # clip
   data <- data[data$X >= xlim[1] & data$X <= xlim[2]
                & data$Y >= ylim[1] & data$Y <= ylim[2], ];
-  
+
   polyPropsReturn <-
     .addFeature(feature = "points", data = data, polyProps = polyProps,
                 isEventData = isEventData,
@@ -2123,7 +2123,7 @@ addPoints <- function(data, xlim = NULL, ylim = NULL, polyProps = NULL,
     class(polyPropsReturn) <- c("PolyData", class(polyPropsReturn));
 
   invisible (polyPropsReturn);
-}  
+}
 
 #==============================================================================
 addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
@@ -2134,7 +2134,7 @@ addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   polys <- .validatePolySet(polys);
   if (is.character(polys))
     stop(paste("Invalid PolySet 'polys'.\n", polys, sep=""));
-  
+
   # load/check 'xlim'/'ylim'
   if (is.null(xlim))
     xlim <- options()$map.xlim;
@@ -2169,7 +2169,7 @@ addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
     stop(
 "No polygons to plot since 'polyProps' contains SIDs but 'polys' does not.\n");
   }
-    
+
   # default values
   pPropsDefs <- list(angle = 45, border = 1, col = 0, colHoles = NULL,
                      lty = par("lty"), density = NA);
@@ -2182,7 +2182,7 @@ addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
     #   if (!is.null(angle)) pPropsDefaults[["angle"]] <- angle;
     # for each of the properties and evalute it
     expr <- paste("if (!is.null(", p, ")) pPropsDefs[[\"", p, "\"]] <- ", p,
-                  sep=""); 
+                  sep="");
     eval(parse(text=expr));
   }
   # handle "density" with care: in R (1.8.1+), density == NULL is equivalent to
@@ -2212,7 +2212,7 @@ addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
 
   # save a copy to return
   polyPropsReturn <- pProps;
-  
+
   # create an index for the properties
   # use an expression like
   #   pProps$props <- paste(pProps$angle, pProps$border, ..., sep = "-");
@@ -2235,10 +2235,10 @@ addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   idxE <- c((idxS-1)[-1], length(polys$IDs))
   holes <- (polys$POS[idxS] > polys$POS[idxE])
   holesIDs <- (polys[idxS, "IDs"])[holes];
-  
+
   pProps$IDs <- .createIDs(pProps, col=c("PID", "SID"), fastIDdig)
   holes <- is.element(pProps$IDs, holesIDs)
-  
+
   pPropsOuter <- pProps[!holes, c("IDs", "props")]
   pPropsOuter <- split(pPropsOuter$IDs, pPropsOuter$props)
 
@@ -2277,19 +2277,19 @@ addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   # create an 'IDs' column for both 'polys' and 'polylines'
   polylines$IDs <- .createIDs(polylines, col=c("PID", "SID"), fastIDdig);
   polys$IDs <- .createIDs(polys, col=c("PID", "SID"), fastIDdig);
-  
+
   polylinex <- split(polylines$X, polylines$IDs);
   polyliney <- split(polylines$Y, polylines$IDs);
   polyx <- split(polys$X, polys$IDs);
   polyy <- split(polys$Y, polys$IDs);
 
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # WORK-AROUND:
   # Problem: the R polygon command behaves different from the S polygon
   #   command.  The R command draws filling lines according to the 'lty' par
   #   parameter, whereas the S polygon command ignores 'lty' for filling
   #   lines.
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Problem:
   #   S-PLUS draws retrace lines when 'lty' != 0.
   #   R refused to draw shading lines (i.e., density) when 'lty' == 0.
@@ -2299,7 +2299,7 @@ addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   # To stop R from plotting retrace lines, the polygon command needs:
   # 1) lty = 0 *OR*
   # 2) border = F
-  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (!is.null(version$language) && (version$language == "R")) {
     fillBorder <- NA;   # in R, NA => omit borders
     polyLty <- 1;
@@ -2312,7 +2312,7 @@ addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   # as we go
   mode <- "o"
   pPropsIdx <- pPropsOuter
-  
+
   # A) if "pPropsHoles" == NA, all holes were transparent and we have
   #    absolutely nothing to plot for holes; in this instance, range need to
   #    include the holes
@@ -2354,11 +2354,11 @@ addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
     density <-  as.vector(toSet$density);
     angle <- as.vector(toSet$angle);
 
-    if (!is.na(col)) {    
+    if (!is.na(col)) {
       # plot the fill
       new.polyx <- .insertNAs(polyx, pPropsIdx[[propIdx]])
       new.polyy <- .insertNAs(polyy, pPropsIdx[[propIdx]])
-      
+
       # Subtle differences exist between the S-PLUS and R "polygon" command.
       # The S-PLUS command fails if not given at least three points, whereas the
       # R command draws nothing for 0-1 point and a line for 2 points.
@@ -2374,7 +2374,7 @@ addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
 
         new.polylinex <- .insertNAs(polylinex, pPropsIdx[[propIdx]])
         new.polyliney <- .insertNAs(polyliney, pPropsIdx[[propIdx]])
-        
+
         polygon(x = new.polylinex, y = new.polyliney, lty = lty,
                 border = border, density = 0, ...);
       }
@@ -2403,7 +2403,7 @@ addStipples <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   polys <- .validatePolySet(polys);
   if (is.character(polys))
     stop(paste("Invalid PolySet 'polys'.\n", polys, sep=""));
-  
+
   if (is.null(xlim))
     xlim <- options()$map.xlim;
   if (is.null(ylim))
@@ -2421,10 +2421,10 @@ addStipples <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   # since thickenPolys() wants a tolerance in kilometers, convert degrees
   # to kilometers if necessary
   if (projectionPlot == "LL") {
-    # Equatorial radius 6,378.14 km 
-    # Polar radius 6,356.78 km 
-    # Mean radius 6,371.3 km 
-    # Sources: 
+    # Equatorial radius 6,378.14 km
+    # Polar radius 6,356.78 km
+    # Mean radius 6,371.3 km
+    # Sources:
     #   http://en.wikipedia.org/wiki/Earth
     #   http://en.wikipedia.org/wiki/Earth_radius
     R <- 6371.3;
@@ -2470,7 +2470,7 @@ addStipples <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   # keep only those events that fall within the proper limits
   events <- events[events$X > xlim[1] & events$X < xlim[2]
                    & events$Y > ylim[1] & events$Y < ylim[2], ];
-  
+
   link <- findPolys(events, polys)
   if (side == -1) {
     # if outside
@@ -2490,12 +2490,12 @@ addStipples <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
 
   .addFeature(feature = "points", data = stip, polyProps = polyProps,
               isEventData = FALSE, ...);
-  
+
   if (!is.null(polyProps) &&
       !is.PolyData(polyProps, fullValidation = FALSE))
     class(polyProps) <- c("PolyData", class(polyProps));
   invisible(polyProps);
-}    
+}
 
 #==============================================================================
 appendPolys <- function(polys, mat, PID = NULL, SID = NULL, isHole = FALSE)
@@ -2560,7 +2560,7 @@ appendPolys <- function(polys, mat, PID = NULL, SID = NULL, isHole = FALSE)
   POS <- 1:nrow(mat);
   if (isHole)
     POS <- rev(POS);
-  
+
   # build the new rows
   if (!is.null(SID)) {
     newRows <- data.frame(PID = rep(PID, nrow(mat)),
@@ -2590,14 +2590,14 @@ appendPolys <- function(polys, mat, PID = NULL, SID = NULL, isHole = FALSE)
   if (length(extraCols) >  0)
     newRows <- cbind(newRows, matrix(NA, nrow=nrow(newRows),
                                      ncol=length(extraCols)));
-  
+
   # bind 'em
   if (!is.null(polys)) {
     ret <- (rbind(polys[, cols], newRows));
-  } else { 
+  } else {
     ret <- (newRows);
   }
-  
+
   if (!is.null(ret)) {
     # restore the attributes (including projection and zone)
     attributes(ret) <- c(attributes(ret), attrValues);
@@ -2605,7 +2605,7 @@ appendPolys <- function(polys, mat, PID = NULL, SID = NULL, isHole = FALSE)
     if (!is.PolySet(ret, fullValidation = FALSE))
       class(ret) <- c("PolySet", class(ret));
   }
-  
+
   return (ret);
 }
 
@@ -2619,14 +2619,14 @@ as.EventData <- function(x, projection = NULL, zone = NULL)
   x <- .validateEventData(x);
   if (is.character(x))
     stop(paste("Cannot coerce into EventData.\n", x, sep=""));;
-  
+
   if (!is.EventData(x, fullValidation = FALSE))
     class(x) <- c("EventData", class(x));
   if (!is.null(projection))
     attr(x, "projection") <- projection;
   if (!is.null(zone))
     attr(x, "zone") <- zone;
-  
+
   return (x);
 }
 
@@ -2653,7 +2653,7 @@ as.PolyData <- function(x, projection = NULL, zone = NULL)
   # if a data frame, remove all other classes
   if (is.data.frame(x))
     class(x) <- "data.frame"
-  
+
   x <- .validatePolyData(x);
   if (is.character(x))
     stop(paste("Cannot coerce into PolyData.\n", x, sep=""));;
@@ -2678,7 +2678,7 @@ as.PolySet <- function(x, projection = NULL, zone = NULL)
   x <- .validatePolySet(x);
   if (is.character(x))
     stop(paste("Cannot coerce into a PolySet.\n", x, sep=""));;
-  
+
   if (!is.PolySet(x, fullValidation = FALSE))
     class(x) <- c("PolySet", class(x));
   if (!is.null(projection))
@@ -2742,7 +2742,7 @@ calcArea <- function(polys, rollup = 3)
 
   inRows <- nrow(polys);
   outCapacity <- inRows;
-  
+
   # create the data structure that the C functions expect
   if (!is.element("SID", names(polys))) {
     inID <- c(polys$PID, integer(length = inRows), polys$POS);
@@ -2750,7 +2750,7 @@ calcArea <- function(polys, rollup = 3)
     inID <- c(polys$PID, polys$SID, polys$POS);
   }
   inXY <- c(polys$X, polys$Y);
-  
+
   # call the C function
   results <- .C("calcArea",
                 inID = as.integer(inID),
@@ -2775,7 +2775,7 @@ calcArea <- function(polys, rollup = 3)
 "file a bug report.\n",
                sep = "\n"));
   }
-  
+
   # determine the number of rows in the result
   outRows <- as.vector(results$outRows);
 
@@ -2794,7 +2794,7 @@ calcArea <- function(polys, rollup = 3)
     return(d);
   } else {
     return(NULL);
-  } 
+  }
 }
 
 #------------------------------------------------------------------------------
@@ -2816,7 +2816,7 @@ calcArea <- function(polys, rollup = 3)
 #   Setting onlyPID = TRUE results in only one centroid per PID.
 #------------------------------------------------------------------------------
 calcCentroid <- function(polys, rollup = 3)
-{  
+{
   polys <- .validatePolySet(polys);
   if (is.character(polys))
     stop(paste("Invalid PolySet 'polys'.\n", polys, sep=""));
@@ -2830,10 +2830,10 @@ calcCentroid <- function(polys, rollup = 3)
     # merged PolySet, it shouldn't matter.  The retrace lines don't change
     # the area, and hence shouldn't change the centroid.
   }
-  
+
   inRows <- nrow(polys);
   outCapacity <- inRows;
-  
+
   # create the data structure that the C functions expect
   if (!is.element("SID", names(polys))) {
     inID <- c(polys$PID, integer(length = inRows), polys$POS);
@@ -2841,7 +2841,7 @@ calcCentroid <- function(polys, rollup = 3)
     inID <- c(polys$PID, polys$SID, polys$POS);
   }
   inXY <- c(polys$X, polys$Y);
-  
+
   # call the C function
   results <- .C("calcCentroid",
                 inID = as.integer(inID),
@@ -2866,7 +2866,7 @@ calcCentroid <- function(polys, rollup = 3)
 "file a bug report.\n",
                sep = "\n"));
   }
-  
+
   # determine the number of rows in the result
   outRows <- as.vector(results$outRows);
 
@@ -2879,7 +2879,7 @@ calcCentroid <- function(polys, rollup = 3)
 
     if (!is.element("SID", names(polys)))
       d$SID <- NULL;
-    
+
     # add projection and zone
     attr(d, "projection") <- attr(polys, "projection");
     attr(d, "zone") <- attr(polys, "zone");
@@ -2890,12 +2890,12 @@ calcCentroid <- function(polys, rollup = 3)
     return(d);
   } else {
     return(NULL);
-  } 
+  }
 }
 
 #==============================================================================
 # New calcConvexHull using chull() in package grDevices
-calcConvexHull <- function(xydata,keepExtra=FALSE) { 
+calcConvexHull <- function(xydata,keepExtra=FALSE) {
 	xydata <- .validateXYData(xydata);
 	if (is.character(xydata))
 		stop(paste("Invalid X/Y data 'xydata'.\n", xydata, sep=""));
@@ -2934,7 +2934,7 @@ calcLength <- function (polys, rollup = 3, close = FALSE)
     warning(
 "'rollup = 2' has no meaning in 'calcLength'; reset it to 'rollup = 3'.\n");
   }
-  
+
   # STEP 1: compute a distance column
   if (!is.null(attr(polys, "projection"))
       && !is.na(attr(polys, "projection"))
@@ -2947,7 +2947,7 @@ calcLength <- function (polys, rollup = 3, close = FALSE)
       polys <- .rollupPolys(polys, rollupMode = 3, exteriorCCW = -1,
                             closedPolys = 1, addRetrace = FALSE);
     }
-    
+
     polys$D <- .calcDist(polys);
   }
   else {
@@ -2957,7 +2957,7 @@ calcLength <- function (polys, rollup = 3, close = FALSE)
   }
 
   # STEP 2: prepare the result
-  if (is.element("D", names(polys))) {    
+  if (is.element("D", names(polys))) {
     # simplify polys
     polys <- polys[, which(is.element(names(polys), c("PID", "SID", "D")))]
 
@@ -2989,7 +2989,7 @@ calcLength <- function (polys, rollup = 3, close = FALSE)
     d <- data.frame(PID = polys$PID,
                     length = polys$length);
   }
-  
+
   if (!is.null(d) &&
       !is.PolyData(d, fullValidation = FALSE))
     class(d) <- c("PolyData", class(d));
@@ -3003,23 +3003,23 @@ calcMidRange <- function(polys, rollup = 3)
   polys <- .validatePolySet(polys);
   if (is.character(polys))
     stop(paste("Invalid PolySet 'polys'.\n", polys, sep=""));
-  
+
   # calculate range
   polys <- calcSummary (polys, FUN="range", rollup = rollup);
 
   # calculate mean range
   polys$X <- (polys$X1 + polys$X2) / 2;
   polys$Y <- (polys$Y1 + polys$Y2) / 2;
-  
+
   # drop obsolete columns
   polys$X1 <- NULL;
   polys$X2 <- NULL;
   polys$Y1 <- NULL;
   polys$Y2 <- NULL;
-  
+
   # no need to assign 'projection' and 'zone' attributes; 'calcSummary'
   # maintains them
-  
+
   # assign class if necessary
   if (!is.null(polys) &&
       !is.PolyData(polys, fullValidation = FALSE))
@@ -3048,7 +3048,7 @@ calcSummary <- function(polys, rollup = 3, FUN, ...)
   # create an index
   idx <- .createIDs(polys, col=c("PID", "SID"), fastIDdig = NULL);
   uniqueIdx <- unique(idx);
-  
+
   # get data value (run FUN on each vector of X and vector of Y)
   dataX <- lapply(split(polys$X, idx), FUN, ...);
   dataY <- lapply(split(polys$Y, idx), FUN, ...);
@@ -3061,7 +3061,7 @@ calcSummary <- function(polys, rollup = 3, FUN, ...)
   # cbind() can result in calling the data frame method if the arguments
   # are all either data frames or vectors, and this will result in the
   # coercion of character vectors to factors. (source: R cbind() help file)
-  
+
   dataX <- cbind(data.frame(IDX=names(dataX)),
                  as.data.frame(matrix(unlist(dataX, use.names = FALSE),
                                       nc = nCol, byrow = TRUE)));
@@ -3070,7 +3070,7 @@ calcSummary <- function(polys, rollup = 3, FUN, ...)
                  as.data.frame(matrix(unlist(dataY, use.names = FALSE),
                                       nc = nCol, byrow = TRUE)));
   dataY$IDX <- as.character(dataY$IDX); # remove factor
-  
+
   if (nCol > 1) {
     names(dataX) <- c("IDX", paste("X", seq(1, nCol), sep=""));
     names(dataY) <- c("IDX", paste("Y", seq(1, nCol), sep=""));
@@ -3093,11 +3093,11 @@ calcSummary <- function(polys, rollup = 3, FUN, ...)
     # copy the projection and zone attribute from input
     attr(result, "projection") <- attr(polys, "projection");
     attr(result, "zone") <- attr(polys, "zone");
-  
+
     if (!is.PolyData(result, fullValidation = FALSE))
       class(result) <- c("PolyData", class(result));
   }
-  
+
   return (result);
 }
 
@@ -3111,7 +3111,7 @@ calcVoronoi <- function(xydata, xlim = NULL, ylim = NULL, eps = 1e-09,
     stop(paste("Invalid X/Y data 'xydata'.\n", xydata, sep=""))
   if (nrow(xydata) < 2)
     stop("This function requires two or more input points.\n")
-  
+
   if (!is.null(xlim) && (length(xlim) != 2 || diff(xlim) < 0))
     stop("Invalid 'xlim' argument.\n")
   if (!is.null(ylim) && (length(ylim) != 2 || diff(ylim) < 0))
@@ -3123,14 +3123,14 @@ calcVoronoi <- function(xydata, xlim = NULL, ylim = NULL, eps = 1e-09,
     xlim <- range(xydata$X) + (rep(diff(range(xydata$X)) * 0.10, 2) * c(-1, 1))
   if (is.null(ylim))
     ylim <- range(xydata$Y) + (rep(diff(range(xydata$Y)) * 0.10, 2) * c(-1, 1))
-  
+
   if (!is.null(attr(xydata, "projection"))
       && attr(xydata, "projection") == "LL")
     warning(paste(
 "When the projection is \"LL\", this function naively treats the data as",
 "a one-to-one projection. Consider converting it to UTM before running",
 "this function.", sep="\n"));
-  
+
   dd <- deldir(xydata$X, xydata$Y, rw=c(xlim, ylim), eps=eps, frac=frac,
                digits=7)
   if (is.null(dd))
@@ -3138,7 +3138,7 @@ calcVoronoi <- function(xydata, xlim = NULL, ylim = NULL, eps = 1e-09,
 "The call to \"deldir\", this function's dependency, failed.  The function",
 "does not support linear (horizontal/vertical) data and that could be the",
 "cause.", sep="\n"));
-  
+
   # dd$dirsgs:
   #  (x1, y1) -> (x2, y2): a line segment in a Dirichlet tile
   #  ind1 and ind2: indices of the two points separated by this line segment
@@ -3168,7 +3168,7 @@ calcVoronoi <- function(xydata, xlim = NULL, ylim = NULL, eps = 1e-09,
   # points in "summary"
 
   # add the "origin" point (twice) for each tile to the data structure
-  res$Xo <- rep(summary[, "x"], times=2*summary[, "n.tside"])  
+  res$Xo <- rep(summary[, "x"], times=2*summary[, "n.tside"])
   res$Yo <- rep(summary[, "y"], times=2*summary[, "n.tside"])
   # compute offset from each "origin"
   res$Xdiff <- res$X - res$Xo
@@ -3272,7 +3272,7 @@ calcVoronoi <- function(xydata, xlim = NULL, ylim = NULL, eps = 1e-09,
     res <- res[order(res$tile), ]
   }
   #----------------------------------------------------------------------------
-  
+
   # build the POS column
   maxPos <- max(nVerts);
   POS <- rep(seq(from=1, to=maxPos), times=length(nVerts));
@@ -3295,7 +3295,7 @@ calcVoronoi <- function(xydata, xlim = NULL, ylim = NULL, eps = 1e-09,
   # ensure edges reach the proper extents
   res <- .expandEdges(res, data.frame(X=summary[, "x"], Y=summary[, "y"]),
                       xlim, ylim)
-  
+
   # set attributes appropriate to the result
   attr(res, "projection") <- 1;
   attr(res, "zone") <- NULL;
@@ -3313,7 +3313,7 @@ clipLines <- function(polys, xlim, ylim, keepExtra = FALSE)
   ret <- .clip(polys, xlim, ylim, isPolygons = FALSE, keepExtra);
 
   # .clip retains extra attributes
-  
+
   if (!is.null(ret) &&
       !is.PolySet(ret, fullValidation = FALSE))
     class(ret) <- c("PolySet", class(ret));
@@ -3331,7 +3331,7 @@ clipPolys <- function(polys, xlim, ylim, keepExtra = FALSE)
   ret <- .clip(polys, xlim, ylim, isPolygons = TRUE, keepExtra);
 
   # .clip retains extra attributes
-  
+
   if (!is.null(ret) &&
       !is.PolySet(ret, fullValidation = FALSE))
     class(ret) <- c("PolySet", class(ret));
@@ -3350,13 +3350,13 @@ closePolys <- function(polys)
   attrNames <- setdiff(names(attributes(polys)),
                        c("names", "row.names", "class"));
   attrValues <- attributes(polys)[attrNames];
-  
+
   xlim <- range(polys$X);
   ylim <- range(polys$Y);
-  
+
   inRows <- nrow(polys);
   outCapacity <- as.integer(2 * inRows);
-  
+
   # create the data structure that the C function expects
   if (!is.element("SID", names(polys))) {
     inID <- c(polys$PID, integer(length = inRows), polys$POS);
@@ -3405,13 +3405,13 @@ closePolys <- function(polys)
 
     if (!is.element("SID", names(polys)))
       d$SID <- NULL;
-    
+
     # restore the attributes, including 'projection' and 'zone'
     attributes(d) <- c(attributes(d), attrValues);
-    
+
     if (!is.PolySet(d, fullValidation = FALSE))
       class(d) <- c("PolySet", class(d));
-    
+
     return(d);
   } else {
     return(NULL);
@@ -3428,11 +3428,11 @@ combineEvents <- function(events, locs, FUN, ..., bdryOK = TRUE)
     stop (
 "EventData is missing required column 'Z'.\n");
   }
-  
+
   # filter the boundary points
   if (!bdryOK)
     locs <- locs[locs$Bdry == 0, ];
-  
+
   # make the list...
   if (is.element("SID", names(locs))) {
     colIDs <- 2;
@@ -3458,12 +3458,12 @@ combineEvents <- function(events, locs, FUN, ..., bdryOK = TRUE)
 
   output <- cbind(output, unlist(summary));
   names(output) <- colNames;
-  
+
   if (!is.null(output) &&
       !is.PolyData(output, fullValidation = FALSE))
     class(output) <- c("PolyData", class(output));
 
-  return(output);  
+  return(output);
 }
 
 #==============================================================================
@@ -3493,7 +3493,7 @@ combinePolys <- function(polys)
 
   # restore the attributes
   attributes(polys) <- c(attributes(polys), attrValues);
-  
+
   return (polys)
 }
 
@@ -3520,7 +3520,7 @@ convCP <- function(data, projection = NULL, zone = NULL)
   nVerts <- (diff(levelsIdx) - 1) / 2;
   # 'levelsIdx': indices to each 'level' element in vector 'vData'
   levelsIdx <- levelsIdx[-length(levelsIdx)];
-  
+
   # create the X column
   # 'n': number of times to repeat each Boolean
   # 'b': vector of Booleans
@@ -3571,7 +3571,7 @@ convCP <- function(data, projection = NULL, zone = NULL)
 
   # add level column to 'PolyData'
   PolyData$level <- vData[levelsIdx];
-  
+
   # put the data frames together in a list
   PolySet <- data.frame(PID=pid, SID=sid, POS=pos, X=x, Y=y);
 
@@ -3582,7 +3582,7 @@ convCP <- function(data, projection = NULL, zone = NULL)
       attr(PolySet, "projection") <- projection;
     if (!is.null(zone))
       attr(PolySet, "zone") <- zone;
-  
+
     # add class attributes as necessary
     if (!is.PolySet(PolySet, fullValidation = FALSE))
       class(PolySet) <- c("PolySet", class(PolySet));
@@ -3613,7 +3613,7 @@ convDP <- function(data, xColumns, yColumns)
   data <- .validatePolyData(data);
   if (is.character(data))
     stop(paste("Invalid PolyData 'data'.\n", data, sep=""));
-  
+
   if (missing(xColumns) || missing(yColumns))
     stop(
 "Must specify 'xColumns' and 'yColumns' vectors.\n");
@@ -3646,7 +3646,7 @@ convDP <- function(data, xColumns, yColumns)
   } else {
     names(result) <- c("PID", "POS", "X", "Y");
   }
-  
+
   if (!is.null(result)) {
     # copy the 'projection' and 'zone' attribute from input
     attr(result, "projection") <- attr(data, "projection");
@@ -3679,11 +3679,11 @@ convLP <- function(polyA, polyB, reverse = TRUE)
     warning(
 "Each PolySet should contain only one polyline.\n");
   }
-  
+
   result <- polyA[, c("X", "Y")];
   if (reverse) {
     result <- rbind(result, polyB[nrow(polyB):1, c("X", "Y")]);
-  } else { 
+  } else {
     result <- rbind(result, polyB[, c("X", "Y")]);
   }
   result <- cbind(1:nrow(result), result);
@@ -3719,7 +3719,7 @@ convLP <- function(polyA, polyB, reverse = TRUE)
     if (!is.PolySet(result, fullValidation = FALSE))
       class(result) <- c("PolySet", class(result));
   }
-  
+
   invisible (result);
 }
 
@@ -3760,7 +3760,7 @@ convUL <- function(xydata, km=TRUE)
     stop(
 "Invalid or missing zone attribute; possibly out of valid range.\n");
   }
-  
+
   inXY <- c(xydata$X, xydata$Y);
   outCapacity <- inVerts <- nrow(xydata);
   inProj <- attr(xydata, "projection");
@@ -3811,7 +3811,7 @@ convUL <- function(xydata, km=TRUE)
 
     xydata$X <- results$outXY[1:outRows];
     xydata$Y <- results$outXY[(outCapacity+1):(outCapacity+outRows)];
-    
+
     if (inProj == "UTM") {
       attr(xydata, "projection") <- "LL";
     } else {
@@ -3825,7 +3825,7 @@ convUL <- function(xydata, km=TRUE)
     return(xydata);
   } else {
     return(NULL);
-  }    
+  }
 }
 
 #==============================================================================
@@ -3843,7 +3843,7 @@ dividePolys <- function(polys)
 
   IDs <- .createIDs(polys, cols = c("PID", "SID"))
   startsIdx <- which(!duplicated(IDs))
-  
+
   POSstart <- polys[startsIdx, "POS"]
   # the calculation for POSend works even with one polygon
   POSend <- polys[c(startsIdx[-1] - 1, nrow(polys)), "POS"]
@@ -3868,7 +3868,7 @@ dividePolys <- function(polys)
 
   # restore the attributes
   attributes(polys) <- c(attributes(polys), attrValues);
-  
+
   return (polys)
 }
 
@@ -3903,7 +3903,7 @@ extractPolyData <- function(polys)
   # a function used to process each list element below
   processElement <- function(a) {
     a <- unique(as.vector(a));
-    
+
     if (length(a) > 1) {
       warning("Added non-unique values to PolyData as 'NA'.\n");
       return (NA);
@@ -3911,7 +3911,7 @@ extractPolyData <- function(polys)
       return (a);
     }
   }
-  
+
   # process each column individually
   for (column in setdiff(names(polys), c(tempIDX, "PID", "SID"))) {
     temp <- split(polys[[column]], polys[[tempIDX]]);
@@ -3935,7 +3935,7 @@ extractPolyData <- function(polys)
   if (!is.null(pdata) &&
       !is.PolyData(pdata, fullValidation = FALSE))
     class(pdata) <- c("PolyData", class(pdata));
-  
+
   return (pdata);
 }
 
@@ -3954,12 +3954,12 @@ findCells <- function (events, polys)
   gridPars <- .getGridPars(polys, fullValidation = TRUE);
   if (is.null(gridPars))
     stop("Invalid 'polys'; appears altered since call to 'makeGrid'.\n");
-  
+
   # prepare data for the C function
   nEvents <- nrow(events);
   brksX <- sort(unique(polys$X));
   brksY <- sort(unique(polys$Y));
-   
+
   # call the C function for the X's
   resultsX <- .C("findCells",
                  inPt = as.double(events$X),
@@ -3994,9 +3994,9 @@ findCells <- function (events, polys)
   bdryY <- d[d$SIDbdry == 1 & d$SID > 1 & d$SID < length(brksY), ];
   bdryY$SID <- bdryY$SID - 1;
   d <- rbind(d, bdryY);
-  
+
   d$Bdry <- as.integer(d$PIDbdry | d$SIDbdry);
-  
+
   # filter out the bad stuff
   d <- d[d$PID != -1 & d$SID != -1, c("EID", "PID", "SID", "Bdry")];
   d[d$PID == length(brksX), "PID"] <- length(brksX) - 1;
@@ -4020,7 +4020,7 @@ findCells <- function (events, polys)
 
   if (!is.LocationSet(d, fullValidation = FALSE))
     class(d) <- c("LocationSet", class(d));
-  
+
   return (d);
 }
 
@@ -4038,7 +4038,7 @@ findPolys <- function(events, polys, maxRows=1e+05)
   inEvents <- nrow(events);
   inEventsID <- events$EID;
   inEventsXY <- c(events$X, events$Y);
-  
+
   inPolys <- nrow(polys);
   if (!is.element("SID", names(polys))) {
     inPolysID <- c(polys$PID, integer(length = inPolys), polys$POS);
@@ -4054,7 +4054,7 @@ findPolys <- function(events, polys, maxRows=1e+05)
   # instead, simply use an argument that the user can tune (this makes
   # the behavior more consistent with joinPolys, too)
   outCapacity <- maxRows;
-  
+
   # call the C function
   results <- .C("findPolys",
                 inEventsID = as.integer(inEventsID),
@@ -4104,7 +4104,7 @@ findPolys <- function(events, polys, maxRows=1e+05)
     return(d);
   } else {
     return(NULL);
-  }  
+  }
 }
 
 #==============================================================================
@@ -4148,14 +4148,14 @@ fixBound <- function(polys, tol)
 
   return(polys);
 }
-    
+
 #==============================================================================
 fixPOS <- function(polys, exteriorCCW = NA)
 {
   polys <- .validatePolySet(polys);
   if (is.character(polys))
     stop(paste("Invalid PolySet 'polys'.\n", polys, sep=""));
-  
+
   if (is.na(exteriorCCW)) {
     exteriorCCW <- -1;
   } else {
@@ -4168,13 +4168,13 @@ fixPOS <- function(polys, exteriorCCW = NA)
 
   polys <- .rollupPolys(polys, rollupMode = 3, exteriorCCW = exteriorCCW,
                         closedPolys = -1, addRetrace = FALSE);
-  
+
   # .rollupPolys() result retains attributes of 'polys'
-  
+
   if (!is.null(polys) &&
       !is.PolySet(polys, fullValidation = FALSE))
     class(polys) <- c("PolySet", class(polys));
-  
+
   return (polys);
 }
 
@@ -4220,9 +4220,9 @@ importGSHHS <- function(gshhsDB, xlim, ylim, level=1, n=0, xoff = -360)
   for(i in 1:4)
     if (any(level==i))
       levelFilter[i] <- 1
-  
+
   #return an R object
-  x <- .Call("importGSHHS", 
+  x <- .Call("importGSHHS",
             as.character(gshhsDB),
             as.numeric(limits),
             as.integer(levelFilter),
@@ -4247,7 +4247,7 @@ is.EventData <- function(x, fullValidation = TRUE)
     if (is.character(msg))
       return (FALSE)
   }
-  
+
   return (inherits(x, "EventData", which = TRUE) == 1);
 }
 
@@ -4271,7 +4271,7 @@ is.PolyData <- function(x, fullValidation = TRUE)
     if (is.character(msg))
       return (FALSE)
   }
-  
+
   return (inherits(x, "PolyData", which = TRUE) == 1);
 }
 
@@ -4306,7 +4306,7 @@ isConvex <- function(polys)
   # if each point appears in more than two polygons, this number will be
   # too low
   outCapacity <- inPolys;
-  
+
   # call the C function
   results <- .C("isConvex",
                 inID = as.integer(inPolysID),
@@ -4344,7 +4344,7 @@ isConvex <- function(polys)
     # when I had this conversion in the about data.frame() call, the 'convex'
     # column became factors...
     d$convex <- as.logical(d$convex);
-    
+
     if (!is.element("SID", names(polys)))
       d$SID <- NULL;
 
@@ -4354,7 +4354,7 @@ isConvex <- function(polys)
     return(d);
   } else {
     return(NULL);
-  }  
+  }
 }
 
 #==============================================================================
@@ -4376,7 +4376,7 @@ isIntersecting <- function(polys, numericResult = FALSE)
   # if ecah point appears in more than two polygons, this number will be
   # too low
   outCapacity <- inPolys;
-  
+
   # call the C function
   results <- .C("isIntersecting",
                 inPolysID = as.integer(inPolysID),
@@ -4414,7 +4414,7 @@ isIntersecting <- function(polys, numericResult = FALSE)
 
     if (!numericResult)
       d$intersecting <- as.logical(d$intersecting);
-    
+
     if (!is.element("SID", names(polys)))
       d$SID <- NULL;
 
@@ -4424,7 +4424,7 @@ isIntersecting <- function(polys, numericResult = FALSE)
     return(d);
   } else {
     return(NULL);
-  }  
+  }
 }
 
 #==============================================================================
@@ -4448,7 +4448,7 @@ joinPolys <- function(polysA, polysB = NULL, operation = "INT", maxVert=1e+05)
 "\n"));
   }
   op <- which(is.element(validOps, operation)) - 1;
-  
+
   # create the data structures that the C function expects
   subRows <- nrow(polysA);
   if (!is.element("SID", names(polysA))) {
@@ -4475,7 +4475,7 @@ joinPolys <- function(polysA, polysB = NULL, operation = "INT", maxVert=1e+05)
   }
 
   outCapacity <- maxVert;
-  
+
   # call the C function
   results <- .C("joinPolys",
                 operation = as.integer(op),
@@ -4492,7 +4492,7 @@ joinPolys <- function(polysA, polysB = NULL, operation = "INT", maxVert=1e+05)
                 PACKAGE = "PBSmapping");
   # note: outRows is set to how much space is allocated -- the C function
   #       should take this into consideration
-  
+
   if (results$outStatus == 1) {
     stop(paste(
 "Insufficient physical memory for processing.",
@@ -4532,7 +4532,7 @@ joinPolys <- function(polysA, polysB = NULL, operation = "INT", maxVert=1e+05)
 "PolySet 'polysA' must contain more than one unique PID when not specifying",
 "'polysB'.\n", sep="\n"));
   }
-  
+
   # determine the number of rows in the result
   outRows <- as.vector(results$outRows);
 
@@ -4574,7 +4574,7 @@ locateEvents <- function(EID, n = 512, type = "p", ...)
     }
     n <- length(EID);
   }
-  
+
   events <- locator(n, type, ...);
   # when 0 pts., S-PLUS returns an object of class "missing", whereas
   # R returns NULL; when > 0 pts., both return an object of class "list"
@@ -4594,11 +4594,11 @@ locateEvents <- function(EID, n = 512, type = "p", ...)
       # set the projection attribute
       attr(EventData, "projection") <- options()$map.projection;
       # does not set "zone" attribute as per documentation
-      
+
       if (!is.EventData(EventData, fullValidation = FALSE))
         class(EventData) <- c("EventData", class(EventData));
     }
-    
+
     return (EventData);
   } else {
     return (NULL);
@@ -4639,11 +4639,11 @@ locatePolys <- function(pdata, n = 512, type = "o", ...)
     }
     if (type == "l" || type == "o")
       lines(pts$x[c(1, length(pts$x))], pts$y[c(1, length(pts$y))], ...);
-    
+
     if (missing(pdata) || (!missing(pdata) && !is.element("n", names(pdata))))
       # keep the sign in case we are generating a hole with no parent
       n <- sign(n) * length(pts$x);
-    
+
     # create vectors for data frame
     PID <- rep(PID, abs(n));
     if (!is.null(SID))
@@ -4653,7 +4653,7 @@ locatePolys <- function(pdata, n = 512, type = "o", ...)
       pts$x <- c(pts$x, rep(NA, abs(n) - length(pts$x)));
       pts$y <- c(pts$y, rep(NA, abs(n) - length(pts$y)));
     }
-    
+
     if (!is.null(SID)) {
       output <- rbind(output, data.frame(PID = PID, SID = SID, POS = POS,
                                          X = pts$x, Y = pts$y));
@@ -4671,7 +4671,7 @@ locatePolys <- function(pdata, n = 512, type = "o", ...)
     if (!is.PolySet(output, fullValidation = FALSE))
       class(output) <- c("PolySet", class(output));
   }
-  
+
   return(output)
 }
 
@@ -4692,7 +4692,7 @@ makeGrid <- function(x, y, byrow = TRUE, addSID = TRUE, projection = NULL,
     stop(
 "Both x and y must have a length > 1.\n");
   }
-  
+
   # generate the Xs and Ys
   numX <- length(x);
   numY <- length(y);
@@ -4715,17 +4715,17 @@ makeGrid <- function(x, y, byrow = TRUE, addSID = TRUE, projection = NULL,
     # adjust for alternative indexing
     pSet <- .createGridIDs(pSet, addSID, byrow);
   }
-  
+
   if (!is.null(pSet)) {
     if (!is.null(projection))
       attr(pSet, "projection") <- projection;
     if (!is.null(zone))
       attr(pSet, "zone") <- zone;
-    
+
     if (!is.PolySet(pSet, fullValidation = FALSE))
       class(pSet) <- c("PolySet", class(pSet));
   }
-  
+
   return(pSet);
 }
 
@@ -4738,7 +4738,7 @@ makeProps <- function(pdata, breaks, propName = "col",
   pdata <- .validatePolyData(pdata);
   if (is.character(pdata))
     stop(paste("Invalid PolyData 'pdata'.\n", pdata, sep=""));
-  
+
   if (!is.element("Z", names(pdata)))
     stop(
 "'Z' column is missing in 'pdata'.\n");
@@ -4750,7 +4750,7 @@ makeProps <- function(pdata, breaks, propName = "col",
   if (is.null(propVals))
     stop(
 "'propVals' cannot be NULL.\n");
-  
+
   if (length(breaks) == 1) {
     numBreaks <- breaks;
   } else {
@@ -4760,7 +4760,7 @@ makeProps <- function(pdata, breaks, propName = "col",
   propVals <- rep(propVals, length.out = numBreaks);
   propIdx <- cut(pdata$Z, breaks, include.lowest = TRUE);
   pdata[[propName]] <- propVals[unclass(propIdx)];
-  
+
   if (!is.null(pdata) &&
       !is.PolyData(pdata, fullValidation = FALSE))
     class(pdata) <- c("PolyData", class(pdata));
@@ -4781,7 +4781,7 @@ plotLines <- function(polys, xlim = NULL, ylim = NULL, projection = FALSE,
                  plt=plt, polyProps=polyProps, border=NULL, lty=lty, col=col,
                  density=NULL, angle=NULL, bg=bg, axes=axes, tckLab=tckLab,
                  tck=tck, tckMinor=tckMinor, isType="lines", ...);
-  
+
   if (!is.null(r) &&
       !is.PolyData(r, fullValidation = FALSE))
     class(r) <- c("PolyData", class(r));
@@ -4866,7 +4866,7 @@ print.EventData <- function(x, ...)
   } else {
     print(data.frame(unclass(x)));
   }
-  invisible(x);  
+  invisible(x);
 }
 
 #==============================================================================
@@ -4888,7 +4888,7 @@ print.PolyData <- function(x, ...)
   } else {
     print(data.frame(unclass(x)));
   }
-  invisible(x);  
+  invisible(x);
 }
 
 #==============================================================================
@@ -4899,7 +4899,7 @@ print.PolySet <- function(x, ...)
   } else {
     print(data.frame(unclass(x)));
   }
-  invisible(x);  
+  invisible(x);
 }
 
 #==============================================================================
@@ -4962,7 +4962,7 @@ summary.EventData <- function(object, ...)
   z$attr.projection <- attr(object, "projection");
   z$attr.zone <- attr(object, "zone");
   class(z) <- "summary.PBS";
-  
+
   z;
 }
 
@@ -4971,7 +4971,7 @@ summary.LocationSet <- function(object, ...)
 {
   # create 'IDX' vector used later for 'unique'/'duplicated'
   IDX <- .createIDs(object, cols = c("PID", "SID"));
-  
+
   z <- list();
   z$type <- "LocationSet";
   z$events <- length(unique(object$EID));
@@ -4983,7 +4983,7 @@ summary.LocationSet <- function(object, ...)
   z$columns <- paste(setdiff(names(object), c("EID", "PID", "SID", "Bdry")),
                      collapse=", ");
   class(z) <- "summary.PBS";
-  
+
   z;
 }
 
@@ -4992,7 +4992,7 @@ summary.PolyData <- function(object, ...)
 {
   # create 'IDX' vector used later for 'unique'/'duplicated'
   IDX <- .createIDs(object, cols = c("PID", "SID"));
-  
+
   z <- list();
   z$type <- "PolyData";
   z$records <- nrow(object);
@@ -5001,7 +5001,7 @@ summary.PolyData <- function(object, ...)
   z$attr.projection <- attr(object, "projection");
   z$attr.zone <- attr(object, "zone");
   class(z) <- "summary.PBS";
-  
+
   z;
 }
 
@@ -5018,7 +5018,7 @@ summary.PolySet <- function(object, ...)
   } else {
     holes <- NULL;
   }
-    
+
   z <- list();
   z$type <- "PolySet";
   z$records <- nrow(object);
@@ -5031,7 +5031,7 @@ summary.PolySet <- function(object, ...)
   z$columns <- paste(setdiff(names(object), c("PID", "SID", "POS", "X", "Y")),
                      collapse=", ");
   class(z) <- "summary.PBS";
-  
+
   z;
 }
 
@@ -5047,7 +5047,7 @@ thickenPolys <- function(polys, tol = 1, filter = 3, keepOrig = TRUE,
   # - estimate 'outCapacity'
   # - this should use the same distance formula as the underlying C code;
   #   otherwise, the estimation may be wrong
-  
+
   # create an 'idx' vector for working with 'polys'
   idx <- .createIDs(polys, cols = c("PID", "SID"));
 
@@ -5076,7 +5076,7 @@ thickenPolys <- function(polys, tol = 1, filter = 3, keepOrig = TRUE,
     newRows <- polys[toDupe, ];
     newRows$PID <- rep((newPID:(newPID + length(starts) - 1)), each=2)
     tempPolys <- rbind(polys, newRows);
-    
+
     # update 'idx'; it won't matter that the new 'idx' values
     # are a different format since they're using new PIDs (i.e., they
     # don't need to match anything); they just need to be relative to
@@ -5089,7 +5089,7 @@ thickenPolys <- function(polys, tol = 1, filter = 3, keepOrig = TRUE,
   } else {
     tempPolys <- polys;
   }
-  
+
   # compute a distance vector
   projection <- attr(polys, "projection");
   if (!is.null(projection) && !is.na(projection)
@@ -5125,7 +5125,7 @@ thickenPolys <- function(polys, tol = 1, filter = 3, keepOrig = TRUE,
 
   pLL <- 0;
   pUTM <- 1;
-  
+
   projection <- attributes(polys)$projection;
   if (!is.null(projection) && !is.na(projection) && projection == "LL") {
     proj <- pLL;
@@ -5196,7 +5196,7 @@ thickenPolys <- function(polys, tol = 1, filter = 3, keepOrig = TRUE,
 
     # restore the attributes (including projection and zone)
     attributes(d) <- c(attributes(d), attrValues);
-    
+
     if (!is.PolySet(d, fullValidation = FALSE))
       class(d) <- c("PolySet", class(d));
 
@@ -5215,7 +5215,7 @@ thinPolys <- function(polys, tol = 1, filter = 3)
 
   pLL <- 0;
   pUTM <- 1;
-  
+
   projection <- attributes(polys)$projection;
   if (!is.null(projection) && !is.na(projection) && projection == "LL") {
     proj <- pLL;
@@ -5299,7 +5299,7 @@ thinPolys <- function(polys, tol = 1, filter = 3)
 
     # restore the attributes (including projection and zone)
     attributes(d) <- c(attributes(d), attrValues);
-    
+
     if (!is.PolySet(d, fullValidation = FALSE))
       class(d) <- c("PolySet", class(d));
 
@@ -5368,7 +5368,7 @@ importShapefile <- function (fn, readDBF = TRUE, projection = NULL, zone = NULL)
 		# 1) last component/hole of each polygon: the total vertices in the polygon
 		#    less the starting POS of that last component/hole
 		# 2) otherwise: use a "diff" on the starting POS's of each part
-		lastComp <- rev(!duplicated(rev(PID))) 
+		lastComp <- rev(!duplicated(rev(PID)))
 		nv <- vector()
 		nv[lastComp] <- rep(nVerts, times=nParts)[lastComp] - pStarts[lastComp]
 		nv[!lastComp] <- diff(pStarts)[diff(pStarts) > 0]
@@ -5470,7 +5470,7 @@ importShapefile <- function (fn, readDBF = TRUE, projection = NULL, zone = NULL)
 .addLabels <- function(projection = NULL, ...) {
   dots <- list(...);
   main=dots$main;  sub=dots$sub;  xlab=dots$xlab;  ylab=dots$ylab;
-  
+
   # set label defaults (if necessary)
   if (!is.null(projection) && !is.na(projection) && projection == "UTM") {
     if (is.null(xlab)) xlab <- "UTM Easting (km)";
@@ -5503,7 +5503,7 @@ makeTopography <- function (dat, digits=2, func=NULL) {
 	z1  = unlist(sapply(tmp,func,simplify=FALSE))
 	id  = as.complex(names(z1))
 	x1  = Re(id); y1 = Im(id)
-	x   = sort(unique(x1)); y = sort(unique(y1)) 
+	x   = sort(unique(x1)); y = sort(unique(y1))
 	nr  = length(x); nc = length(y); nz=nr*nc
 	z   = matrix(NA,nrow=nr,ncol=nc,dimnames=list(x,y))
 	for (i in x) { # populate matrix row by row
