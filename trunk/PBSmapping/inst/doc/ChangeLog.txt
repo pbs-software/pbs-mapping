@@ -3,7 +3,14 @@ PBSmapping Changes
 Authors: JTS = Jon T. Schnute           RH  = Rowan Haigh
          NB  = Nicholas Boers           ACB = Alex Couture-Beil
 
-2.62  2011-09-08  Authors
+2.62  2011-10-03  Authors
+  - Added the UG document (PBSmapping-UG.doc) to a 'documentation' folder under 'trunk' in the SVN repository. (RH 10/3)
+  - Changed status of Issue 11 ro 'Started'  - incorporate PBSmapping protocols into function 'addBubbles'. (NB 10/2)
+  - Changed status of Issue 9  to 'Accepted' - user is possibly talking about 'MGRJ' latitude bands. (NB 10/2)
+  - Changed status of Issue 10 to 'Accepted' - word change needed in UG. (NB 10/2)
+  - Changed status of Issue 8  to 'Invalid'  - UG appears to be unlocked now. (NB 10/2)
+  - Changed status of Issue 1  to 'Invalid'  - segmentation fault not reproducible and user never supplied code. (NB 10/2)
+  - Improved path expansion in 'importShapefile' using R's 'path.expand' and ' normalizePath'. (NB 10/2)
   - Bumped up the version number to distinguish the revisions under way from the version currently on CRAN. (RH 9/8)
   - Fixed a bug in appendPolys() and update the function's documentation. (NB 9/5)
 	Within appendPolys(), a reference to polys used parentheses rather than brackets causing R 
