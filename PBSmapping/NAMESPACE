@@ -1,6 +1,7 @@
-# Export all functions that do NOT begin with a dot (period)
-#exportPattern("^[^\\.]")
-exportPattern("^[^\\*]") # export all objects
+# Export all names from PBSmapping
+exportPattern(".")
 
-# Import all functions from the package tcltk, which is heavily used by PBSmodelling
-#import(tcltk)
+# Import all packages listed as Imports or Depends
+#import(
+#  some package
+#)
