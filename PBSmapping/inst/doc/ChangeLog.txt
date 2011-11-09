@@ -4,6 +4,7 @@ Authors: JTS = Jon T. Schnute           RH  = Rowan Haigh
          NB  = Nicholas Boers           ACB = Alex Couture-Beil
 
 2.62  2011-10-03  Authors
+  - R-2.14.0 now requires all packages to have a namespace.  (RH 11/9)
   - Added the UG document (PBSmapping-UG.doc) to a 'documentation' folder under 'trunk' in the SVN repository. (RH 10/3)
   - Changed status of Issue 11 ro 'Started'  - incorporate PBSmapping protocols into function 'addBubbles'. (NB 10/2)
   - Changed status of Issue 9  to 'Accepted' - user is possibly talking about 'MGRJ' latitude bands. (NB 10/2)
