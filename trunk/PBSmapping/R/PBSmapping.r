@@ -180,6 +180,171 @@ PBSprint <- FALSE;
 }
 
 #==============================================================================
+.addBubblesLegend <- function(radii.leg, usr.xdiff, usr.ydiff,
+                              symbol.zero, symbol.fg, symbol.bg,
+                              legend.pos, legend.breaks,
+                              legend.type, legend.title, legend.cex, ...)
+{
+  # ratio of y to x: units-per-inch (Y) / units-per-inch (X)
+  ratio.y.x = (usr.ydiff / par("pin")[2]) / (usr.xdiff / par("pin")[1])
+
+  # calculate the height and width of the legend, which is essential
+  # to calculating its position
+  gap.x <- par("cxy")[1] * legend.cex / 2
+  gap.y <- par("cxy")[2] * legend.cex / 2
+  radii.leg.y <- radii.leg * ratio.y.x
+  leg.tex.w <- strwidth(legend.breaks, units = "user") * legend.cex
+  title.w = strwidth(legend.title)
+  max.tex.w <- max(leg.tex.w)
+
+  switch(legend.type,
+         nested = {
+           # height of the legend is the biggest bubble + title
+           legend.height <- 2 * max(radii.leg.y) + 3 * gap.y
+           legend.width <- 2 * max(radii.leg) + gap.x + max.tex.w },
+         horiz = {
+           # height of the legend is the biggest bubble + title + tag
+           legend.height <- 2 * max(radii.leg.y) + 3 * gap.y
+           legend.width <- 2 * sum(radii.leg) +
+             (length(legend.breaks) - 1) * gap.x },
+         vert = {
+           legend.height <- 2 * sum(radii.leg.y) +
+             (length(legend.breaks) - 1) * gap.y + 3 * gap.y
+           legend.width <- 2 * max(radii.leg) + gap.x + max.tex.w }
+         )
+
+  # reflect an adjustment in X if the title is broader than the legend
+  if (title.w > legend.width) {
+    w.adj <- (title.w - legend.width) / 2
+  } else {
+    w.adj <- 0
+  }
+
+  # if we already have positions, keep them; otherwise, calculate
+  # positions given the described corner
+  if (class(legend.pos) == "numeric") {
+    legend.loc <- legend.pos
+  } else {
+    corners <- c("bottomleft", "bottomright", "topleft", "topright")
+    if (legend.pos %in% corners) {
+      legend.loc <- switch(legend.pos,
+        bottomleft =
+          c(par("usr")[1] + 0.025 * usr.xdiff + w.adj,
+            par("usr")[3] + 0.025 * usr.ydiff + legend.height),
+        bottomright =
+          c(par("usr")[2] - (0.025 * usr.xdiff + legend.width + w.adj),
+            par("usr")[3] + 0.025 * usr.ydiff + legend.height),
+        topleft =
+          c(par("usr")[1] + 0.025 * usr.xdiff + w.adj,
+            par("usr")[4] - 0.025 * usr.ydiff),
+        topright =
+          c(par("usr")[2] - (0.025 * usr.xdiff + legend.width + w.adj),
+            par("usr")[4] - 0.025 * usr.ydiff));
+    }
+  }
+
+  # the calling function should already have validated legend.type
+  switch(legend.type,
+         nested = {
+           # legend.loc[1] specifies X for *center* of circle; we need
+           # to shift it right by the largest radius
+           legend.loc[1] <- legend.loc[1] + max(radii.leg)
+           # the legend will be drawn from the bottom up; shift
+           # legend.loc[2] so that it refers to the bottom
+           legend.loc[2] <- legend.loc[2] - legend.height
+           
+           r <- rev(radii.leg)
+           bb <- rev(legend.breaks)
+
+           # position of the right edge of the text labels legend
+           x.text.leg <- legend.loc[1] + max(r) + gap.x + max.tex.w
+
+           # draw the circles, lines, and labels
+           for (i in 1:length(r)) {
+             symbols(legend.loc[1], legend.loc[2] + r[i] * ratio.y.x,
+                     circle=r[i], inches=FALSE, add=TRUE, bg=symbol.bg,
+                     fg=symbol.fg)
+             lines(c(legend.loc[1], legend.loc[1] + r[1] + gap.x),
+                   rep(legend.loc[2] + 2 * r[i] * ratio.y.x, 2))
+             text(x.text.leg, legend.loc[2] + 2 * r[i] * ratio.y.x, bb[i],
+                  adj=c(1, .5), cex=legend.cex)
+           }
+
+           # add the title
+           x.title.leg <- legend.loc[1] - max(radii.leg) + (legend.width / 2)
+           text(x.title.leg, legend.loc[2]+legend.height, legend.title,
+                adj=c(0.5,0.5), cex=legend.cex+0.2, col="black")
+
+           # set positions for plotting of zero (later)
+           zlab <- c(x.title.leg, legend.loc[2]+legend.height/4) },
+         
+         horiz = {
+           # legend.loc[2] currently identifies the top of the legend
+           legend.loc[2] <- legend.loc[2] + max(radii.leg.y) - legend.height 
+
+           # compute offsets for horizontal spacing
+           offset <- vector()
+           for (i in 1:length(radii.leg))
+             offset[i] <- 2 * sum(radii.leg[1:i]) - radii.leg[i] +
+               (i - 1) * gap.x
+
+           # draw circles, labels
+           symbols(legend.loc[1] + offset,
+                   rep(legend.loc[2],length(radii.leg)),
+                   circles = radii.leg, inches = FALSE, bg = symbol.bg,
+                   fg = symbol.fg, add = TRUE)
+           text(legend.loc[1] + offset, legend.loc[2] + radii.leg.y + gap.y,
+                legend.breaks, adj = c(0.5, 0.5), cex = legend.cex)
+
+           # add the title
+           text(legend.loc[1] + legend.width / 2,
+                legend.loc[2] + legend.height - max(radii.leg.y),
+                legend.title, adj = c(0.5, 0.5), cex = legend.cex + 0.2,
+                col = "black")
+
+           # set positions for plotting of zero (later)
+           zlab <- c(legend.loc[1], legend.loc[2] - legend.height / 8) },
+
+         vert = {
+           # part of the calculations have been made above to
+           # calculate the height of the legend
+           if (any(legend.pos == c("bottomleft","topleft")))
+             legend.loc[1] <- legend.loc[1] + 0.05 * usr.xdiff
+
+           # compute offsets for vertical spacing
+           offset <- vector()
+           for (i in 1:length(legend.breaks))
+             offset[i] <- gap.y + 2 * sum(radii.leg.y[1:i]) - radii.leg.y[i] +
+               i * gap.y
+
+           # draw circles, labels
+           symbols(rep(legend.loc[1], length(legend.breaks)),
+                   legend.loc[2] - offset,
+                   circles = radii.leg, bg = symbol.bg, fg = symbol.fg,
+                   inches = FALSE, add = TRUE)
+           x.text.leg <- legend.loc[1] + max(radii.leg) + gap.x + max.tex.w
+           text(rep(x.text.leg, length(legend.breaks)), legend.loc[2] - offset,
+                legend.breaks,
+                cex = legend.cex, adj = c(1, 0.5), col="black")
+
+           # add the title
+           text(legend.loc[1] + legend.width / 2 - max(radii.leg),
+                legend.loc[2], legend.title, adj = c(0.5, 0.5),
+                cex = legend.cex + 0.2, col = "black")
+
+           # set positions for plotting of zero (later)
+           zlab <- c(x.title.leg, legend.loc[2]) }
+         )
+
+  # plot the zero if need be
+  if (!is.logical(symbol.zero))
+    legend(zlab[1], zlab[2], legend = "zero", pch = symbol.zero, xjust = 0,
+           yjust = 1, bty = "n", cex = 0.8, x.intersp = 0.5)
+
+  invisible()
+}
+
+#==============================================================================
 .addFeature <- function(feature, data, polyProps, isEventData,
                         cex = NULL, col = NULL, font = NULL, pch = NULL, ...)
   # 'feature == "points"': add 'data' with points()
@@ -1781,6 +1946,114 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
                        noNACols = c("X", "Y"),
                        keyCols = NULL,
                        numericCols = c("X", "Y")));
+}
+
+#==============================================================================
+#addBubbles-----------------------------2010-01-07
+#  addBubbles takes EventData and optional arguments to draw
+#    bubbles of radius proportional to the z variable.
+#
+#  Modified (and for the legend, strongly inspired) from:
+#    S. Tanimura, C. Kuroiwa, and T. Mizota. Proportional symbol
+#    mapping in R. Journal of Statistical Software, 15(5):1–7,
+#    Jan. 2006. [http://www.jstatsoft.org]
+#
+#  Modifications by Denis Chabot allow it to work with PBSmapping,
+#  add one type of bubble (z proportional to volume of bubble)
+#  and make it possible to draw several maps with bubbles that all
+#  have the same radii (instead of each bubble plot having a radii
+#  that depends on the max z value for that plot). Can add a
+#  legend in one of 4 corners or at a specific x-y positiion.
+#--------------------------------------------DC/RH
+addBubbles <- function(events, type = c("perceptual", "surface", "volume"),
+                       z.max = NULL, max.size = 0.8, symbol.zero = "+",
+                       symbol.fg = rgb(0,0,0,0.60), symbol.bg = rgb(0,0,0,0.30),
+                       legend.pos = "bottomleft", legend.breaks = NULL,
+                       show.actual = FALSE,
+                       legend.type = c("nested", "horiz", "vert"),
+                       legend.title = "Abundance", legend.cex = .8, ...) {
+  # validate events
+  events <- .validateEventData(events)
+  if (is.character(events))
+    stop(paste("Invalid EventData 'events'.\n", events, sep=""));
+  if (!is.element("Z", names(events)))
+    stop ("EventData is missing required column 'Z'.\n");
+
+  # check arguments before we get too far
+  type <- match.arg(type)
+  if (!is.null(legend.pos))
+    legend.type <- match.arg(legend.type)
+
+  # set z.max if necessary
+  if (is.null(z.max) || is.na(z.max))
+    z.max <- max(events$Z, na.rm=TRUE)
+
+  # adjust legend breaks if necessary
+  if (is.null(legend.breaks) || is.na(legend.breaks))
+    legend.breaks <- pretty(range(events$Z), 3)[-1]
+  if (show.actual)
+    legend.breaks <- signif(legend.breaks / max(legend.breaks)
+                            * max(events$Z, na.rm=TRUE), 3)
+
+  # determine x/y range of plotting region
+  usr.xdiff <- par("usr")[2] - par("usr")[1]
+  usr.ydiff <- par("usr")[4] - par("usr")[3]
+
+  # for sizing in inches, it's important to USE the X rather than Y axis
+  #
+  # max.size is diameter (inches); /2 for radius; /par()$pin[2] (inches)
+  # for fraction of width (inches); *usr.xdiff to convert to width to
+  # user coordinates
+  stand.rad <- (max.size / 2) / par("pin")[1] * usr.xdiff;
+
+  # sorting from large to small ensures that small bubbles will not be hidden
+  # behind large bubbles
+  events <- events[order(events$Z, decreasing=TRUE), ]
+
+  # determine the size of each circle/legend circle based on the selected type
+  type <- match.arg(type)
+  switch(type,
+         volume = {
+           radii <- ((events$Z / z.max)^(1/3)) * stand.rad;
+           radii.leg <- ((legend.breaks / z.max)^(1/3)) * stand.rad },
+         surface = {
+           radii <- sqrt(events$Z / z.max) * stand.rad;
+           radii.leg <- sqrt(legend.breaks / z.max) * stand.rad },
+         perceptual = {
+           radii <- ((events$Z / z.max)^0.57) * stand.rad;
+           radii.leg <- ((legend.breaks / z.max)^0.57) * stand.rad }
+         )
+
+  # compare events$Z to 0; cannot simply use "== 0" given floating-point type
+  isZero <- unlist(lapply(events$Z, all.equal, current = 0)) == "TRUE"
+
+  # plot the circles (data with non-zero radii)
+  symbols(events$X[!isZero], events$Y[!isZero], circles = radii[!isZero],
+          inches = FALSE, bg = symbol.bg, fg = symbol.fg, add = TRUE)
+
+  # plot the zero symbol for points (where necessary)
+  if (any(isZero) && (!is.logical(symbol.zero) || symbol.zero)) {
+    if (is.logical(symbol.zero))
+      symbol.zero <- "+" # set to default
+
+    dots <- list(...);
+    if (!is.null(dots$pch))
+      stop("Specify 'pch' through 'symbol.zero'")
+
+    points(events$X[isZero], events$Y[isZero], pch = symbol.zero, ...)
+  }
+
+  # plot the legend if there's a position specified for it
+  if (!is.null(legend.pos)) {
+    # only plot zero symbol if used
+    if (!any(isZero))
+      symbol.zero <- FALSE;
+    .addBubblesLegend (radii.leg, usr.xdiff, usr.ydiff, symbol.zero, symbol.fg,
+                       symbol.bg, legend.pos, legend.breaks, legend.type,
+                       legend.title, legend.cex, ...)
+  }
+
+  invisible()
 }
 
 #==============================================================================
