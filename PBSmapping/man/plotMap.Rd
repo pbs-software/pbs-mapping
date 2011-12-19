@@ -29,12 +29,13 @@ plotMap (polys, xlim = NULL, ylim = NULL, projection = TRUE,
   \item{border}{vector describing edge colours (cycled by \code{PID}).}
   \item{lty}{vector describing line types (cycled by \code{PID}).}
   \item{col}{vector describing fill colours (cycled by \code{PID}).}
-	\item{colHoles}{vector describing hole colours (cycled by \code{PID}).
-		The default, \code{NULL}, should be used in most cases as it renders holes 
-		transparent. \code{colHoles} is designed solely to eliminate retrace lines 
-		when images are converted to PDF format. If \code{colHoles} is specified, 
-		underlying information (i.e., previosuly plotted shapes) will be obliterated.
-		If \code{NA} is specified, only outer polygons are drawn, consequently filling holes.}
+  \item{colHoles}{vector describing hole colours (cycled by \code{PID}).
+    The default, \code{NULL}, should be used in most cases as it renders
+    holes transparent. \code{colHoles} is designed solely to eliminate
+    retrace lines when images are converted to PDF format. If
+    \code{colHoles} is specified, underlying information (i.e., previosuly
+    plotted shapes) will be obliterated.  If \code{NA} is specified, only
+    outer polygons are drawn, consequently filling holes.}
   \item{density}{vector describing shading line densities (lines per
     inch, cycled by \code{PID}).}
   \item{angle}{vector describing shading line angles (degrees, cycled by
