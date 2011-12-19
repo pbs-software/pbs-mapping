@@ -5223,6 +5223,135 @@ print.summary.PBS <- function(x, ...)
 }
 
 #==============================================================================
+refocusWorld <- function(polys, xlim = NULL, ylim = NULL) {
+  # define a local function to assist with shifting
+  .shiftRegion <- function(polys, shift = 0) {
+    npolys <- polys;
+    
+    npolys$xmin  <- polys$xmin + (360 * shift);
+    npolys$xmax  <- polys$xmax + (360 * shift);
+    npolys$shift <- polys$shift + shift;
+    
+    return (npolys);
+  }
+  
+  # validate input
+  polys <- .validatePolySet(polys);
+  if (is.character(polys))
+    stop(paste("Invalid PolySet 'polys'.\n", polys, sep=""));
+
+  # default values
+  if (is.null(xlim))
+    xlim <- range(polys$X)
+  if (is.null(ylim))
+    ylim <- range(polys$Y)
+
+  # validate/adjust xlim
+  if (abs(diff(xlim)) > 360)
+    stop("Invalid 'xlim' range: cannot exceed 360 degrees.\n");
+  warn <- F;
+  while (min(xlim) < -360) {
+    xlim <- xlim + 360;
+    warn <- T;
+  }
+  while (max(xlim) > 360) {
+    xlim <- xlim - 360;
+    warn <- T;
+  }
+  if (warn)
+    warning(paste("Shifted 'xlim' to ", paste(xlim, collapse=","),
+                  ": use new limits in future plots.\n", sep=""));
+  
+  # save the attributes of the data frame
+  attrNames <- setdiff(names(attributes(polys)),
+                       c("names", "row.names", "class"));
+  attrValues <- attributes(polys)[attrNames];
+  
+  # build indices in case both PID *and* SID exist
+  polys$IDs <- .createIDs(polys, col=c("PID", "SID"));
+  
+  # build a data frame with the ranges
+  xrng <- lapply(split(polys[, c("X")], polys$IDs), range)
+  yrng <- lapply(split(polys[, c("Y")], polys$IDs), range)
+  ppid <- lapply(split(polys[, c("PID")], polys$IDs), unique)
+  rng <- data.frame(IDs=names(xrng),
+                    PID=unlist(ppid),
+                    xmin=unlist(xrng)[c(T,F)],
+                    xmax=unlist(xrng)[c(F,T)],
+                    ymin=unlist(yrng)[c(T,F)],
+                    ymax=unlist(yrng)[c(F,T)],
+                    shift=0);
+  
+  # 'rng' currently contains one row per polygon; to wrap the region,
+  # let's make the range [-360,360] contain *every* polygon that exists
+  # within that range -- doing so will require replicating polygons;
+  # for "shifted" polygons, we'll add a "shift" field to the data frame
+  nrng <- rng;  # 'nrng' will be the new range data frame
+
+  # go right until every polygon's X is greater than the range
+  srng <- .shiftRegion (rng, 1);
+  while (any(srng$xmin < 360)) {
+    # typically one iteration
+    nrng <- rbind (nrng, srng);
+    srng <- .shiftRegion (srng, 1);
+  }
+
+  # go left until every polygon's X is less than the range
+  srng <- .shiftRegion (rng, -1);
+  while (any(srng$xmax > -360)) {
+    # typically one iteration
+    nrng <- rbind(nrng, srng);
+    srng <- .shiftRegion (srng, -1);
+  }
+
+  # we've added polygons that are completely outside of the range;
+  # remove those polygons
+  nrng <- nrng[nrng$xmax > -360 & nrng$xmin < 360, ]
+
+  # identify all of the polygons within the region of interest (x/ylim)
+  nrng <- nrng[!(nrng$xmax < xlim[1] | nrng$xmin > xlim[2] |
+                 nrng$ymax < ylim[1] | nrng$ymin > ylim[2]), ];
+
+  # eliminate duplicated polys for now, i.e., Antarctica;
+  # in the future (TO DO), we should probably merge them into a single
+  # polygon; some code that might help...
+  #   nrng <- nrng[order(nrng$IDs), ]
+  #   dups <- duplicated(nrng$IDs)
+  #   dups <- dups | c(dups[-1], F)
+  #   drng <<- nrng[dups, ]
+  #   nrng <- nrng[!dups, ]
+  # but for now, let's simply...
+  dups <- duplicated(nrng$IDs);
+  if (any(dups)) {
+    warning(paste("Removed duplicates of following polygons (Antarctica?): ",
+                  paste(unique(nrng$PID[dups]), collapse=", "),
+                  "\n", sep=""));
+    nrng <- nrng[!dups, ];
+  }
+  
+  # given relevant PIDs and their shift factors, let's create a new
+  # data frame containing only those polygons, where we've shifted the X
+  # values
+  idx <- split(1:nrow(polys), polys$IDs) # to extract relevant polygons
+  len <- lapply(idx, length)           # num vertices in each polygon
+
+  # indices for relevant polys
+  idx <- unlist(idx[as.character(nrng$IDs)])
+  # num vertices in relevant polys
+  len <- unlist(len[as.character(nrng$IDs)])
+  
+  # build the return value
+  npolys <- polys[idx, setdiff (names (polys), "IDs")];
+  npolys$X <- npolys$X + rep(nrng$shift * 360, len);
+  row.names(npolys) <- NULL;
+  
+  # restore the attributes
+  attributes(npolys) <- c(attributes(npolys), attrValues);
+  
+  invisible(npolys);
+}
+
+#==============================================================================
 summary.EventData <- function(object, ...)
 {
   z <- list();
