@@ -59,7 +59,7 @@ PBSprint <- FALSE;
   # should remain after the function termimates; .addLabels() will use the same
   # units for measuring lines
 
-  # changing 'cex' causes plot(...) to change 'mai' -- unless you reset 'mai'
+  # changing 'cex' causes plot(...) to change 'mai', so let's reset 'mai'
   # after setting 'cex'
   mai <- par()$mai;
   par(cex = par()$cex * 0.8);   # decrease font size
@@ -5880,8 +5880,8 @@ importShapefile <- function (fn, readDBF = TRUE, projection = NULL, zone = NULL)
     if (is.null(xlab)) xlab <- "UTM Easting (km)";
     if (is.null(ylab)) ylab <- "UTM Northing (km)";
   } else if (!is.null(projection) && !is.na(projection) && projection == "LL") {
-    if (is.null(xlab)) xlab <- "Longitude (\260)";
-    if (is.null(ylab)) ylab <- "Latitude (\260)";
+    if (is.null(xlab)) xlab <- expression("Longitude" ~ group("(", degree, ")"))
+    if (is.null(ylab)) ylab <- expression("Latitude" ~ group("(", degree, ")"))
   } else {
     if (is.null(xlab)) xlab <- "X";
     if (is.null(ylab)) ylab <- "Y";
