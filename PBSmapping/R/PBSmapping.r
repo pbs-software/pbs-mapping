@@ -59,14 +59,12 @@ PBSprint <- FALSE;
   # should remain after the function termimates; .addLabels() will use the same
   # units for measuring lines
 
-  # changing 'mex'/'cex' changes 'omi' in R; changing 'omi' (to correct this
-  # behaviour) in R changes 'mfg'; therefore, reset both
-  backup <- par("omi", "mfg");
-  par(cex = par()$cex * 0.8);
+  # changing 'cex' causes plot(...) to change 'mai' -- unless you reset 'mai'
+  # after setting 'cex'
   mai <- par()$mai;
-  par(mex = par()$cex);
+  par(cex = par()$cex * 0.8);   # decrease font size
   par(mai = mai);
-  par(backup);
+  par(mex = par()$cex);         # decrease spacing to match font size
 
   # 1 is the horizontal axis, 2 is the vertical axis
   lim <- list(xlim, ylim);
