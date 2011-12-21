@@ -4,6 +4,34 @@ Authors: JTS = Jon T. Schnute           RH  = Rowan Haigh
          NB  = Nicholas Boers           ACB = Alex Couture-Beil
 
 2.62  2011-11-09  Authors
+  - Recompressed rda files; changed namespace to explicitly export; changed dependency to R (>= 2.10). (RH 12/21)
+  - Fixed missing longitude/latitude X/Y labels on Mac OS X. (NB 12/20)
+	When plotting a longitude/latitude PolySet on Mac OS X, the X/Y labels wouldn't plot.
+	Our earlier use of \260 for the degree sign depends on the underlying character set, so it isn't sufficiently portable.
+	Let's hope the current approach works a little better...
+  - Updated .addAxis(...) to address layout(...) incompatibility. (NB 12/20)
+	.addAxis(...) would backup/restore "omi" and "mfg", which would impact how layout(...) handles multiple plots.
+	This behaviour is unnecessary in the current version of R, so it has been removed.
+  - Added refocusWorld() to help plot maps centred on the mid-Atlantic ( issue #4 ). (NB 12/19)
+	This new function accepts a PolySet containing one or more polygons with X-coordinates that collectively span 
+	approximately 360 degrees. 
+	The function effectively joins the PolySet into a cylinder and then splits it at an arbitrary longitude according
+	to the user-specified limits.  
+	Modifications in the resulting PolySet are restricted to shifting X-coordinates by +/- multiples of 360 degrees,
+	and instead of clipping polygons, the return value simply omits out-of-range polygons.
+  - Fixed indenting. (NB 12/19)
+  - Clarified use of "latter" on page 13 of UG (issue #10). (NB 12/14)
+	Note: someone will need to regenerate the PDF.  I tried to do	so using an open-source PDF creator, 
+	but the resulting file was larger than the one produced by Distiller.
+  - Amended r18, which didn't delete addBubbles.r (NB 12/14)
+  - Incorporated addBubbles() into PBSmapping.R (NB 12/14)
+	Added addBubbles() to PBSmapping.R and made many changes including completely reformatting all of the code,
+	improving the comments, changing some of the logic, and addressing bugs.
+	The bugs included (a) testing floating-point equality using ==, which would result in inconsistent behaviour and 
+	(b) sizing bubbles in a way that that was inconsistent with the documentation.
+  - Changed EOL character from \r\n to \n for polygons.c (NB 12/14)
+	When running R CMD CHECK, the script complained about the end-of-line character for this particular file.
+	I've changed the character to eliminate the warning.
   - namespace requires the use of '.onLoad' instead of '.First.lib'. (RH 11/9)
   - R-2.14.0 now requires all packages to have a namespace.  (RH 11/9)
   - Added the UG document (PBSmapping-UG.doc) to a 'documentation' folder under 'trunk' in the SVN repository. (RH 10/3)
