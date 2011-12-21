@@ -9,9 +9,9 @@
 	
 	userguide_path <- system.file( "doc/PBSmapping-UG.pdf", package = "PBSmapping")
 	
-	cat("
+	packageStartupMessage("
 -----------------------------------------------------------
-PBS Mapping", pkg_info$Version, "-- Copyright (C) 2003-2011 Fisheries and Oceans Canada
+PBS Mapping ", pkg_info$Version, " -- Copyright (C) 2003-2012 Fisheries and Oceans Canada
 
 PBS Mapping comes with ABSOLUTELY NO WARRANTY;
 for details see the file COPYING.
@@ -23,7 +23,7 @@ A complete user guide 'PBSmapping-UG.pdf' is located at
 
 To see demos, type '.PBSfigs()'.
 
-Packaged on", pkg_date, "
+Packaged on ", pkg_date, "
 Pacific Biological Station, Nanaimo
 -----------------------------------------------------------
 

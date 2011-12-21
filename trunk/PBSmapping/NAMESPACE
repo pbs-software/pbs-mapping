@@ -1,5 +1,25 @@
 # Export all names from PBSmapping
-exportPattern(".")
+#exportPattern(".") # temporary default
+
+exportPattern("^[^\\.]")
+exportPattern("^\\.add")
+exportPattern("^\\.calc")
+exportPattern("^\\.check")
+exportPattern("^\\.clip")
+exportPattern("^\\.closest")
+exportPattern("^\\.create")
+exportPattern("^\\.expand")
+exportPattern("^\\.fix")
+exportPattern("^\\.get")
+exportPattern("^\\.init")
+exportPattern("^\\.insert")
+exportPattern("^\\.PBSfig")
+exportPattern("^\\.plot")
+exportPattern("^\\.prepare")
+exportPattern("^\\.rollup")
+exportPattern("^\\.validate")
+
+export(.mat2df)
 
 # Import all packages listed as Imports or Depends
 #import(
