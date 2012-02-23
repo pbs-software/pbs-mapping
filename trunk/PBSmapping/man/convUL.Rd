@@ -23,13 +23,21 @@ convUL (xydata, km=TRUE)
   6i < x <= -180 + 6i degrees}.
   
   This function converts the \code{X} and \code{Y} columns of
-  \code{xydata} from \code{"LL"} to \code{"UTM"} or vice-versa.  After
-  the conversion, it adjusts the data frame's attributes accordingly.
+  \code{xydata} from \code{"LL"} to \code{"UTM"} or vice-versa.  If the
+  data spans more than one zone to the right or left of the intended
+  central zone, the underlying algorithm may produce erroneous
+  results. After the conversion, this routine adjusts the data frame's
+  attributes accordingly.
 }
 \value{
   A data frame identical to \code{xydata}, except that the \code{X} and
   \code{Y} columns contain the results of the conversion and the
   \code{projection} attribute matches the new projection.
+}
+\references{
+  Ordnance Survey. 2010. A guide to coordinate systems
+  in Great Britain. Report D00659 (v2.1). Southampton, UK.
+  \url{http://www.ordnancesurvey.co.uk/oswebsite/gps/docs/A_Guide_to_Coordinate_Systems_in_Great_Britain.pdf}.
 }
 \seealso{
   \code{\link{closePolys}},
@@ -39,7 +47,7 @@ convUL (xydata, km=TRUE)
 #--- load the data
 data(nepacLL, package="PBSmapping")
 #--- set the zone attribute
-attr(nepacLL, "zone") <- 9
+attr(nepacLL, "zone") <- 6
 #--- convert and plot the result
 nepacUTM <- convUL(nepacLL)
 plotMap(nepacUTM)
