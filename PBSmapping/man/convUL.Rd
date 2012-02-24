@@ -5,11 +5,16 @@
   Convert coordinates between UTM and Lon/Lat.
 }
 \usage{
-convUL (xydata, km=TRUE)
+convUL (xydata, km=TRUE, southern=NULL)
 }
 \arguments{
   \item{xydata}{data frame with columns \code{X} and \code{Y}.}
-  \item{km}{use UTM coordinates in kilometres if true, or metres if false.}
+  \item{km}{Boolean value; if \code{TRUE}, UTM coordinates within
+    \code{xydata} are in kilometres; otherwise, metres.}
+  \item{southern}{Boolean value; if \code{TRUE}, forces conversions from
+    UTM to longitude/latitude to produce coordinates within the
+    southern hemisphere.  For conversions from UTM, defaults to
+    \code{FALSE}. For conversions from LL, detected from \code{xydata}.}
 }
 \details{
   \code{xydata} must possess a \code{projection} attribute that

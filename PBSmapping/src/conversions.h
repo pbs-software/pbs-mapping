@@ -56,8 +56,7 @@ struct pair
     National Mapping Agency of Great Britain Ordnance Survey 
     <http://www.ordsvy.gov.uk>
   ---------------------------------------------------------------------------*/
-void lonlat_to_utm(double lon, double lat, struct pair *eastingNorthing,
-                   int utmZone);
+void lonlat_to_utm(double lambda, double phi, int utmZone, struct pair *result);
 
 /*-----------------------------------------------------------------------------
   utm_to_lonlat:
@@ -72,7 +71,7 @@ void lonlat_to_utm(double lon, double lat, struct pair *eastingNorthing,
     National Mapping Agency of Great Britain Ordnance Survey 
     <http://www.ordsvy.gov.uk>
   ---------------------------------------------------------------------------*/
-void utm_to_lonlat(double easting, double northing, struct pair *lonlat,
-                   int utmZone);
+void utm_to_lonlat(double E, double N, char hem, int utmZone, 
+		   struct pair *result);
 
 #endif /* _CONVERSIONS_H */

@@ -53,6 +53,11 @@
       http://www.ordnancesurvey.co.uk/oswebsite/gps/docs/
            A_Guide_to_Coordinate_Systems_in_Great_Britain.pdf
 
+  Testing:
+
+    To test the conversion programs, compile with
+      gcc -std=c99 -Wall -pedantic -o conversions -DTEST=1 conversions.c
+    and run ./conversions.
   ---------------------------------------------------------------------------*/
 
 #include <stdlib.h>
@@ -72,7 +77,7 @@
 #define _n3	(_n2 * _n)		/* _n^3 */
 #define _phi0	0.0			/* true origin, latitude */
 /*      lambda0 (-177+((utmZone-1)*6.0))   true origin, longitude */
-#define _N0	0.0			/* true origin, northings (metres) */
+#define _N0	0.0		        /* true origin, northings (metres) */
 #define _E0	500000.0                /* true origin, eastings (meters) */
 #define _F0	0.9996			/* scale factor */
 
@@ -84,15 +89,15 @@
 /* getEta2 */
 #define getEta2(nu,rho) ((nu / rho) - 1.0)
 /* getM: get developed arc of a meridian from 'phi' to zero */
-#define getM(phi) ( (_b * _F0)						\
-		    * ( ( (1 + _n + 5.0/4.0*_n2 + 5.0/4.0*_n3)		\
-			  * (phi - _phi0) )				\
-			- ( (3*_n + 3*_n2 + 21.0/8.0*_n3)		\
-			    * (sin(phi - _phi0) * cos(phi + _phi0)) )	\
-			+ ( (15.0/8.0*_n2 + 15.0/8.0*_n3)		\
-			    * (sin(2*(phi - _phi0)) * cos(2*(phi + _phi0))) ) \
-			- ( (35.0/24.0*_n3)				\
-			    * (sin(3*(phi - _phi0)) * cos(3*(phi + _phi0))) ) ) )
+#define getM(phi) ((_b * _F0)						\
+		   * ( ( (1 + _n + 5.0/4.0*_n2 + 5.0/4.0*_n3)		\
+			 * (phi - _phi0) )				\
+		       - ( (3*_n + 3*_n2 + 21.0/8.0*_n3)		\
+			   * (sin(phi - _phi0) * cos(phi + _phi0)) )	\
+		       + ( (15.0/8.0*_n2 + 15.0/8.0*_n3)		\
+			   * (sin(2*(phi - _phi0)) * cos(2*(phi + _phi0))) ) \
+		       - ( (35.0/24.0*_n3)				\
+			   * (sin(3*(phi - _phi0)) * cos(3*(phi + _phi0))) ) ))
 
 /*------------------------------------------------------------------------------
  * lonlat_to_utm:
@@ -104,7 +109,7 @@
  *
  * See note for utm_to_lonlat.
  *----------------------------------------------------------------------------*/
-void lonlat_to_utm(double lambda, double phi, struct pair *utm, int utmZone)
+void lonlat_to_utm(double lambda, double phi, int utmZone, struct pair *result)
 {
 #if !defined(_N0) || !defined(_E0) || !defined(_F0) || !defined(_phi0)
 #error "One or more of the required constants is undefined."
@@ -134,13 +139,23 @@ void lonlat_to_utm(double lambda, double phi, struct pair *utm, int utmZone)
 	   * (5.0 - 18.0 * pow(tanphi, 2)
 	      + pow(tanphi, 4) + 14.0 * eta2 
 	      - 58.0 * pow(tanphi, 2) * eta2) );
+
+#if TEST >= 2
+    printf ("> I:\t%e\n> II:\t%e\n> III:\t%e\n> IIIA:\t%e\n> IV:\t%e\n"
+	    "> V:\t%e\n> VI:\t%e\n", I, II, III, IIIA, IV, V, VI);
+#endif /* TEST >= 2 */
     
-    utm->y = I + II * pow(lambda - lambda0, 2)
+    result->y = I + II * pow(lambda - lambda0, 2)
 	+ III * pow(lambda - lambda0, 4)
 	+ IIIA * pow(lambda - lambda0, 6);			/* C4 */
-    utm->x = _E0 + IV * (lambda - lambda0)
+    result->x = _E0 + IV * (lambda - lambda0)
 	+ V * pow(lambda - lambda0, 3)
 	+ VI * pow(lambda - lambda0, 5);			/* C5 */
+
+    /* if the latitude is in the southern hemisphere, add 10e6 metres (the false
+       northing) to the result to make it positive */
+    if (phi < 0)
+    	result->y += 10e6;
 }
 
 /*------------------------------------------------------------------------------
@@ -155,13 +170,19 @@ void lonlat_to_utm(double lambda, double phi, struct pair *utm, int utmZone)
  * noticed a significant performance hit by removing many of the
  * earlier "optimizations."
  *----------------------------------------------------------------------------*/
-void utm_to_lonlat(double E, double N, struct pair *lonlat,
-                   int utmZone)
+void utm_to_lonlat(double E, double N, char hem, int utmZone, 
+		   struct pair *result)
 {
 #if !defined(_a) || !defined(_b) || !defined(_e2) || !defined(_N0) || \
     !defined(_F0) || !defined(_phi0)
 #error "One or more of the required constants is undefined."
 #endif
+
+    /* if we are converting to a latitude in the southern hemisphere, adjust
+       the northing; we'll work with it in the norther hemisphere and at
+       the end, adjust flip the latitude to the southern hemisphere */
+    if (hem == 'S')
+	N = 10e6 - N;
 
     /* calculate M and adjust phiPrime in the process */
     double phiPrime, M;
@@ -206,15 +227,79 @@ void utm_to_lonlat(double E, double N, struct pair *lonlat,
 		+ 662.0 * pow(tan(phiPrime), 2)
 		+ 1320.0 * pow(tan(phiPrime), 4)
 		+ 720.0 * pow(tan(phiPrime), 6)) );
-    
+
+#if TEST >= 2
+    printf ("> VII:\t%e\n> VIII:\t%e\n> IX:\t%e\n> X:\t%e\n> XI:\t%e\n"
+	    "> XII:\t%e\n> XIIA:\t%e\n", VII, VIII, IX, X, XI, XII, XIIA);
+#endif /* TEST >= 2 */
+
     double lambda0 = (-177 + ((utmZone - 1) * 6.0)) * DEG_TO_RAD;
-    lonlat->y = ( phiPrime
+    result->y = ( phiPrime
 		  - VII * pow(E - _E0, 2)
 		  + VIII * pow(E - _E0, 4)
 		  - IX * pow(E - _E0, 6) );			/* C8 */
-    lonlat->x = ( lambda0
+    result->x = ( lambda0
 		  + X * (E - _E0)
 		  - XI * pow(E - _E0, 3)
 		  + XII * pow(E - _E0, 5)
 		  - XIIA * pow(E - _E0, 7) );			/* C9 */
+
+    /* the original northing was in the southern hemisphere, so let's flip
+       our latitude down to the southern hemisphere */
+    if (hem == 'S')
+	result->y *= -1;
 }
+
+#if TEST >= 1
+typedef struct _TestCases {
+    double E, N;
+    char hem;
+    int zone;
+    double lon, lat;
+} TestCases;
+    
+int main ()
+{
+    /* these test cases came from Google Earth v6.0.3.2197 */
+    TestCases tests[] = {
+        /*        E,             N,     hem,      zone,
+		 lon,           lat } */
+        {   431470.35,    5446321.96,   'N',        10,
+	      -123.940065,     49.165884 }, /* Nanaimo, CA */
+        {   449346.18,    4417294.04,   'N',        50,
+	       116.407413,    39.904214 }, /* Beijing, CN */
+        {   699298.83,    5710244.25,   'N',        30,
+	        -0.128005,     51.508129 }, /* London, UK */
+	{   300581.49,    5919603.30,   'S',        60,
+	       174.763332,    -36.848460 }, /* Aukland, NZ */
+	{   355882.90,    6301446.04,   'S',        19,
+	       -70.550000,    -33.416667 }, /* Santiago, CH */
+    };
+    int n = sizeof (tests) / sizeof (TestCases), i;
+
+    for (i = 0; i < n; i++) {
+	struct pair results;
+
+	printf ("\n------------------------------------------------------\n\n");
+
+	printf ("UTM (%f,%f,%c) to lon/lat (%f,%f):\n",
+		tests[i].E, tests[i].N, tests[i].hem, tests[i].lon,
+		tests[i].lat);
+	utm_to_lonlat (tests[i].E, tests[i].N, tests[i].hem, tests[i].zone,
+		       &results);
+	printf ("-> Expected:\t%f\t%f\n",
+		tests[i].lon, tests[i].lat);
+	printf ("-> Actual:  \t%f\t%f\n",
+		results.x * RAD_TO_DEG, results.y * RAD_TO_DEG);
+
+	printf ("\nLon/lat (%f,%f) to UTM (%f,%f):\n",
+		tests[i].lon, tests[i].lat, tests[i].E, tests[i].N);
+	lonlat_to_utm (tests[i].lon * DEG_TO_RAD, tests[i].lat * DEG_TO_RAD,
+		       tests[i].zone, &results);
+	printf ("-> Expected:\t%f\t%f\n", tests[i].E, tests[i].N);
+	printf ("-> Actual:  \t%f\t%f\n", results.x, results.y);
+    }
+
+    return 0;
+}
+#endif /* TEST >= 1 */
