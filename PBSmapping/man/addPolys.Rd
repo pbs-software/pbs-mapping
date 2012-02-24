@@ -24,7 +24,7 @@ addPolys (polys, xlim = NULL, ylim = NULL, polyProps = NULL,
 		The default, \code{NULL}, should be used in most cases as it renders holes 
 		transparent. \code{colHoles} is designed solely to eliminate retrace lines 
 		when images are converted to PDF format. If \code{colHoles} is specified, 
-		underlying information (i.e., previosuly plotted shapes) will be obliterated.
+		underlying information (i.e., previously plotted shapes) will be obliterated.
 		If \code{NA} is specified, only outer polygons are drawn, consequently filling holes.}
   \item{density}{vector describing shading line densities (lines per
     inch, cycled by \code{PID}).}

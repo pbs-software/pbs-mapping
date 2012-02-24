@@ -11,7 +11,7 @@ thickenPolys (polys, tol = 1, filter = 3, keepOrig = TRUE,
 }
 \arguments{
   \item{polys}{\link{PolySet} to thicken.}
-  \item{tol}{tolerance (in kilometers when \code{proj} is
+  \item{tol}{tolerance (in kilometres when \code{proj} is
     \code{"LL"} and \code{"UTM"}; otherwise, same units as
     \code{polys}).}
   \item{filter}{minimum number of vertices per result polygon.}
@@ -54,7 +54,7 @@ if (!is.null(version$language) && (version$language == "R"))
   data(nepacLL)
 #--- plot Vancouver Island
 plotMap(nepacLL[nepacLL$PID == 33, ])
-#--- calculate a thickened version using a 30 kilometers tolerance,
+#--- calculate a thickened version using a 30 kilometres tolerance,
 #--- without keeping the original points
 p <- thickenPolys(nepacLL[nepacLL$PID == 33, ], tol = 30, keepOrig = FALSE)
 #--- convert the PolySet to EventData by dropping the PID column and
