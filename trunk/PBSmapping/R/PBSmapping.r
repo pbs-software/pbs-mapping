@@ -3995,7 +3995,7 @@ convLP <- function(polyA, polyB, reverse = TRUE)
 }
 
 #==============================================================================
-convUL <- function(xydata, km=TRUE)
+convUL <- function(xydata, km=TRUE, southern=NULL)
 {
   xydata <- .validateXYData(xydata);
   if (is.character(xydata))
@@ -4021,15 +4021,26 @@ convUL <- function(xydata, km=TRUE)
                  sep = "\n"));
     }
     attr(xydata, "zone") <- ceiling((m + 180) / 6);
-    warning(paste(
-"For the UTM conversion, automatically detected zone ", attr(xydata, "zone"),
-".\n",
-                  sep = ""));
+    message("convUL: For the UTM conversion, automatically detected zone ",
+            attr(xydata, "zone"), ".");
   }
   else if (!is.element("zone", names(attributes(xydata)))
            || (attr(xydata, "zone") < 1) || (attr(xydata, "zone") > 60)) {
     stop(
 "Invalid or missing zone attribute; possibly out of valid range.\n");
+  }
+
+  # determine whether in the northern or southern hemisphere
+  if (is.null(southern)) {
+    if (attr(xydata, "projection") == "LL")
+      southern <- (mean(range(xydata$Y)) < 0)
+    else if (attr(xydata, "projection") == "UTM")
+      southern <- FALSE
+    else
+      stop("Projection attribute must be UTM or LL.")
+
+    message("convUL: Converting coordinates within the ",
+            ifelse(southern, "southern", "northern"), " hemisphere.")
   }
 
   inXY <- c(xydata$X, xydata$Y);
@@ -4052,6 +4063,7 @@ convUL <- function(xydata, km=TRUE)
                 inVerts = as.integer(inVerts),
                 toUTM = as.integer(toUTM),
                 zone = as.integer(inZone),
+                southern = as.integer(southern),
                 outXY = double(2 * outCapacity),
                 outVerts = as.integer(outCapacity),
                 outStatus = integer(1),

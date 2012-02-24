@@ -1757,7 +1757,7 @@ findPolys(PBSINT *inEventsID, double *inEventsXY, PBSINT *inEvents,
   ---------------------------------------------------------------------------*/
 void
 convUL(double *inXY, PBSINT *inVerts, PBSINT *toUTM, PBSINT *zone,
-       double *outXY, PBSINT *outVerts,
+       PBSINT *southern, double *outXY, PBSINT *outVerts,
        PBSINT *status)
 {
   double *inX = inXY;
@@ -1785,11 +1785,11 @@ convUL(double *inXY, PBSINT *inVerts, PBSINT *toUTM, PBSINT *zone,
       num1 *= DEG_TO_RAD;
       num2 *= DEG_TO_RAD;
       /* no dynamic memory allocation */
-      lonlat_to_utm(num1, num2, &results, (int)(*zone));
+      lonlat_to_utm(num1, num2, (int)(*zone), &results);
     }
     else {
       /* no dynamic memory allocation */
-      utm_to_lonlat(num1, num2, &results, (int)(*zone));
+      utm_to_lonlat(num1, num2, (*southern ? 'S' : 'N'), (int)(*zone), &results);
       results.x *= RAD_TO_DEG;
       results.y *= RAD_TO_DEG;
     }
