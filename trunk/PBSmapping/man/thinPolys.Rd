@@ -10,7 +10,7 @@ thinPolys (polys, tol = 1, filter = 3)
 }
 \arguments{
   \item{polys}{\link{PolySet} to thin.}
-  \item{tol}{tolerance (in kilometers when \code{proj} is
+  \item{tol}{tolerance (in kilometres when \code{proj} is
     \code{"LL"} and \code{"UTM"}; otherwise, same units as
     \code{polys}).}
   \item{filter}{minimum number of vertices per result polygon.}
