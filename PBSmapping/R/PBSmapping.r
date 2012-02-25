@@ -683,17 +683,15 @@ PBSprint <- FALSE;
 #==============================================================================
 .checkClipLimits <- function(limits)
 {
-	# Makes sure that the X & Y limits are within the bounds of the GSHHS databases
-	if (limits[1] > limits[2])
-		warning("xlim[1] is larger than xlim[2]")
-	if (limits[3] > limits[4])
-		warning("ylim[1] is larger than ylim[2]")
-	xx <- c(-20,360)
-	yy <- c(-90,90)
-	if (limits[1] > 360 || limits[2] < -20)
-		warning("xlim are outside of the range of c(-20,360)")
-	if (limits[3] > 90 || limits[4] < -90)
-		warning("ylim are outside of the range of c(-90,90)")
+  # Makes sure that the X & Y limits are within the bounds of the GSHHS databases
+  if (limits[1] > limits[2])
+    stop("xlim[1] is larger than xlim[2]")
+  if (limits[3] > limits[4])
+    stop("ylim[1] is larger than ylim[2]")
+  if (limits[1] > 360 || limits[2] < -20)
+    stop("xlim are outside of the range of c(-20,360)")
+  if (limits[3] > 90 || limits[4] < -90)
+    stop("ylim are outside of the range of c(-90,90)")
 }
 
 #==============================================================================
@@ -1080,30 +1078,45 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
 
 #==============================================================================
 .fixGSHHSWorld <- function (world) {
-	# determine PID of Antarctica
-	event <- data.frame(EID = 1, X = 297, Y = -67)
-	event <- findPolys(event, world)
-	pid <- event$PID[1]
-	# start building a new Antarctica
-	curAnt <- world[is.element(world$PID,pid), ]
-	if (curAnt[length(curAnt$X), "X"] == max(curAnt$X)) {
-		endAnt <- curAnt[length(curAnt$X),]; endAnt$POS <- -1;
-		curAnt <- curAnt[-length(curAnt$X),] };
-	# build the new section
-	zPOS <- ceiling(approx(curAnt$X,curAnt$POS,340)$y); aPOS <- zPOS-1;
-	newAnt <- curAnt[1:zPOS,]
-	# new points to close it
-	newAnt$Y[zPOS] <- approx(newAnt$X[aPOS:zPOS],newAnt$Y[aPOS:zPOS],xout=340)$y
-	newAnt$X[zPOS] <- 340; newAnt$X <- newAnt$X - 360;
-	newAnt <- rbind(newAnt,data.frame(PID=pid,POS=zPOS+1,X=-20,Y=-90));
-	curAnt <- rbind(data.frame(PID=pid,POS=-2,X=360,Y=-90),endAnt,curAnt);
-	newAnt$POS <- max(curAnt$POS) + newAnt$POS;
-	# complete the new Antarctica
-	curAnt <- rbind(curAnt,newAnt); curAnt <- fixPOS(curAnt);
-	# insert it into the world
-	world <- rbind(world[world$PID < pid, ], curAnt, world[world$PID > pid, ])
-	row.names(world) <- 1:length(row.names(world))
-	invisible(world)
+  # store desired limits
+  xlim <- range(world$X)
+  ylim <- range(world$Y)
+  ylim[1] <- -90
+  
+  # determine PID of Antarctica: we'll use it to extract the current Antarctica,
+  # which we'll grow west/east, then clip, then merge with the other polygons
+  event <- data.frame(EID = 1, X = 85, Y = -72)
+  event <- findPolys(event, world)
+  pid <- event$PID[1]
+  
+  # extract current Antarctica
+  curAnt <- world[is.element(world$PID,pid), ]
+
+  # ensure the points are ordered from left to right
+  if (curAnt$X[1] > curAnt$X[nrow(curAnt)])
+    curAnt <- curAnt[nrow(curAnt):1, ]
+
+  # create a copy to the left and a copy to the right; add corners
+  left <- curAnt[c(1,1:nrow(curAnt)), ]
+  left$X <- left$X - 360
+  left$Y[1] <- -90
+  right <- curAnt[c(1:nrow(curAnt), nrow(curAnt)), ]
+  right$X <- right$X + 360
+  right$Y[nrow(right)] <- -90
+
+  # merge to create a new, very wide Antarctica
+  curAnt <- rbind(left, curAnt, right)
+  curAnt$POS <- 1:nrow(curAnt)
+  
+  # clip
+  curAnt <- clipPolys(curAnt, xlim, ylim)
+  curAnt$oldPOS <- NULL
+
+  # merge into the existing world
+  world <- rbind(world[world$PID < pid, ], curAnt, world[world$PID > pid, ])
+  row.names(world) <- 1:length(row.names(world))
+
+  invisible(world)
 }
 
 #=============================================================================
@@ -4487,39 +4500,68 @@ importLocs <- function(LocationSet)
 }
 
 #=============================================================================
-importGSHHS <- function(gshhsDB, xlim, ylim, level=1, n=0, xoff = -360)
+importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0)
 {
-  #get gshhsDB filename
+  # get gshhsDB filename
   if (missing(gshhsDB))
     gshhsDB <- paste(system.file(package="PBSmapping"), "gshhs_f.b", sep="/")
+  else
+    gshhsDB <- path.expand(gshhsDB)
   if (!file.exists(gshhsDB))
     stop("unable to find gshhsDB \"", gshhsDB, "\"")
 
-  #setup limit
-  limits <- c(xlim[1]-xoff, xlim[2]-xoff, ylim[1], ylim[2])
+  # setup limits: for lon, (-20, 360)
+  limits <- c(xlim[1], xlim[2], ylim[1], ylim[2])
   .checkClipLimits(limits)
-  #setup boolean levelFilter
-  levelFilter <- rep(0,4)
-  for(i in 1:4)
-    if (any(level==i))
-      levelFilter[i] <- 1
 
-  #return an R object
+  # return an R object
   x <- .Call("importGSHHS",
-            as.character(gshhsDB),
-            as.numeric(limits),
-            as.integer(levelFilter),
-            as.integer(n),
-            PACKAGE = "PBSmapping")
-	if (is.null(x) || !length(x$PID)) return(NULL)
-	# Currently C-code ignores n (SEXP minVerts) so do it in R (RH)
-	x <- as.data.frame(x,row.names=1:length(x$PID));
-	xpid <- sapply(split(x$POS,x$PID),length);
-	zpid <- xpid[xpid>=n]; PIDkeep <- names(zpid);
-	x <- x[is.element(x$PID,PIDkeep),];
-	x$X <- x$X + xoff
-	attr(x, "PolyData") <- as.data.frame(attr(x, "PolyData"))
-	return(as.PolySet(x, projection = "LL"))
+             as.character(gshhsDB),
+             as.numeric(limits),
+             as.integer(maxLevel),
+             as.integer(n),
+             PACKAGE = "PBSmapping")
+  if (is.null(x) || !length(x$PID))
+    return(NULL)
+
+  # pull out PolyData and clipAsPolys attributes
+  PolyData <- as.data.frame(attr(x, "PolyData"))
+  attr(x, "PolyData") <- NULL
+  clipAsPolys <- attr(x, "clipAsPolys")
+  attr(x, "clipAsPolys") <- NULL
+  
+  # headers in the GSHHS database range from 0 to 360 while the underlying data
+  # ranges from -180 to 180; if our xlim > 180, shift it
+  xlim.orig <- NULL;
+  if (abs(diff(xlim)) >= 360) {
+    # the user apparently wants to extract the whole range, so let's
+    # provide some help... (to avoid clipping problems)
+    xlim.orig <- xlim
+    xlim <- c(-200, 200)
+  } else if (max(xlim) > 180) {
+    xlim.orig <- xlim
+    xlim <- xlim - 360
+  }
+  
+  # convert list to a data frame and clip
+  x <- as.PolySet(as.data.frame(x), projection = "LL")
+  if (clipAsPolys)
+    x <- clipPolys(x, xlim=xlim, ylim=ylim)
+  else
+    x <- clipLines(x, xlim=xlim, ylim=ylim)
+  x$oldPOS <- NULL
+
+  # sort so that holes immediately follow their parents
+  x <- x[order(x$PID, x$SID), ]
+
+  # display a message if the output longitudes differ from xlim
+  if (!is.null(xlim.orig))
+    message("importGSHHS: input xlim was (", paste(xlim.orig, collapse=", "),
+            ") and the longitude range of the extracted data is (",
+            paste(range(x$X), collapse=", "), ").")
+  attr(x, "PolyData") <- PolyData
+  
+  return (x)
 }
 
 #==============================================================================
