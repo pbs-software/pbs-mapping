@@ -6,33 +6,35 @@
   with a \code{PolyData} attribute.
 }
 \usage{
-importGSHHS(gshhsDB, xlim, ylim, level=1, n=0, xoff=-360)
+importGSHHS(gshhsDB, xlim, ylim, maxLevel=4, n=0)
 }
 \arguments{
-  \item{gshhsDB}{filename of binary GSHHS database. If no file is specified,
-    look for gshhs\_f.b in the root of the PBSmapping library directory.}
-  \item{xlim}{range of X-coordinates to clip. Range should match the transform \code{xoff}.}
-  \item{ylim}{range of Y-coordinates to clip.}
-  \item{level}{import polygons of level 1 (land), 2 (lakes on land), 3 (islands in lakes),
-    4 (ponds on islands). Multiple layers are specified in a vector.}
-  \item{n}{retain polygons of at least n vertices.}
-  \item{xoff}{transform the X-coordinates by specified amount.}
+  \item{gshhsDB}{pathname to binary GSHHS database. If unspecified,
+    looks for \code{gshhs_f.b} in the root of the PBSmapping library
+    directory.}
+  \item{xlim}{range of X-coordinates (for clipping).
+    The range should be between 0 and 360.}
+  \item{ylim}{range of Y-coordinates (for clipping).}
+  \item{maxLevel}{maximum level of polygons to import:
+    1 (land), 2 (lakes on land), 3 (islands in lakes), or 4 (ponds on
+    islands); ignored when importing lines.}
+  \item{n}{minimum number of vertices that must exist in a line/polygon
+    in order for it to be imported.}
 }
 \details{
-  This routine requires a binary GSHHS (Global Self-consistent, Hierarchical,
-  High-resolution Shoreline) database file. The GSHHS database has been 
-  released in the public domain and may be downloaded from
-  \url{http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html}.
-  At the time of writing, the most recent database is \code{gshhs_1.5.zip}. 
-  This version uses binary packing of the header information.
-  
-  This routine will return a \code{PolySet} object directly to R.
-  
-  The \code{PolyData} attribute contains four fields: 1) PID which maps poly data
-  to a polygon in the \code{PolySet}, 2) LEVEL to indicate the type of polygon 
-  (1=land, 2=lake, 3=island, 4=pond), 3) SOURCE to indicate the source of
-  the data (1=WVS, not 1=CIA (WDBII)), and 4) GREENWICH (1 if poly crosses
-  greenwich, 0 otherwise).
+  This routine requires a binary GSHHS (Global Self-consistent,
+  Hierarchical, High-resolution Shoreline) database file. The GSHHS
+  database has been released in the public domain and may be downloaded
+  from \url{http://www.soest.hawaii.edu/wessel/gshhs/}.  At the time of
+  writing, the most recent database is \code{gshhs+wdbii_2.2.0.zip}.
+
+  This routine returns a \code{PolySet} object with an associated
+  \code{PolyData} attribute. The attribute contains four fields: (a)
+  \code{PID}, (b) \code{SID}, (c) \code{Level}, and (d) \code{Source}.
+  Each record corresponds to a line/polygon in the \code{PolySet}.  The
+  \code{Level} indicates the line's/polygon's level (1=land, 2=lake,
+  3=island, 4=pond). The \code{Source} identifies the data source
+  (1=WVS, 0=CIA (WDBII)).
 }
 \value{
   A \code{PolySet} with a \code{PolyData} attribute.
@@ -42,49 +44,38 @@ importGSHHS(gshhsDB, xlim, ylim, level=1, n=0, xoff=-360)
 }
 \examples{
 \dontrun{
-  #function to properly plot the 4 levels in order working
-  #from 1 (land) to 4 (ponds on islands in lakes on land)
-  plotInOrder <- function(polys, ...)
-  {
-    myCols = c("gold1", "steelblue2", "gold1", "steelblue2")
-    projection <- attr(polys, "projection")
-    if (is.null(projection))
-      stop("projection attribute is null")
-    Pdata <- attr(polys, "PolyData")
-    if (is.null(Pdata))
-      stop("PolyData attribute is null")
+#--- EXAMPLE 1
+#--- set some limits appropriate for a map of Canada
+limits <- list(x = c(216.0486, 307.1274), y = c(42.87209, 77.35183))
 
-    plotMap(NULL, xlim=c(min(polys$X), max(polys$X)), 
-            ylim=c(min(polys$Y), max(polys$Y)), projection=projection, ...)
+#--- extract data from the GSHHS binary files; you will need to download
+#--- these files from http://www.soest.hawaii.edu/wessel/gshhs/
+#--- and place them in an appropriate location
+polys <- importGSHHS ("~/gshhs+wdbii_2.2.0/gshhs/gshhs_l.b",
+	                 xlim=limits$x, limits$y, maxLevel=4)
+rivers <- importGSHHS ("~/gshhs+wdbii_2.2.0/gshhs/wdb_rivers_i.b",
+                       xlim=limits$x, limits$y)
+borders <- importGSHHS ("~/gshhs+wdbii_2.2.0/gshhs/wdb_borders_i.b",
+                        xlim=limits$x, limits$y)
 
-    #extract all polygons of a certain level
-    #(could probably be done more efficiently)
-    for(i in 1:4) {
-      PIDs <- Pdata[Pdata$LEVEL==i,]$PID
-      if (length(PIDs)==0) next
-      tmp <- NULL
-      for (p in PIDs) {
-        if (is.null(tmp))
-          tmp <- polys[(polys$PID==p),]
-        else
-          tmp <- rbind(tmp, polys[(polys$PID==p),])
-      }
-      attr(tmp, "PolyData") <- Pdata
-      addPolys(tmp, col=myCols[i])
-    }
-  }
-  
-  # You will have to download a copy of `gshhs_f.b'
-  # from http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html
-  # and place it in the PBSmapping library root.
+#--- create a PNG for the output
+png ("~/plot.png", width=1600, height=1200, pointsize=20)
 
-  # clip out Manitoulin Island area which includes all four levels
-  x <- importGSHHS(xlim=c(-84, -81), ylim=c(45.3, 46.5), level=1:4)
+#--- plot the polygons, river, and then borders
+plotMap (polys, col="beige", bg="lightblue")
+addLines (rivers, col="lightblue")
+addLines (borders, col="red")
 
-  #plot map data and a label
-  plotInOrder(x, main="Manitoulin Island, Ontario, Canada")
-  text(-82.08, 45.706, "Manitoulin Isl")
+#--- close the output file
+dev.off ()
 
+#--- EXAMPLE 2
+#--- clip out Manitoulin Island area which includes all four levels
+polys <- importGSHHS ("~/gshhs+wdbii_2.2.0/gshhs/gshhs_f.b",
+                      xlim=c(276, 279), ylim=c(45.3, 46.5), maxLevel=4)
+#--- plot the map and add a label
+plotMap (polys, col="beige", bg="lightblue");
+text (-82.08, 45.706, "Manitoulin Isl")
 }
 }
 \keyword{file}
