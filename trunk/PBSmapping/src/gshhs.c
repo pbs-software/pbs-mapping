@@ -80,7 +80,9 @@ int gshhs (int argc, char **argv)
 {
 	double w, e, s, n, area, f_area, lon, lat, scale = 10.0, minarea = 0.0;
 	char source, kind[2] = {'P', 'L'}, c = '>', *file = NULL;
+#ifdef STANDALONE
 	char *name[2] = {"polygon", "line"}, container[8], ancestor[8];
+#endif /* STANDALONE */
 	FILE *fp = NULL;
 	int k, line, max_east = 270000000, info, single, error, ID, flip, m, octave = 0, rank = -1;
 	int  OK, level, version, greenwich, river, src, msformat = 0, qmode = 0, first = 1;

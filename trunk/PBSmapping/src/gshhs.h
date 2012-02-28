@@ -59,9 +59,11 @@
 #include <ctype.h>
 #include <math.h>
 
+#if STANDALONE
 #ifdef WIN32
 #pragma warning( disable : 4996 )
 #endif
+#endif /* STANDALONE */
 
 #ifndef M_PI
 #define M_PI          3.14159265358979323846
