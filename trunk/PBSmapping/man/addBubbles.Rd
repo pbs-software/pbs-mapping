@@ -17,7 +17,7 @@ addBubbles(events, type=c("perceptual","surface","volume"),
    legend.title="Abundance", legend.cex=0.8, ...)
 }
 \arguments{
-  \item{events}{\link{EventData} to use (\emph{required}).}
+  \item{events}{\link[PBSmapping]{EventData} to use (\emph{required}).}
   \item{type}{scaling option for bubbles where \code{"perceptual"}
     emphasizes large z-values, \code{"volume"} emphasizes small z-values,
     and \code{"surface"} lies in between.}
@@ -46,8 +46,8 @@ addBubbles(events, type=c("perceptual","surface","volume"),
     plots zero-value symbols.}
 }
 \details{
-  Modified (and for the legend, strongly inspired) from Tanimura
-  et al. (2006) by Denis Chabot to work with PBSmapping.
+  Modified from (and for the legend, strongly inspired by) Tanimura
+  et al. (2006) by Denis Chabot to work with \pkg{PBSmapping}.
 
   Furthermore, Chabot's modifications make it possible to draw
   several maps with bubbles that all have the same scale
@@ -57,7 +57,7 @@ addBubbles(events, type=c("perceptual","surface","volume"),
   plotted.
   
   The user can also add a legend in one of four corners
-  (see \code{legend::legend}) or at a specific x,y position.
+  (see \code{\link[graphics]{legend}}) or at a specific \code{c(X,Y)} position.
   If \code{legend.pos} is \code{NULL}, no legend is drawn.
 }
 \references{
@@ -66,10 +66,10 @@ addBubbles(events, type=c("perceptual","surface","volume"),
   \emph{Journal of Statistical Software} \bold{15}(5).
 }
 \author{
-  Denis Chabot, Institut Maurice-Lamontagne, Mont-Joli, QC.
+  Denis Chabot, Maurice Lamontagne Institute, Fisheries and Oceans Canada, Mont-Joli QC
 }
 \seealso{
-  \code{\link{addPolys}}, \code{\link{surveyData}}
+  \code{\link[PBSmapping]{addPolys}}, \code{\link[PBSmapping]{surveyData}}
 }
 \examples{
 require(PBSmapping)

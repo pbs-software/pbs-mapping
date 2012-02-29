@@ -3,7 +3,52 @@ PBSmapping Changes
 Authors: JTS = Jon T. Schnute           RH  = Rowan Haigh
          NB  = Nicholas Boers           ACB = Alex Couture-Beil
 
-2.62  2011-11-09  Authors
+2.62  2012-02-29  Authors
+  - Cleaned up various files in preparation for submission to CRAN. (RH 2/29)
+  - Added further conditional compilation to gshhs.[ch] to address warnings in Windows OS. (NB 2/28)
+  - Rewrote GSHHS import functionality and revised some related functions. (NB 2/25)
+	This rather large commit completely rewrites GSHHS functionality and provides a number of immediate advantages:
+	  (a) support for the latest (2.20) GSHHS binary files, 
+	  (b) support for multiple levels, e.g., lakes, islands, and ponds, within a single import with suitable ordering of polygons and their holes, 
+	  (c) support for lines, e.g., rivers and borders, 
+	  (d) more robust support functions, e.g., .fixGSHHSworld, and finally, 
+	  (e) a more maintainable approach to GSHHS integration.
+	Some specific changes include:
+	(1) .fixGSHHSworld (PBSmapping.r)
+	    -> support world maps centred on 0 in addition to 180 degrees.
+	(2) importGSHHS (PBSmapping.r)
+	    -> revised arguments to support the new behaviour (above);
+	    -> process argument gshhsDB to support paths relative to home directories;
+	    -> moved handling of minVerts from R to C;
+	    -> moved clipping from C to R (to simplify C code);
+	    -> ordered PIDs/SIDs to support holes.
+	(3) convGSHHS.c
+	    -> rewrote completely so that it is distinct from gshhs.c.
+	(4) gshhs.c
+	    -> added slight revisions to support calls to routines in convGSHHS.c.
+	(5) gshhs.h
+	    -> added slight revisions to support calls to routines in convGSHHS.c.
+	(6) importGSHHS.Rd
+	    -> revised to match the changes to the code.
+  - Reduced whitespace and break long lines in 'convGSHHS.c'. (NB 2/24)
+  - Corrected spelling mistakes in Rd documentation. (NB 2/24)
+  - Added support for S hemisphere to LL <=> UTM conversion (convUL). (NB 2/24)
+	Added support for the southern hemisphere to convUL (and supporting functions) by adding a new 
+	"southern" argument.  By default, the argument is NULL because detection is automatic when the 
+	source is LL. For UTM source data, the default is FALSE because we typically work within the northern hemisphere.
+	Added the ability to compile conversions.c (the supporting C code) as a stand-alone application.  
+	When executed, the stand-alone executable performs a number of conversions that help validate the algorithm.
+  - Improved long/lat <=> UTM conversions; updated documentation ( Issue #9 ). (NB 2/23)
+	Issue #9  noted erroneous results given data that spanned more than one zone to the right/left 
+	of the intended central zone.  This update improves our implementation by correcting a number of 
+	(implementation) errors (described below), but the problem still persists.
+	The earlier (2001) implementation had a number of optimizations that made it terribly difficult 
+	to verify the code against the published algorithm and inspecting the implementation revealed some errors:
+	(1) the calculation of 'n' used scaled 'a'/'b' rather than original 'a'/'b',
+	(2) the calculation of 'e^2' used scaled 'a'/'b' rather than original 'a'/'b', and
+	(3) the calculation of 'm' was not iterative as suggested in the algorithm.
+	This new version more closely matches the published algorithm and is consequently easy to verify.
+	The performance is similar to the old algorithm (faster in some cases, slower in others).
   - Recompressed rda files; changed namespace to explicitly export; changed dependency to R (>= 2.10). (RH 12/21)
   - Fixed missing longitude/latitude X/Y labels on Mac OS X. (NB 12/20)
 	When plotting a longitude/latitude PolySet on Mac OS X, the X/Y labels wouldn't plot.

@@ -2,7 +2,7 @@
 \alias{plotMap}
 \title{Plot a PolySet as a Map}
 \description{
-  Plot a \link{PolySet} as a map, using the correct aspect ratio.
+  Plot a \link[PBSmapping]{PolySet} as a map, using the correct aspect ratio.
 }
 \usage{
 plotMap (polys, xlim = NULL, ylim = NULL, projection = TRUE,
@@ -12,10 +12,10 @@ plotMap (polys, xlim = NULL, ylim = NULL, projection = TRUE,
          tckLab = TRUE, tck = 0.014, tckMinor = 0.5 * tck, \dots)
 }
 \arguments{
-  \item{polys}{\link{PolySet} to plot (\emph{required}).}
+  \item{polys}{\link[PBSmapping]{PolySet} to plot (\emph{required}).}
   \item{xlim}{range of X-coordinates.}
   \item{ylim}{range of Y-coordinates.}
-  \item{projection}{desired projection when \link{PolySet} lacks a
+  \item{projection}{desired projection when \link[PBSmapping]{PolySet} lacks a
     \code{projection} attribute; one of \code{"LL"}, \code{"UTM"},
     or a numeric value.  If Boolean, specifies whether to check
     \code{polys} for a \code{projection} attribute.}
@@ -23,8 +23,8 @@ plotMap (polys, xlim = NULL, ylim = NULL, projection = TRUE,
     the coordinates of the plot region measured as a fraction of the
     figure region. Set to \code{NULL} if \code{mai} in \code{par} is
     desired.}
-  \item{polyProps}{\link{PolyData} specifying which polygons to plot and their
-    properties.  \code{\link{par}} parameters passed as direct arguments
+  \item{polyProps}{\link[PBSmapping]{PolyData} specifying which polygons to plot and their
+    properties.  \code{\link[graphics]{par}} parameters passed as direct arguments
     supersede these data.}
   \item{border}{vector describing edge colours (cycled by \code{PID}).}
   \item{lty}{vector describing line types (cycled by \code{PID}).}
@@ -57,18 +57,18 @@ plotMap (polys, xlim = NULL, ylim = NULL, projection = TRUE,
     marks can not be automatically labelled.  If given a two-element vector,
     the first element describes the tick marks on the x-axis and
     the second element describes those on the y-axis.}
-  \item{\dots}{additional \code{\link{par}} parameters, or the arguments
+  \item{\dots}{additional \code{\link[graphics]{par}} parameters, or the arguments
     \code{main}, \code{sub}, \code{xlab}, or \code{ylab} for the
-    \code{\link{title}} function.}
+    \code{\link[graphics]{title}} function.}
 }
 \details{
-  This function plots a \link{PolySet}, where each unique (\code{PID},
+  This function plots a \link[PBSmapping]{PolySet}, where each unique (\code{PID},
   \code{SID}) describes a polygon.  It connects each polygon's last
   vertex to its first.  The function supports both borders
   (\code{border}, \code{lty}) and fills (\code{col}, \code{density},
   \code{angle}).  When supplied with the appropriate arguments, it can
-  draw only borders or only fills .  Unlike \code{\link{plotLines}} and
-  \code{\link{plotPolys}}, it uses the aspect ratio supplied in the
+  draw only borders or only fills .  Unlike \code{\link[PBSmapping]{plotLines}} and
+  \code{\link[PBSmapping]{plotPolys}}, it uses the aspect ratio supplied in the
   \code{projection} attribute of \code{polys}.  If this attribute is
   missing, it attempts to use its \code{projection} argument.  In the
   absence of both, it uses a default aspect ratio of 1:1.  It clips
@@ -78,38 +78,40 @@ plotMap (polys, xlim = NULL, ylim = NULL, projection = TRUE,
   \code{NULL}.  In this case, the user must supply both \code{xlim} and
   \code{ylim} arguments.  Alternatively, it accepts the argument
   \code{type = "n"} as part of \dots, which is equivalent to specifying
-  \code{polys = NULL}, but requires a \link{PolySet}.  In both cases,
+  \code{polys = NULL}, but requires a \link[PBSmapping]{PolySet}.  In both cases,
   the function's behaviour changes slightly.  To resemble the
-  \code{\link{plot}} function, it plots the border, labels, and other
-  parts according to \code{\link{par}} parameters such as \code{col}.
+  \code{\link[graphics]{plot}} function, it plots the border, labels, and other
+  parts according to \code{\link[graphics]{par}} parameters such as \code{col}.
 
   For additional help on the arguments \code{border}, \code{lty},
   \code{col}, \code{density}, and \code{angle}, please see
-  \code{\link{polygon}} and \code{\link{par}}.
+  \code{\link[graphics]{polygon}} and \code{\link[graphics]{par}}.
 }
 \value{
-  \link{PolyData} consisting of the \code{PolyProp}s used to create the plot.
+  \link[PBSmapping]{PolyData} consisting of the \code{PolyProp}s used to create the plot.
 }
 \note{
   To satisfy the aspect ratio, this plotting routine resizes the plot
-  region.  Consequently, \code{\link{par}} parameters such as
+  region.  Consequently, \code{\link[graphics]{par}} parameters such as
   \code{plt}, \code{mai}, and \code{mar} will change.  When the function
   terminates, these changes persist to allow for additions to the plot.
 }
+\author{
+  Nicholas Boers, Dept. of Computer Science, Grant MacEwan University, Edmonton AB
+}
 \seealso{
-  \code{\link{addLabels}},
-  \code{\link{addPolys}},
-  \code{\link{addStipples}},
-  \code{\link{clipPolys}},
-  \code{\link{closePolys}},
-  \code{\link{fixBound}},
-  \code{\link{fixPOS}},
-  \code{\link{locatePolys}},
-  \code{\link{plotLines}},
-  \code{\link{plotMap}},
-  \code{\link{plotPoints}},
-  \code{\link{thinPolys}},
-  \code{\link{thickenPolys}}.
+  \code{\link[PBSmapping]{addLabels}},
+  \code{\link[PBSmapping]{addPolys}},
+  \code{\link[PBSmapping]{addStipples}},
+  \code{\link[PBSmapping]{clipPolys}},
+  \code{\link[PBSmapping]{closePolys}},
+  \code{\link[PBSmapping]{fixBound}},
+  \code{\link[PBSmapping]{fixPOS}},
+  \code{\link[PBSmapping]{locatePolys}},
+  \code{\link[PBSmapping]{plotLines}},
+  \code{\link[PBSmapping]{plotPoints}},
+  \code{\link[PBSmapping]{thinPolys}},
+  \code{\link[PBSmapping]{thickenPolys}}.
 }
 \examples{
 #--- create a PolySet to plot

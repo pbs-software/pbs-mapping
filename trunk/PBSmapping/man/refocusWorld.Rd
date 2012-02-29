@@ -9,27 +9,30 @@
 refocusWorld (polys, xlim = NULL, ylim = NULL)
 }
 \arguments{
-  \item{polys}{\link{PolySet} with one or more polygons; typically
+  \item{polys}{\link[PBSmapping]{PolySet} with one or more polygons; typically
     \code{worldLL} or \code{worldLLhigh} (\emph{required}).}
   \item{xlim}{range of X-coordinates.}
   \item{ylim}{range of Y-coordinates.}
 }
 \details{
-  This function accepts a \link{PolySet} containing one or more polygons
+  This function accepts a \link[PBSmapping]{PolySet} containing one or more polygons
   with X-coordinates that collectively span approximately 360 degrees.
-  The function effectively joins the \link{PolySet} into a cylinder and
+  The function effectively joins the \link[PBSmapping]{PolySet} into a cylinder and
   then splits it at an arbitrary longitude according to the
-  user-specified limits.  Modifications in the resulting \link{PolySet}
+  user-specified limits.  Modifications in the resulting \link[PBSmapping]{PolySet}
   are restricted to shifting X-coordinates by +/- multiples of 360
   degrees, and instead of clipping polygons, the return value simply
   omits out-of-range polygons.
 }
 \value{
-  \link{PolySet}, likely a subset of the input \link{PolySet}, which
+  \link[PBSmapping]{PolySet}, likely a subset of the input \link[PBSmapping]{PolySet}, which
   retains the same \code{PID}/\code{SID} values.
 }
+\author{
+  Nicholas Boers, Dept. of Computer Science, Grant MacEwan University, Edmonton AB
+}
 \seealso{
-  \code{\link{joinPolys}}
+  \code{\link[PBSmapping]{joinPolys}}
 }
 \examples{
 #--- load appropriate data
@@ -42,3 +45,4 @@ polys <- refocusWorld(worldLL, xlim, ylim)
 plotMap(polys, xlim, ylim)
 }
 \keyword{manip}
+
