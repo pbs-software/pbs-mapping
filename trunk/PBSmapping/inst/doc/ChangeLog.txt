@@ -3,7 +3,8 @@ PBSmapping Changes
 Authors: JTS = Jon T. Schnute           RH  = Rowan Haigh
          NB  = Nicholas Boers           ACB = Alex Couture-Beil
 
-2.62  2012-02-29  Authors
+2.62  2012-03-01  Authors
+  - Resolved partial argument matching in functions identified by Brian Ripley. (RH 3/1)
   - Cleaned up various files in preparation for submission to CRAN. (RH 2/29)
   - Added further conditional compilation to gshhs.[ch] to address warnings in Windows OS. (NB 2/28)
   - Rewrote GSHHS import functionality and revised some related functions. (NB 2/25)

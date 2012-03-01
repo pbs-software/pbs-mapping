@@ -1,5 +1,5 @@
 #==============================================================================
-# Copyright (C) 2003-2010  Fisheries and Oceans Canada
+# Copyright (C) 2003-2012  Fisheries and Oceans Canada
 # Nanaimo, British Columbia
 # This file is part of PBS Mapping.
 #
@@ -178,6 +178,10 @@ PBSprint <- FALSE;
 }
 
 #==============================================================================
+
+#.addBubblesLegend----------------------2012-03-01
+#  Construct legend for the function addBubble.
+#--------------------------------------------DC/NB
 .addBubblesLegend <- function(radii.leg, usr.xdiff, usr.ydiff,
                               symbol.zero, symbol.fg, symbol.bg,
                               legend.pos, legend.breaks,
@@ -260,7 +264,7 @@ PBSprint <- FALSE;
            # draw the circles, lines, and labels
            for (i in 1:length(r)) {
              symbols(legend.loc[1], legend.loc[2] + r[i] * ratio.y.x,
-                     circle=r[i], inches=FALSE, add=TRUE, bg=symbol.bg,
+                     circles=r[i], inches=FALSE, add=TRUE, bg=symbol.bg,
                      fg=symbol.fg)
              lines(c(legend.loc[1], legend.loc[1] + r[1] + gap.x),
                    rep(legend.loc[2] + 2 * r[i] * ratio.y.x, 2))
@@ -2229,8 +2233,10 @@ addLabels <- function(data, xlim = NULL, ylim = NULL, polyProps = NULL,
   invisible (data);
 }
 
-#==============================================================================
-# '...' contains arguments for the 'lines()' function
+#addLines=========================================2012-03-01
+#  Add polylines to an existing map plot.
+#  '...' contains arguments for the 'lines()' function
+#---------------------------------------------------------NB
 addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
                      lty = NULL, col = NULL, ...)
 {
@@ -2297,7 +2303,7 @@ addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
                                 cols=c("PID", "SID"));
   # if fastIDdig > 0, we can use "fast IDs"; must divide SID by 10^fastIDdig
 
-  polyProps$IDs <- .createIDs(polyProps, col=c("PID", "SID"), fastIDdig);
+  polyProps$IDs <- .createIDs(polyProps, cols=c("PID", "SID"), fastIDdig);
   polyPropsIdx <- split(polyProps$IDs, polyProps$props);
 
   # reduce before split
@@ -2306,7 +2312,7 @@ addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   res <- split(toSplit[, parCols], toSplit$props);
 
   # create an 'IDs' column for 'polys'
-  polys$IDs <- .createIDs(polys, col=c("PID", "SID"), fastIDdig);
+  polys$IDs <- .createIDs(polys, cols=c("PID", "SID"), fastIDdig);
 
   # create lists of X/Y vertices
   polyx <- split(polys$X, polys$IDs);
@@ -2332,9 +2338,11 @@ addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   invisible(polyPropsReturn);
 }
 
-#==============================================================================
-# '...' contains arguments for the '.addFeature()' function, which will then
-# pass those arguments to the 'points' function
+#addPoints========================================2010-11-10
+#  Add points to an existing map plot.
+#  '...' contains arguments for the '.addFeature()' function,
+#  which will then pass those arguments to 'points' function.
+#---------------------------------------------------------NB
 addPoints <- function(data, xlim = NULL, ylim = NULL, polyProps = NULL,
                       cex = NULL, col = NULL, pch = NULL, ...)
 {
@@ -2409,7 +2417,9 @@ addPoints <- function(data, xlim = NULL, ylim = NULL, polyProps = NULL,
   invisible (polyPropsReturn);
 }
 
-#==============================================================================
+#addPolys=========================================2012-03-01
+#  Add polygons to an existing map plot.
+#---------------------------------------------------------NB
 addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
                      border = NULL, lty = NULL, col = NULL, colHoles = NULL,
                      density = NA, angle = NULL, ...)
@@ -2520,7 +2530,7 @@ addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   holes <- (polys$POS[idxS] > polys$POS[idxE])
   holesIDs <- (polys[idxS, "IDs"])[holes];
 
-  pProps$IDs <- .createIDs(pProps, col=c("PID", "SID"), fastIDdig)
+  pProps$IDs <- .createIDs(pProps, cols=c("PID", "SID"), fastIDdig)
   holes <- is.element(pProps$IDs, holesIDs)
 
   pPropsOuter <- pProps[!holes, c("IDs", "props")]
@@ -2559,8 +2569,8 @@ addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   }
 
   # create an 'IDs' column for both 'polys' and 'polylines'
-  polylines$IDs <- .createIDs(polylines, col=c("PID", "SID"), fastIDdig);
-  polys$IDs <- .createIDs(polys, col=c("PID", "SID"), fastIDdig);
+  polylines$IDs <- .createIDs(polylines, cols=c("PID", "SID"), fastIDdig);
+  polys$IDs <- .createIDs(polys, cols=c("PID", "SID"), fastIDdig);
 
   polylinex <- split(polylines$X, polylines$IDs);
   polyliney <- split(polylines$Y, polylines$IDs);
@@ -3312,7 +3322,9 @@ calcMidRange <- function(polys, rollup = 3)
   return (polys);
 }
 
-#==============================================================================
+#calcSummary======================================2012-03-01
+#  Apply functions to polygons in a PolySet.
+#---------------------------------------------------------NB
 calcSummary <- function(polys, rollup = 3, FUN, ...)
   # Maintains extra attributes.
 {
@@ -3330,7 +3342,7 @@ calcSummary <- function(polys, rollup = 3, FUN, ...)
   }
 
   # create an index
-  idx <- .createIDs(polys, col=c("PID", "SID"), fastIDdig = NULL);
+  idx <- .createIDs(polys, cols=c("PID", "SID"), fastIDdig = NULL);
   uniqueIdx <- unique(idx);
 
   # get data value (run FUN on each vector of X and vector of Y)
@@ -3348,11 +3360,11 @@ calcSummary <- function(polys, rollup = 3, FUN, ...)
 
   dataX <- cbind(data.frame(IDX=names(dataX)),
                  as.data.frame(matrix(unlist(dataX, use.names = FALSE),
-                                      nc = nCol, byrow = TRUE)));
+                                      ncol = nCol, byrow = TRUE)));
   dataX$IDX <- as.character(dataX$IDX); # remove factor
   dataY <- cbind(data.frame(IDX=names(dataY)),
                  as.data.frame(matrix(unlist(dataY, use.names = FALSE),
-                                      nc = nCol, byrow = TRUE)));
+                                      ncol = nCol, byrow = TRUE)));
   dataY$IDX <- as.character(dataY$IDX); # remove factor
 
   if (nCol > 1) {
@@ -3702,7 +3714,9 @@ closePolys <- function(polys)
   }
 }
 
-#==============================================================================
+#combineEvents====================================2012-03-01
+#  Combine measurements of events.
+#---------------------------------------------------------NB
 combineEvents <- function(events, locs, FUN, ..., bdryOK = TRUE)
 {
   events <- .validateEventData(events);
@@ -3738,7 +3752,7 @@ combineEvents <- function(events, locs, FUN, ..., bdryOK = TRUE)
   # The as.numeric function calls (below) are very important.  They prevent
   # elements in the PID and SID columns from becoming factors.
   output <- as.numeric(unlist(strsplit(names(summary), "-")));
-  output <- as.data.frame(matrix(output, byrow = TRUE, nc = colIDs));
+  output <- as.data.frame(matrix(output, byrow = TRUE, ncol = colIDs));
 
   output <- cbind(output, unlist(summary));
   names(output) <- colNames;
@@ -5274,7 +5288,9 @@ print.summary.PBS <- function(x, ...)
   invisible(x);
 }
 
-#==============================================================================
+#refocusWorld=====================================2012-03-01
+#  Refocus the 'worldLL'/'worldLLhigh' data sets.
+#---------------------------------------------------------NB
 refocusWorld <- function(polys, xlim = NULL, ylim = NULL) {
   # define a local function to assist with shifting
   .shiftRegion <- function(polys, shift = 0) {
@@ -5320,7 +5336,7 @@ refocusWorld <- function(polys, xlim = NULL, ylim = NULL) {
   attrValues <- attributes(polys)[attrNames];
   
   # build indices in case both PID *and* SID exist
-  polys$IDs <- .createIDs(polys, col=c("PID", "SID"));
+  polys$IDs <- .createIDs(polys, cols=c("PID", "SID"));
   
   # build a data frame with the ranges
   xrng <- lapply(split(polys[, c("X")], polys$IDs), range)
