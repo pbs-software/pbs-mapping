@@ -208,14 +208,14 @@ int gshhs (int argc, char **argv)
 	        if (octave) c = '%';
 		if (OK) {
 			if (line) {
-#if STANDALONE
+#ifdef STANDALONE
 				printf ("%c %6d%8d%3d%2c%10.5f%10.5f%10.5f%10.5f\n", c, h.id, h.n, level, source, w, e, s, n);
 #else /* !STANDALONE */
 				if (lineHeader)
 					(*lineHeader)(c, h.id, h.n, level, source, w, e, s, n);
 #endif /* !STANDALONE */
 			} else {
-#if STANDALONE
+#ifdef STANDALONE
 				(h.container == -1) ? sprintf (container, "-") : sprintf (container, "%6d", h.container);
 				(h.ancestor == -1) ? sprintf (ancestor, "-") : sprintf (ancestor, "%6d", h.ancestor);
 				printf ("%c %6d%8d%2d%2c %.12g %.12g%11.5f%11.5f%10.5f%10.5f %s %s\n", c, h.id, h.n, level, source, area, f_area, w, e, s, n, container, ancestor);
@@ -243,14 +243,16 @@ int gshhs (int argc, char **argv)
 				lon = p.x * GSHHS_SCL;
 				if (((greenwich & 1) && p.x > max_east) || (h.west > 180000000)) lon -= 360.0;
 				lat = p.y * GSHHS_SCL;
-#if STANDALONE
+#ifdef STANDALONE
 				printf ("%11.6f%11.6f\n", lon, lat);
 #else /* !STANDALONE */
 				if (point)
 					(*point) (lon, lat);
 #endif /* !STANDALONE */
 			}
+#ifdef STANDALONE
 			if (octave) printf ("NaN\tNaN\n");
+#endif /* STANDALONE */
 		}
 		max_east = 180000000;	/* Only Eurasia needs 270 */
 		n_read = fread((void *)&h, (size_t)sizeof (struct GSHHS), (size_t)1, fp);

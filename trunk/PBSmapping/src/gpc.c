@@ -124,17 +124,17 @@ Modifications:
 
 /* Modified: ?? May 2004:  NMB:
    Different MALLOC for !STANDALONE. */
-#ifndef STANDALONE
+#ifdef STANDALONE
 #define MALLOC(p, b, s)    {if ((b) > 0) { \
                             p= malloc(b); if (!(p)) { \
                             fprintf(stderr, "gpc malloc failure: %s\n", s); \
                             exit(0);}} else p= NULL;}
-#else
+#else /* !STANDALONE */
 #define MALLOC(p, b, s)    {if ((b) > 0) { \
                             p = malloc(b); if (!(p)) { \
                             gpc_success = FALSE; \
                             longjmp(returnLocation, 1);}} else p= NULL;}
-#endif
+#endif /* !STANDALONE */
 
 #define FREE(p)            {if (p) {free(p); (p)= NULL;}}
 
