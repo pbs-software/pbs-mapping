@@ -1,3 +1,5 @@
+# Figures for PBSmapping examples     (last modified: 2012-03-01)
+#----------------------------------------------------------------
 .initPBS <- function(new=FALSE) {
 #  Sets up colour table and global settings for the demo figures.
 #================================================================
@@ -140,7 +142,7 @@
    # shift B right
    polyA[[2]]$X <- polyA[[2]]$X + size
    # create 'polysA' and 'polysB'
-   polyA  <- as.PolySet(joinPolys(polyA[[1]], polyA[[2]], operation="DIFF"), proj=1)
+   polyA  <- as.PolySet(joinPolys(polyA[[1]], polyA[[2]], operation="DIFF"), projection=1)
    polyB  <- polyA
    polyB$X<- abs(polyB$X - (radius[1] * 2)) + shiftB
    par(mfrow=c(3,2),mai=c(0,0,0,0),omi=parOmi) #------Plot-the-figure------
@@ -161,7 +163,7 @@
    cols   <- c(NA, NA, clr$red, clr$purple, clr$purple, clr$purple)
    panel  <- c(NA, NA, "C", "D", "E", "F")
    for (i in 3:6) {
-      plotMap(NULL,xlim=xlim,ylim=ylim,proj=1,xlab="",ylab="",axes=FALSE,plt=NULL)
+      plotMap(NULL,xlim=xlim,ylim=ylim,projection=1,xlab="",ylab="",axes=FALSE,plt=NULL)
       addPolys(polyA, border=clr$red, lty=dash)
       addPolys(polyB, border=clr$blue, lty=dash)
       addPolys(joinPolys(polyA, polyB, operation=ops[i]), col=cols[i])
