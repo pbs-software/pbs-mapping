@@ -50,7 +50,7 @@ importShapefile (fn, readDBF=TRUE, projection=NULL, zone=NULL,
 
   Shapes of numeric shape type \code{5} exported from \pkg{ArcView} in geographic 
   projection identify solids as polygons with vertices following a clockwise 
-  path and holes as polygons that follow a counter clockwise path. 
+  path and holes as polygons that follow a counter-clockwise path. 
   Unfortuantely, either the export from \pkg{ArcView} or the import using a C-routine 
   from the package \pkg{maptools} often does not report solids followed by their holes. 
   We employ a new R function \code{placeHoles} to do this for us. 
@@ -71,7 +71,8 @@ importShapefile (fn, readDBF=TRUE, projection=NULL, zone=NULL,
 }
 \seealso{
   \code{\link[PBSmapping]{importGSHHS}}, \code{\link[PBSmapping]{importEvents}}, 
-  \code{\link[PBSmapping]{importLocs}}, \code{\link[PBSmapping]{importPolys}} \cr
+  \code{\link[PBSmapping]{importLocs}}, \code{\link[PBSmapping]{importPolys}}, 
+  \code{\link[PBSmapping]{placeHoles}} \cr
   In the package \pkg{sp}, see the function \code{\link[sp]{point.in.polygon}}
 }
 \keyword{file}

@@ -6005,6 +6005,8 @@ placeHoles = function(polyset, minVerts=3) {
 		.Call("R_point_in_polygon_sp", as.numeric(hole$X), as.numeric(hole$Y), 
 			as.numeric(solid$X), as.numeric(solid$Y), PACKAGE = "sp")
 	}
+	# initialization
+	.checkRDeps("placeHoles", c("sp"))
 	newpoly = list(); newpoly = NULL
 	pid = sort(unique(polyset$PID))
 	for (i in pid) {
@@ -6029,13 +6031,11 @@ placeHoles = function(polyset, minVerts=3) {
 			hsids = orphans
 		}
 	}
-	#attr(newpoly, "PolyData") = NULL; attr(newpoly, "orbits") = NULL  #testing
 	Natts = names(attributes(polyset))
 	natts = names(attributes(newpoly))
 	Datts = setdiff(Natts,natts)
 	Aatts = attributes(polyset)[Datts]
 	attributes(newpoly) = c(attributes(newpoly),Aatts)
-#browser();return()
 	return(newpoly) }
 #---------------------------------------placeHoles
 
