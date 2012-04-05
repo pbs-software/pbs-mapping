@@ -5779,7 +5779,7 @@ thinPolys <- function(polys, tol = 1, filter = 3)
   }
 }
 
-#importShapefile------------------------2010-06-01
+#importShapefile------------------------2012-04-04
 # importShapefile (Nick Boers)
 # This function has several slow parts:
 # 1) conversion of the matrix (verts) to X and Y columns in a data frame
@@ -5788,8 +5788,11 @@ thinPolys <- function(polys, tol = 1, filter = 3)
 #   Nick's loop to extract data from 'shapeList' has been replaced
 #     by Rowan's series of 'sapply' calls.
 #   Rowan added check for polygons with 0 vertices.
+# 2012-04-04: Rowan created function 'placeHoles' 
+#   to place holes under correct solids.
 #--------------------------------------------NB/RH
-importShapefile <- function (fn, readDBF = TRUE, projection = NULL, zone = NULL)
+importShapefile <- function (fn, readDBF=TRUE, projection=NULL, zone=NULL, 
+     placeholes=FALSE, minverts=3)
 {
 	# initialization
 	.checkRDeps("importShapefile", c("maptools", "foreign"))
@@ -5859,13 +5862,18 @@ importShapefile <- function (fn, readDBF = TRUE, projection = NULL, zone = NULL)
 			# PolySet: polygons: reorder vertices for holes
 			or <- .calcOrientation (df)
 			# where "orientation" == -1, we need to reverse the POS
-			or$orientation <- or$orientation == -1
-			if (any(or$orientation)) {
+			or$solid <- is.element(or$orientation,1); or$hole <- !or$solid
+			if (any(or$hole)) {
 				or$nv <- nv
-				toFix <- rep(or$orientation, times=or$nv)
-				o <- or$nv[or$orientation]
+				toFix <- rep(or$hole, times=or$nv)
+				o <- or$nv[or$hole]
 				newPOS <- unlist(lapply(lapply(split(o, 1:length(o)), "seq"), "rev"))
 				df[toFix, "POS"] <- newPOS  }
+			
+			if (placeholes) {
+				# Fix to the problem where ArcPew does not put solid shapes before holes
+				df = placeHoles(df,minVerts=minverts)
+			}
 		}
 		class(df) <- c("PolySet", class(df))
 	} else if (shpType == 1) {  # EventData
@@ -5988,5 +5996,47 @@ makeTopography <- function (dat, digits=2, func=NULL) {
 	result$x = x; result$y = y; result$z = z
 	return(result) }
 
+#placeHoles-----------------------------2012-04-05
+# Place holes under correct solids.
+#-----------------------------------------------RH
+placeHoles = function(polyset, minVerts=3) {
+	
+	is.in =function(hole,solid) {
+		.Call("R_point_in_polygon_sp", as.numeric(hole$X), as.numeric(hole$Y), 
+			as.numeric(solid$X), as.numeric(solid$Y), PACKAGE = "sp")
+	}
+	newpoly = list(); newpoly = NULL
+	pid = sort(unique(polyset$PID))
+	for (i in pid) {
+		ipoly = polyset[is.element(polyset$PID,i),]
+		orien = .calcOrientation (ipoly)
+		zsols = is.element(orien$orientation,1)
+		ssids = orien$SID[zsols]
+		hsids = orien$SID[!zsols]
+		for (s in ssids) {
+			orphans = adopted = NULL
+			spoly = ipoly[is.element(ipoly$SID,s),]
+			newpoly = rbind(newpoly, spoly)
+			if (length(hsids)==0) next
+			for (h in hsids) {
+				hpoly = ipoly[is.element(ipoly$SID,h),]
+				if (nrow(hpoly) < minVerts) next
+				io = is.in(hpoly,spoly)
+				if (any(io==0)) orphans = c(orphans,h)
+				else adopted = c(adopted, h)
+			}
+			newpoly = rbind(newpoly, ipoly[is.element(ipoly$SID,adopted),])
+			hsids = orphans
+		}
+	}
+	#attr(newpoly, "PolyData") = NULL; attr(newpoly, "orbits") = NULL  #testing
+	Natts = names(attributes(polyset))
+	natts = names(attributes(newpoly))
+	Datts = setdiff(Natts,natts)
+	Aatts = attributes(polyset)[Datts]
+	attributes(newpoly) = c(attributes(newpoly),Aatts)
+#browser();return()
+	return(newpoly) }
+#---------------------------------------placeHoles
 
 

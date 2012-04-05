@@ -25,3 +25,5 @@ export(.mat2df)
 #import(
 #  some package
 #)
+#importFrom(sp, point.in.polygon)
+
