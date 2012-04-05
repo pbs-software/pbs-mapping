@@ -3,7 +3,16 @@ PBSmapping Changes
 Authors: JTS = Jon T. Schnute           RH  = Rowan Haigh
          NB  = Nicholas Boers           ACB = Alex Couture-Beil
 
+2.63  2012-04-05  Authors
+  - Modified function 'importShapefile' to optionally use 'placeHoles' for fixing mismatched holes and solids (RH 4/4)
+  - Added new function 'placeHoles' to fix problem of mismatched holes and solids from ArcView. (RH 4/4)
+  - Bumped up the version number to distinguish the revisions under way from the version currently on CRAN. (RH 4/4)
+
 2.62  2012-03-01  Authors
+  - Fixed source code problems identified by Brian Ripley. (NB 3/1)
+	Compiled code should not call functions which might terminate R nor write to stdout/stderr instead of to the console.
+	The detected symbols are linked into the code but might come from libraries and not actually be called.
+	Please fix (especially the call to exit).
   - Resolved partial argument matching in functions identified by Brian Ripley. (RH 3/1)
   - Cleaned up various files in preparation for submission to CRAN. (RH 2/29)
   - Added further conditional compilation to gshhs.[ch] to address warnings in Windows OS. (NB 2/28)

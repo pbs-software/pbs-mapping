@@ -1,6 +1,6 @@
 Package: PBSmapping
-Version: 2.62
-Date: 2012-03-01
+Version: 2.63
+Date: 2012-04-05
 Title: Mapping Fisheries Data and Spatial Analysis Tools
 Author: Jon T. Schnute <jon.schnute@dfo-mpo.gc.ca>,
         Nicholas Boers <boersn@macewan.ca>, and
@@ -8,7 +8,7 @@ Author: Jon T. Schnute <jon.schnute@dfo-mpo.gc.ca>,
 Maintainer: Jon Schnute <Jon.Schnute@dfo-mpo.gc.ca>
 Depends: R (>= 2.12.0)
 Suggests: foreign, maptools, deldir
-Description: This 	software has evolved from fisheries research
+Description: This software has evolved from fisheries research
         conducted at the Pacific Biological Station (PBS) in Nanaimo,
         British Columbia, Canada. It extends the R language to include
         two-dimensional plotting features similar to those commonly
