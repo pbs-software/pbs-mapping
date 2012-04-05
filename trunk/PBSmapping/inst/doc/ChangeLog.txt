@@ -4,7 +4,8 @@ Authors: JTS = Jon T. Schnute           RH  = Rowan Haigh
          NB  = Nicholas Boers           ACB = Alex Couture-Beil
 
 2.63  2012-04-05  Authors
-  - Modified function 'importShapefile' to optionally use 'placeHoles' for fixing mismatched holes and solids (RH 4/4)
+  - Modified function 'placeHoles' to .Call("R_point_in_polygon_sp", ..., PACKAGE="sp"); still need to load package 'sp'. (RH 4/5)
+  - Modified function 'importShapefile' to optionally use 'placeHoles' for fixing mismatched holes and solids. (RH 4/4)
   - Added new function 'placeHoles' to fix problem of mismatched holes and solids from ArcView. (RH 4/4)
   - Bumped up the version number to distinguish the revisions under way from the version currently on CRAN. (RH 4/4)
 
