@@ -22,8 +22,10 @@ exportPattern("^\\.validate")
 export(.mat2df)
 
 # Import all packages listed as Imports or Depends
-#import(
-#  some package
-#)
+#import( some package )
 #importFrom(sp, point.in.polygon)
+#importFrom(maptools, getinfo.shape, readShapeSpatial)
+
+#useDynLib(sp, R_point_in_polygon_sp) # doesn't work
+#useDynLib(maptools, Rshapeget) # doesn't work
 
