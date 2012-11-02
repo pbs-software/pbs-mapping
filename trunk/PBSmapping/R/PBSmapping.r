@@ -5810,7 +5810,7 @@ importShapefile <- function (fn, readDBF=TRUE, projection=NULL, zone=NULL,
 		"the shapefile.\n", sep=""))
 
 	# read shapefile
-	shapeList <- .Call("Rshapeget",as.character(fn),as.logical(FALSE),PACKAGE = "maptools")
+	eval(parse(text="shapeList <- .Call(\"Rshapeget\",as.character(fn),as.logical(FALSE),PACKAGE = \"maptools\")"))
 	if (length(shapeList) < 1)
 		stop("The shapefile is empty or an error occurred while importing.\n")
 	shpType=unique(sapply(shapeList,function(x){x$shp.type}))
@@ -6002,8 +6002,7 @@ makeTopography <- function (dat, digits=2, func=NULL) {
 placeHoles = function(polyset, minVerts=3) {
 	
 	is.in =function(hole,solid) {
-		.Call("R_point_in_polygon_sp", as.numeric(hole$X), as.numeric(hole$Y), 
-			as.numeric(solid$X), as.numeric(solid$Y), PACKAGE = "sp")
+		eval(parse(text=".Call(\"R_point_in_polygon_sp\", as.numeric(hole$X), as.numeric(hole$Y), as.numeric(solid$X), as.numeric(solid$Y), PACKAGE = \"sp\")"))
 	}
 	# initialization
 	.checkRDeps("placeHoles", c("sp"))

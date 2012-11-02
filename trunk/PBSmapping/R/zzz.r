@@ -5,7 +5,7 @@
 	if( is.character( pkg_info$Packaged ) )
 		pkg_date <- strsplit( pkg_info$Packaged, " " )[[1]][1]
 	else
-		pkg_date  <- "unkown"
+		pkg_date  <- date()
 	
 	userguide_path <- system.file( "doc/PBSmapping-UG.pdf", package = "PBSmapping")
 	
@@ -21,13 +21,25 @@ it under certain conditions, as outlined in the above file.
 A complete user guide 'PBSmapping-UG.pdf' is located at 
 ", userguide_path, "
 
-To see demos, type '.PBSfigs()'.
-
 Packaged on ", pkg_date, "
 Pacific Biological Station, Nanaimo
------------------------------------------------------------
 
+All available PBS packages can be found at
+http://code.google.com/p/pbs-software/
+
+To see demos, type '.PBSfigs()'.
+-----------------------------------------------------------
 
 ")
 }
+# No Visible Bindings
+# ===================
+if(getRversion() >= "2.15.1") utils::globalVariables(names=c(
+	"bcBathymetry",
+	"nepacLL","nepacLLhigh",
+	"PBSval","pythagoras",
+	"surveyData",
+	"towData","towTracks",
+	"worldLL"),
+	package="PBSmapping")
 
