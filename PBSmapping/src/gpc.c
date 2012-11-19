@@ -11,7 +11,7 @@ Author:    Alan Murta (email: gpc@cs.man.ac.uk)
 Version:   2.31
 Date:      4th June 1999
 
-Copyright: (C) 1997-1999, Advanced Interfaces Group,
+Copyright: (C) 1997-2012, Advanced Interfaces Group,
            University of Manchester.
 
            This software is free for non-commercial use. It may be copied,

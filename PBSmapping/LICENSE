@@ -1,0 +1,24 @@
+The software tools in PBSmapping are covered by the 
+Gnu General Public License:
+http://www.gnu.org/licenses/gpl.html
+
+EXCEPT for the General Polygon Clipper (GPC) routine which is covered by the
+license information at the University of Manchester:
+http://www.cs.man.ac.uk/~toby/gpc/#Licensing
+
+The GPC library is free for NON-COMMERCIAL use only.
+If you wish to use GPC in support of a commercial product,
+you must obtain an official GPC Commercial Use Licence from 
+The University of Manchester.
+
+GPC Copyright: (C) 1997-2012, Advanced Interfaces Group,
+               University of Manchester.
+GPC Author:    Alan Murta (email: gpc@cs.man.ac.uk)
+GPC Licencing  Manager: Toby Howard
+GPC Source:    See the files `gpc.c' and `gpc.h' for additional details.
+               The GPC routine is used in the PBSmapping function `joinPolys'.
+
+Details on source code other than that for the GPC routine 
+can be found in individual source files.
+
+
