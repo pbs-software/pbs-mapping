@@ -1,4 +1,4 @@
-The software tools in PBSmapping are covered by the 
+Most of the software tools in PBSmapping are covered by the 
 Gnu General Public License:
 http://www.gnu.org/licenses/gpl.html
 
@@ -15,10 +15,8 @@ GPC Copyright: (C) 1997-2012, Advanced Interfaces Group,
                University of Manchester.
 GPC Author:    Alan Murta (email: gpc@cs.man.ac.uk)
 GPC Licencing  Manager: Toby Howard
-GPC Source:    See the files `gpc.c' and `gpc.h' for additional details.
-               The GPC routine is used in the PBSmapping function `joinPolys'.
+GPC Usage:     The GPC routine is used in the PBSmapping function `joinPolys'.
 
-Details on source code other than that for the GPC routine 
-can be found in individual source files.
-
+Copyright details on source code can be found in individual source files.
+For the GPC library specifically, see the files `gpc.c' and `gpc.h'.
 
