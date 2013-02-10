@@ -2262,37 +2262,51 @@ addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
     return (NULL);
   }
 
+  # valid columns for PolyProps (described in ?lines under ...)
+  pPropsCols <- c("lty", "lwd", "col", "pch", "lend", "ljoin", "lmitre", "type")
+  
   # validate the polyProps argument
-  polyProps <- .validatePolyProps(polyProps, parCols = c("col", "lty"));
+  polyProps <- .validatePolyProps(polyProps, parCols = pPropsCols);
   if (is.character(polyProps))
     stop(paste("Invalid PolyData 'polyProps'.\n", polyProps, sep=""));
-
-  # names(NULL) == NULL, so first test is safe
   if (is.element("SID", names(polyProps))
       && !is.element("SID", names(polys))) {
     stop(
-"No polygons to plot since 'polyProps' contains SIDs but 'polys' does not.\n");
+"No lines to plot since 'polyProps' contains SIDs but 'polys' does not.\n");
   }
 
-  # build values for 'polyProps'
-  parValues <- list(col = 1, lty = par("lty"));
+  # obtain default values for 'polyProps'
+  parValues <- append(par(setdiff(pPropsCols, "type")), list(type="l"))
   # don't replace attributes already in 'polyProps' with default values
-  parValues <- parValues[setdiff(names(parValues), names(polyProps))];
-
+  parValues <- parValues[setdiff(names(parValues), names(polyProps))]
+  # use this function's arguments to override defaults; look into
+  # ..., too, and evaluate statements like
+  #   if (!is.null(list(...)$lwd)) parValues[[\"lwd\"]] <- list(...)$lwd;
   if (!is.null(col)) parValues[["col"]] <- col;
   if (!is.null(lty)) parValues[["lty"]] <- lty;
+  pPropsColsTmp <- setdiff(pPropsCols, c("col", "lty"));
+  expr <- paste("if (!is.null(list(...)$", pPropsColsTmp,
+                ")) parValues[[\"", pPropsColsTmp,
+                "\"]] <- list(...)$", pPropsColsTmp,
+                sep="", collapse="; ");
+  eval(parse(text=expr))
 
   # adds an SID column to 'polyProps' if one exists in 'polys'
   polyProps <- .preparePolyProps(polys$PID, polys$SID, polyProps);
 
-  # flesh out 'polyProps' columns
+  # flesh out 'polyProps' columns (add parValues to polyProps, cycling by PID)
   if (length(parValues) > 0)
     polyProps <- .addProps(type = "p", polyProps = polyProps, parValues);
   polyPropsReturn <- polyProps;
 
   # create an index for the properties
-  polyProps$props <- paste(polyProps$col, polyProps$lty);
-
+  # use an expression like
+  #   polyProps$props <- paste(polyProps$lty, polyProps$lwd, ..., sep = "-");
+  expr <- paste("polyProps$props <- paste(",
+                paste("polyProps$", pPropsCols, sep="", collapse=", "),
+                ", sep=\"-\")", sep="");
+  eval(parse(text=expr));
+  
   # determine if we can use "fast IDs" (i.e., no 'paste')
   fastIDdig <- .createFastIDdig(polysA=polys, polysB=polyProps,
                                 cols=c("PID", "SID"));
@@ -2301,28 +2315,29 @@ addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   polyProps$IDs <- .createIDs(polyProps, cols=c("PID", "SID"), fastIDdig);
   polyPropsIdx <- split(polyProps$IDs, polyProps$props);
 
-  # reduce before split
-  parCols <- c("col", "lty");
-  toSplit <- polyProps[!duplicated(polyProps$props), c(parCols, "props")];
-  res <- split(toSplit[, parCols], toSplit$props);
-
   # create an 'IDs' column for 'polys'
   polys$IDs <- .createIDs(polys, cols=c("PID", "SID"), fastIDdig);
 
+  # reduce before split
+  toSplit <- polyProps[!duplicated(polyProps$props), c(pPropsCols, "props")];
+  res <- split(toSplit[, pPropsCols], toSplit$props);
+  
   # create lists of X/Y vertices
   polyx <- split(polys$X, polys$IDs);
   polyy <- split(polys$Y, polys$IDs);
 
   for (prop in names(polyPropsIdx)) {
     toSet <- as.vector(res[prop][[1]]);
-    col <- as.vector(toSet$col);
-    lty <- as.vector(toSet$lty);
 
     # separate lines with NAs for plotting
     new.x <- .insertNAs(polyx, polyPropsIdx[[prop]]);
     new.y <- .insertNAs(polyy, polyPropsIdx[[prop]]);
-
-    lines(x = new.x, y = new.y, col = col, lty = lty, ...);
+    # when we call lines, set par values like
+    #   col = as.vector(toSet$col), lwd = as.vector(toSet$lwd), ...
+    eval(parse(text=paste("lines(x = new.x, y = new.y, ",
+                 paste(pPropsCols, " = as.vector(toSet$", pPropsCols, ")",
+                       sep="", collapse=", "), ")",
+                 sep="")))
   }
 
   # add to the class attribute
@@ -2469,7 +2484,7 @@ addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   for (p in setdiff(pPropsCols, "density")) {
     # create an expression like
     #   if (!is.null(angle)) pPropsDefaults[["angle"]] <- angle;
-    # for each of the properties and evalute it
+    # for each of the properties and evaluate it
     expr <- paste("if (!is.null(", p, ")) pPropsDefs[[\"", p, "\"]] <- ", p,
                   sep="");
     eval(parse(text=expr));
