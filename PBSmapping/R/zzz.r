@@ -1,6 +1,11 @@
 .onLoad <- function(lib, pkg)
 {
 	library.dynam("PBSmapping", pkg, lib);
+}
+
+.onAttach <- function(lib, pkg)
+{
+        # obtain values necessary for the start-up message
 	pkg_info <- utils::sessionInfo( package="PBSmapping" )$otherPkgs$PBSmapping
 	if( is.character( pkg_info$Packaged ) )
 		pkg_date <- strsplit( pkg_info$Packaged, " " )[[1]][1]
@@ -11,7 +16,7 @@
 	
 	packageStartupMessage("
 -----------------------------------------------------------
-PBS Mapping ", pkg_info$Version, " -- Copyright (C) 2003-2012 Fisheries and Oceans Canada
+PBS Mapping ", pkg_info$Version, " -- Copyright (C) 2003-2013 Fisheries and Oceans Canada
 
 PBS Mapping comes with ABSOLUTELY NO WARRANTY;
 for details see the file COPYING.
@@ -32,6 +37,7 @@ To see demos, type '.PBSfigs()'.
 
 ")
 }
+
 # No Visible Bindings
 # ===================
 if(getRversion() >= "2.15.1") utils::globalVariables(names=c(

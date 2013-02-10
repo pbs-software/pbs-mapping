@@ -1,5 +1,5 @@
 #==============================================================================
-# Copyright (C) 2003-2012  Fisheries and Oceans Canada
+# Copyright (C) 2003-2013  Fisheries and Oceans Canada
 # Nanaimo, British Columbia
 # This file is part of PBS Mapping.
 #
@@ -31,11 +31,6 @@
 # Authors:
 #   Specifications: Jon Schnute, Nicholas Boers, Rowan Haigh
 #   Code:           Nicholas Boers (and others as documented)
-#
-# Known Problems:
-#   - sp conversions (.pbsproj, SpatialPolygons2PolySet, SpatialLines2PolySet,
-#     SpatialPoints2EventData) incomplete and commented out at the end of this
-#     file.
 #
 # Change Log:
 #    See PBSmapping/ChangeLog
