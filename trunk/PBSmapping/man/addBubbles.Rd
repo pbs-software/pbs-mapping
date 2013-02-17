@@ -10,7 +10,7 @@
 }
 \usage{
 addBubbles(events, type=c("perceptual","surface","volume"),
-   z.max=NULL, max.size=0.8, symbol.zero="+",
+   z.max=NULL, min.size = 0, max.size=0.8, symbol.zero="+",
    symbol.fg=rgb(0,0,0,0.6), symbol.bg=rgb(0,0,0,0.3),
    legend.pos="bottomleft", legend.breaks=NULL,
    show.actual=FALSE, legend.type=c("nested","horiz","vert"),
@@ -24,17 +24,27 @@ addBubbles(events, type=c("perceptual","surface","volume"),
   \item{z.max}{maximum value for z (default = \code{max(events$Z)});
     determines the largest bubble; keeps the same legend for different
     maps.}
+  \item{min.size}{minimum size (inches) for a bubble representing
+    \code{min(events$Z)}.  The legend may not actually include a bubble of
+    this size because the calculated legend.breaks does not include the
+    \code{min(events$Z)}.}
   \item{max.size}{maximum size (inches) for a bubble representing
     \code{z.max}.  A legend bubble may exceed this size when
     \code{show.actual} is \code{FALSE} (on account of using
     \code{pretty(\dots)}).}
   \item{symbol.zero}{symbol to represent z-values equal to 0.}
   \item{symbol.fg}{bubble outline (border) colour.}
-  \item{symbol.bg}{bubble interior (fill) colour.}
+  \item{symbol.bg}{bubble interior (fill) colour.  If a vector, the
+    first element represents \code{min(legend.breaks)} and the last
+    element represents \code{max(legend.breaks)}; colours are interpolated
+    for values of \code{events$Z} between those boundaries.  For values
+    outside of those boundaries, interiors remain unfilled.}
   \item{legend.pos}{position for the legend.}
   \item{legend.breaks}{break values for categorizing the z-values.
    The automatic method should work if zeroes are present;
-   otherwise, you can specify your own break values for the legend.}
+   otherwise, you can specify your own break values for the legend.
+   If a single number, specifies the number of breaks; if a vector,
+   specifies the breaks.}
   \item{show.actual}{logical; if \code{FALSE}, legend values are
     obtained using \code{pretty(\dots)}, and consequently, the largest
     bubble may be larger than \code{z.max}.  If \code{TRUE}, the largest
@@ -72,12 +82,24 @@ addBubbles(events, type=c("perceptual","surface","volume"),
   \code{\link[PBSmapping]{addPolys}}, \code{\link[PBSmapping]{surveyData}}
 }
 \examples{
+#--- common code for both examples below
 require(PBSmapping)
 data(nepacLL,surveyData)
+surveyData$Z <- surveyData$catch
+
+#--- plot a version that only varies the size
 plotMap(nepacLL, xlim=c(-131.8,-127.2), ylim=c(50.5,52.7),
   col="gainsboro",plt=c(.08,.99,.08,.99))
-surveyData$Z <- surveyData$catch
 addBubbles(surveyData, symbol.bg=rgb(.9,.5,0,.6),
   legend.type="nested", symbol.zero="+", col="grey")
+
+#--- plot a version that uses different symbol colours
+plotMap(nepacLL, xlim=c(-131.8,-127.2), ylim=c(50.5,52.7),
+  col="gainsboro",plt=c(.08,.99,.08,.99))
+subset <- surveyData[surveyData$Z <= 1000, ]
+addBubbles(subset, symbol.bg=c("red", "yellow", "green"),
+  legend.type="horiz",
+  legend.breaks=pretty(range(subset$Z), n=11),
+  symbol.zero=FALSE, col="grey", min.size=0.1, max.size=0.4)
 }
 \keyword{aplot}
