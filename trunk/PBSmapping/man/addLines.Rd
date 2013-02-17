@@ -7,7 +7,7 @@
 }
 \usage{
 addLines (polys, xlim = NULL, ylim = NULL,
-    polyProps = NULL, lty = NULL, col = NULL, \dots)
+    polyProps = NULL, lty = NULL, col = NULL, arrows = FALSE, \dots)
 }
 \arguments{
   \item{polys}{\link{PolySet} to add (\emph{required}).}
@@ -18,6 +18,9 @@ addLines (polys, xlim = NULL, ylim = NULL,
     supersede these data.}
   \item{lty}{vector of line types (cycled by \code{PID}).}
   \item{col}{vector of colours (cycled by \code{PID}).}
+  \item{arrows}{Boolean value; if \code{TRUE}, add arrows using the
+    \link{arrows} function and consider the arguments \code{angle},
+    \code{length}, and \code{code}.}
   \item{\dots}{additional \code{\link{par}} parameters for the
     \code{\link{lines}} function.}
 }

@@ -1481,7 +1481,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
 
 #==============================================================================
 # Default for 'projection' must be logical type.
-# For 'plotPoints()', 'cex'and 'pch' are art of '...' -- and they may equal
+# For 'plotPoints()', 'cex'and 'pch' are part of '...' -- and they may equal
 # NULL; when they equal NULL, don't try adding them to par()!
 .plotMaps <- function(polys, xlim, ylim, projection, plt, polyProps,
                       border, lty, col, colHoles, density, angle, bg,
@@ -2278,7 +2278,7 @@ addLabels <- function(data, xlim = NULL, ylim = NULL, polyProps = NULL,
 #  '...' contains arguments for the 'lines()' function
 #---------------------------------------------------------NB
 addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
-                     lty = NULL, col = NULL, ...)
+                     lty = NULL, col = NULL, arrows = FALSE, ...)
 {
   # check 'polys'
   polys <- .validatePolySet(polys);
@@ -2307,8 +2307,15 @@ addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
     return (NULL);
   }
 
-  # valid columns for PolyProps (described in ?lines under ...)
-  pPropsCols <- c("lty", "lwd", "col", "pch", "lend", "ljoin", "lmitre", "type")
+  # valid columns for PolyProps (described in ?lines under ... and in ?arrows)
+  if (arrows)
+    pPropsCols <- c("lty", "lwd", "col", "pch", "lend", "ljoin", "lmitre",
+                    "angle", "length", "code")
+  else
+    pPropsCols <- c("lty", "lwd", "col", "pch", "lend", "ljoin", "lmitre",
+                    "type")
+  # properties that aren't included in par
+  nonParProps <- c("angle", "length", "code", "type")
   
   # validate the polyProps argument
   polyProps <- .validatePolyProps(polyProps, parCols = pPropsCols);
@@ -2320,18 +2327,19 @@ addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
 "No lines to plot since 'polyProps' contains SIDs but 'polys' does not.\n");
   }
 
-  # obtain default values for 'polyProps'
-  parValues <- append(par(setdiff(pPropsCols, "type")), list(type="l"))
+  # obtain default values for 'polyProps': !par values from ?lines/?arrows
+  propDefaults <- append(par(setdiff(pPropsCols, nonParProps)),      # in par
+                         list(type="l",length=0.25,angle=30,code=2)) # !in par
   # don't replace attributes already in 'polyProps' with default values
-  parValues <- parValues[setdiff(names(parValues), names(polyProps))]
-  # use this function's arguments to override defaults; look into
-  # ..., too, and evaluate statements like
-  #   if (!is.null(list(...)$lwd)) parValues[[\"lwd\"]] <- list(...)$lwd;
-  if (!is.null(col)) parValues[["col"]] <- col;
-  if (!is.null(lty)) parValues[["lty"]] <- lty;
+  propDefaults <- propDefaults[setdiff(names(propDefaults), c(names(polyProps)))]
+  # use this function's arguments to override defaults obtained from par
+  if (!is.null(col)) propDefaults[["col"]] <- col;
+  if (!is.null(lty)) propDefaults[["lty"]] <- lty;
+  # look into ..., too, and evaluate statements like
+  #   if (!is.null(list(...)$lwd)) propDefaults[[\"lwd\"]] <- list(...)$lwd;
   pPropsColsTmp <- setdiff(pPropsCols, c("col", "lty"));
   expr <- paste("if (!is.null(list(...)$", pPropsColsTmp,
-                ")) parValues[[\"", pPropsColsTmp,
+                ")) propDefaults[[\"", pPropsColsTmp,
                 "\"]] <- list(...)$", pPropsColsTmp,
                 sep="", collapse="; ");
   eval(parse(text=expr))
@@ -2339,9 +2347,9 @@ addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   # adds an SID column to 'polyProps' if one exists in 'polys'
   polyProps <- .preparePolyProps(polys$PID, polys$SID, polyProps);
 
-  # flesh out 'polyProps' columns (add parValues to polyProps, cycling by PID)
-  if (length(parValues) > 0)
-    polyProps <- .addProps(type = "p", polyProps = polyProps, parValues);
+  # flesh out 'polyProps' columns (add propDefaults to polyProps, cycling by PID)
+  if (length(propDefaults) > 0)
+    polyProps <- .addProps(type = "p", polyProps = polyProps, propDefaults);
   polyPropsReturn <- polyProps;
 
   # create an index for the properties
@@ -2374,15 +2382,28 @@ addLines <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
   for (prop in names(polyPropsIdx)) {
     toSet <- as.vector(res[prop][[1]]);
 
-    # separate lines with NAs for plotting
+    # separate lines with NAs for plotting;
+    # for arrows, a start/end of NA does not produce a warning/error
     new.x <- .insertNAs(polyx, polyPropsIdx[[prop]]);
     new.y <- .insertNAs(polyy, polyPropsIdx[[prop]]);
+
     # when we call lines, set par values like
     #   col = as.vector(toSet$col), lwd = as.vector(toSet$lwd), ...
-    eval(parse(text=paste("lines(x = new.x, y = new.y, ",
-                 paste(pPropsCols, " = as.vector(toSet$", pPropsCols, ")",
-                       sep="", collapse=", "), ")",
-                 sep="")))
+    if (arrows) {
+      eval(parse(text=paste("arrows(",
+                   "x0 = new.x[1:(length(new.x)-1)], ",
+                   "y0 = new.y[1:(length(new.y)-1)], ",
+                   "x1 = new.x[2:length(new.x)], ",
+                   "y1 = new.y[2:length(new.y)], ",
+                   paste(pPropsCols, " = as.vector(toSet$", pPropsCols, ")",
+                         sep="", collapse=", "), ")",
+                   sep="")))
+    } else {
+      eval(parse(text=paste("lines(x = new.x, y = new.y, ",
+                   paste(pPropsCols, " = as.vector(toSet$", pPropsCols, ")",
+                         sep="", collapse=", "), ")",
+                   sep="")))
+    }
   }
 
   # add to the class attribute
