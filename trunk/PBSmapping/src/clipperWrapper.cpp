@@ -170,8 +170,8 @@ getNextPolygon (struct PolySetState &pset, long double scaleFactor, Sint &pid)
 
 	/* push integer points onto the vector */
 	p[polyNum].push_back(
-		     IntPoint((int64_t)(pset.X[pset.nextStart] * scaleFactor),
-			      (int64_t)(pset.Y[pset.nextStart] * scaleFactor)));
+		     IntPoint((long64)(pset.X[pset.nextStart] * scaleFactor),
+			      (long64)(pset.Y[pset.nextStart] * scaleFactor)));
 
 	pset.nextStart++;
     } while (pset.nextStart < pset.n && pset.PID[pset.nextStart] == lastPID);
@@ -384,7 +384,7 @@ countPolygons (Sint *pid, Sint *sid, Sint n, int onlyPID)
 static int
 determineScale (const Sfloat *f, Sint n)
 {
-    uint64_t mask = ~0;
+    ulong64 mask = ~(0LL);
     int count = 0;
 
     /* if n == 0; won't clear any bits in mask and it will return 63 */
@@ -393,12 +393,12 @@ determineScale (const Sfloat *f, Sint n)
        64-bit integer, and clear the value's set bits from 'mask'; in the
        end, the set bits in mask were never needed by a value */
     for (int i = 0; i < n; i++) {
-	uint64_t val = llabs(*f++);
+	ulong64 val = llabs(*f++);
 	mask &= ~val;
     }
 
     /* count the most-significant set bits */
-    while (mask & ((uint64_t)1 << 63)) {
+    while (mask & ((ulong64)1 << 63)) {
 	count++;
 	mask <<= 1;
     }

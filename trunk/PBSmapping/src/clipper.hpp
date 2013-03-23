@@ -40,6 +40,8 @@
 #include <cstdlib>
 #include <ostream>
 
+#include <stdint.h>
+
 namespace ClipperLib {
 
 enum ClipType { ctIntersection, ctUnion, ctDifference, ctXor };
