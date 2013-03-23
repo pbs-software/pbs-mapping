@@ -5,7 +5,7 @@
   Join one or two \link{PolySet}s using a logic operation.
 }
 \usage{
-joinPolys(polysA,polysB=NULL,operation="INT",maxVert=1e+05)
+joinPolys(polysA,polysB=NULL,operation="INT")
 }
 \arguments{
   \item{polysA}{\link{PolySet} to join.}
@@ -13,14 +13,15 @@ joinPolys(polysA,polysB=NULL,operation="INT",maxVert=1e+05)
   \item{operation}{one of \code{"DIFF"}, \code{"INT"}, \code{"UNION"},
     or \code{"XOR"}, representing difference, intersection, union, and
     exclusive-or, respectively.}
-  \item{maxVert}{estimated maximum number of vertices in the output
-    \link{PolySet}.}
 }
 \details{
-  This function interfaces with the General Polygon Clipper library
-  (\url{http://www.cs.man.ac.uk/aig/staff/alan/software/}) produced by
-  Alan Murta at the University of Manchester.  Consequently, we adopt
-  some of his terminology in the details below.
+  This function now (Mar. 2013) interfaces with the Clipper library
+  (\url{http://www.angusj.com/delphi/clipper.php}) developed by Angus
+  Johnson.  Previously, it interfaced with the General Polygon Clipper
+  library (\url{http://www.cs.man.ac.uk/aig/staff/alan/software/}) by
+  Alan Murta at the University of Manchester.  We keep this historic
+  reference to GPC because \link{joinPolys} remains faithful to Murta's
+  definition of a generic polygon, which we describe below.
   
   Murta (2004) defines a \emph{generic polygon} (or \emph{polygon set})
   as zero or more disjoint boundaries of arbitrary configuration.  He

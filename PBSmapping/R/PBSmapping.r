@@ -4843,137 +4843,66 @@ isIntersecting <- function(polys, numericResult = FALSE)
 }
 
 #==============================================================================
-# operation is one of: DIFF, INT, XOR, UNION
-joinPolys <- function(polysA, polysB = NULL, operation = "INT", maxVert=1e+05)
+joinPolys <- function(polysA, polysB = NULL, operation = "INT")
 {
-  polysA <- .validatePolySet(polysA);
+  polysA <- .validatePolySet(polysA)
   if (is.character(polysA))
-    stop(paste("Invalid PolySet 'polysA'.\n", polysA, sep=""));
+    stop(paste("Invalid PolySet 'polysA'.\n", polysA, sep=""))
 
   if (!is.null(polysB)) {
-    polysB <- .validatePolySet(polysB);
+    polysB <- .validatePolySet(polysB)
     if (is.character(polysB))
-      stop(paste("Invalid PolySet 'polysB'.\n", polysB, sep=""));
+      stop(paste("Invalid PolySet 'polysB'.\n", polysB, sep=""))
   }
 
-  validOps <- c("DIFF", "INT", "XOR", "UNION");
+  validOps <- c("INT", "UNION", "DIFF", "XOR")
   if (!is.element(operation, validOps)) {
     stop(paste(
 "Invalid \"operation.\"  Must be one of: ", paste(validOps, collapse=", "),
-"\n"));
+"\n"))
   }
-  op <- which(is.element(validOps, operation)) - 1;
+  op <- which(is.element(validOps, operation)) - 1
 
-  # create the data structures that the C function expects
-  subRows <- nrow(polysA);
+  inputHasSID <- is.element("SID", names(polysA))
   if (!is.element("SID", names(polysA))) {
-    subID <- c(polysA$PID, integer(length = subRows), polysA$POS);
-  } else {
-    subID <- c(polysA$PID, polysA$SID, polysA$POS);
+    polysA$SID <- 1
   }
-  subXY <- c(polysA$X, polysA$Y);
-
-  # create the data structures that the C function expects
-  if (!is.null(polysB)) {
-    clipRows <- nrow(polysB);
-    if (!is.element("SID", names(polysB))) {
-      clipID <- c(polysB$PID, integer(length = clipRows), polysB$POS);
-    } else {
-      clipID <- c(polysB$PID, polysB$SID, polysB$POS);
-    }
-    clipXY <- c(polysB$X, polysB$Y);
+  if (!is.element("SID", names(polysB))) {
+    polysB$SID <- 1
   }
-  else {
-    clipRows <- 0;
-    clipID <- NULL;
-    clipXY <- NULL;
-  }
-
-  outCapacity <- maxVert;
 
   # call the C function
-  results <- .C("joinPolys",
-                operation = as.integer(op),
-                subID = as.integer(subID),
-                subXY = as.double(subXY),
-                subVerts = as.integer(subRows),
-                clipID = as.integer(clipID),
-                clipXY = as.double(clipXY),
-                clipVerts = as.integer(clipRows),
-                outID = integer(3 * outCapacity),
-                outXY = double(2 * outCapacity),
-                outRows = as.integer(outCapacity),
-                outStatus = integer(1),
-                PACKAGE = "PBSmapping");
-  # note: outRows is set to how much space is allocated -- the C function
-  #       should take this into consideration
+  results <- .Call("joinPolys",
+                   operation = as.integer(op),
+                   sPID = as.integer(polysA$PID),
+                   sSID = as.integer(polysA$SID),
+                   sPOS = as.integer(polysA$POS),
+                   sX   = as.numeric(polysA$X),
+                   sY   = as.numeric(polysA$Y),
+                   cPID = as.integer(polysB$PID),
+                   cSID = as.integer(polysB$SID),
+                   cPOS = as.integer(polysB$POS),
+                   cX   = as.numeric(polysB$X),
+                   cY   = as.numeric(polysB$Y),
+                   PACKAGE = "PBSmapping")
 
-  if (results$outStatus == 1) {
-    stop(paste(
-"Insufficient physical memory for processing.",
-"Try reducing this function's 'maxVerts' argument to reduce its memory",
-"requirements.\n",
-               sep="\n"));
-  }
-  if (results$outStatus == 2) {
-    stop(paste(
-"Insufficient memory allocated for output.",
-"Try increasing this function's 'maxVerts' argument to increase the memory",
-"that it allocates for the output.\n",
-               sep = "\n"));
-  }
-  if (results$outStatus == 3) {
-    stop(paste(
-"While processing the results, the program encountered an already processed",
-"hole.  A bug or an invalid PolySet may have caused this behaviour.  Please",
-"upgrade to the latest version of the software and check the PolySet, and",
-"if the problem persists, please file a bug report.\n",
-               sep = "\n"));
-  }
-  if (results$outStatus == 4) {
-    stop(paste(
-"While processing the results, the program skipped a hole.  A bug or an",
-"invalid PolySet may have caused this behaviour.  Please upgrade to the",
-"latest version of the software and check the PolySet, and if the problem",
-"persists, please file a bug report.\n",
-               sep = "\n"));
-  }
-  if (results$outStatus == 5) {
-    stop(
-"The required PolySet 'polysA' is missing.\n");
-  }
-  if (results$outStatus == 6) {
-    stop(paste(
-"PolySet 'polysA' must contain more than one unique PID when not specifying",
-"'polysB'.\n", sep="\n"));
-  }
-
-  # determine the number of rows in the result
-  outRows <- as.vector(results$outRows);
-
-  # extract the data from the C function results
-  if (outRows > 0) {
-    d <- data.frame(PID = results$outID[1:outRows],
-                    SID = results$outID[(outCapacity+1):(outCapacity+outRows)],
-                    POS = results$outID[(2*outCapacity+1):(2*outCapacity+outRows)],
-                    X = results$outXY[1:outRows],
-                    Y = results$outXY[(outCapacity+1):(outCapacity+outRows)]);
-
+  if (nrow(results) > 0) {
     # the C routine might add an SID column when one previously didn't
     # exist...
-    if (!is.element("SID", names(polysA)) && all(d$SID == 1))
-      d$SID <- NULL;
+    if (!inputHasSID && all(results$SID == 1)) {
+      results$SID <- NULL
+    }
 
     # copy the 'projection' and 'zone' attribute from the input
-    attr(d, "projection") <- attr(polysA, "projection");
-    attr(d, "zone") <- attr(polysA, "zone");
+    attr(results, "projection") <- attr(polysA, "projection")
+    attr(results, "zone") <- attr(polysA, "zone")
 
-    if (!is.PolySet(d, fullValidation = FALSE))
-      class(d) <- c("PolySet", class(d));
+    if (!is.PolySet(results, fullValidation = FALSE))
+      class(results) <- c("PolySet", class(results))
 
-    return(d);
+    return(results)
   } else {
-    return(NULL);
+    return(NULL)
   }
 }
 
