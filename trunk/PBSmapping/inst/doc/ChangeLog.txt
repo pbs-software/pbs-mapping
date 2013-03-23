@@ -3,6 +3,9 @@ PBSmapping Changes
 Authors: JTS = Jon T. Schnute           RH  = Rowan Haigh
          NB  = Nicholas Boers           ACB = Alex Couture-Beil
 
+2.63  2013-03-23
+  - Replaced the General Polygon Clipper (GPC) library with Clipper. (NB 03/23)
+
 2.63  2012-11-27
   - Finalised some tweaks to the files DESCRIPTION and LICENSE. (RH 11/27)
   - Updated 'PBSmapping-UG.pdf' slightly and set the resolution to 150 dpi. (RH 11/26)
