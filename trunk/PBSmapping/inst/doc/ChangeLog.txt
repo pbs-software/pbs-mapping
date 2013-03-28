@@ -1,12 +1,25 @@
 PBSmapping Changes
-==================
-Authors: JTS = Jon T. Schnute           RH  = Rowan Haigh
-         NB  = Nicholas Boers           ACB = Alex Couture-Beil
+===================================
+Authors:  JTS = Jon T. Schnute
+          NB  = Nicholas Boers
+          RH  = Rowan Haigh
+          ACB = Alex Couture-Beil
+-----------------------------------
 
-2.63  2013-03-23
-  - Replaced the General Polygon Clipper (GPC) library with Clipper. (NB 03/23)
+2.65  2013-03-28
+  - Address odd joinPoly output observed in Puget Sound. (NB 3/28)
+  - Updated Clipper from 5.1.3 to 5.1.4. (NB 3/28)
+  - Change Clipper line endings from DOS (\r\n) to UNIX (\n). (NB 3/23)
+  - Replaced the General Polygon Clipper (GPC) library with Clipper. (NB 3/23)
+  - Fix compilation problem on Windows. (NB 3/23)
+  - Support arrows with addLines. (NB 2/16)
+  - Support multiple bg colours, min.size arg, ... in addBubbles. (NB 2/16)
+  - Support additional fields in polyProps for addLines. (NB 2/10)
+  - Move start-up message to .onAttach (NB 2/10)
+  - In the process, updated copyright dates. (NB 2/10)
+  - Updated LICENSE file, based on suggestion from Kurt Hornik. Version advanced slightly. (JTS 11/28)
 
-2.63  2012-11-27
+2.64  2012-11-27
   - Finalised some tweaks to the files DESCRIPTION and LICENSE. (RH 11/27)
   - Updated 'PBSmapping-UG.pdf' slightly and set the resolution to 150 dpi. (RH 11/26)
   - Bumped up version for yet another submission to CRAN.

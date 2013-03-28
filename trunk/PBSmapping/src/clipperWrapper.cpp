@@ -176,6 +176,11 @@ getNextPolygon (struct PolySetState &pset, long double scaleFactor, Sint &pid)
 	pset.nextStart++;
     } while (pset.nextStart < pset.n && pset.PID[pset.nextStart] == lastPID);
 
+    /* removes self-intersections from p that are created by our approach to
+       clipping, which maintains the original PID and does not introduce new
+       SIDs */
+    SimplifyPolygons(p, p);
+
     return (p);
 }
 
