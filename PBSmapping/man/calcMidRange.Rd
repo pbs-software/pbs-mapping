@@ -31,10 +31,13 @@ calcMidRange (polys, rollup = 3)
   \code{\link{calcSummary}}.
 }
 \examples{
-#--- load the data (if using R)
-if (!is.null(version$language) && (version$language == "R"))
-  data(nepacLL)
-#--- calculate and print the centroids for several polygons
-print(calcMidRange(nepacLL[is.element(nepacLL$PID, c(33, 39, 47)), ]))
+local(envir=.PBSmapEnv,expr={
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(nepacLL,envir=.PBSmapEnv)
+  #--- calculate and print the centroids for several polygons
+  print(calcMidRange(nepacLL[is.element(nepacLL$PID,c(33,39,47)),]))
+})
 }
 \keyword{manip}
+

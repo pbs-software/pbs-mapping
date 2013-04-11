@@ -35,14 +35,18 @@ refocusWorld (polys, xlim = NULL, ylim = NULL)
   \code{\link[PBSmapping]{joinPolys}}
 }
 \examples{
-#--- load appropriate data
-data(worldLL)
-#--- set limits
-xlim <- c(-100,25)
-ylim <- c(0,90)
-#--- refocus and plot the world
-polys <- refocusWorld(worldLL, xlim, ylim)
-plotMap(polys, xlim, ylim)
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- load appropriate data
+  data(worldLL,envir=.PBSmapEnv)
+  #--- set limits
+  xlim <- c(-100,25)
+  ylim <- c(0,90)
+  #--- refocus and plot the world
+  polys <- refocusWorld(worldLL, xlim, ylim)
+  plotMap(polys, xlim, ylim)
+  par(oldpar)
+})
 }
 \keyword{manip}
 

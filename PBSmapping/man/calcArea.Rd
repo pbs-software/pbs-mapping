@@ -45,13 +45,15 @@ calcArea (polys, rollup = 3)
   \code{\link{locatePolys}}.
 }
 \examples{
-#--- load the data (if using R)
-if (!is.null(version$language) && (version$language == "R"))
-  data(nepacLL)
-#--- convert LL to UTM so calculation makes sense
-attr(nepacLL, "zone") <- 9
-nepacUTM <- convUL(nepacLL)
-#--- calculate and print the areas
-print(calcArea(nepacUTM))
+local(envir=.PBSmapEnv,expr={
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language == "R"))
+    data(nepacLL,envir=.PBSmapEnv)
+  #--- convert LL to UTM so calculation makes sense
+  attr(nepacLL, "zone") <- 9
+  nepacUTM <- convUL(nepacLL)
+  #--- calculate and print the areas
+  print(calcArea(nepacUTM))
+})
 }
 \keyword{manip}

@@ -25,7 +25,7 @@ importGSHHS(gshhsDB, xlim, ylim, maxLevel=4, n=0)
   This routine requires a binary GSHHS (Global Self-consistent,
   Hierarchical, High-resolution Shoreline) database file. The GSHHS
   database has been released in the public domain and may be downloaded
-  from \url{http://www.soest.hawaii.edu/wessel/gshhs/}.  At the time of
+  from \cr \url{http://www.soest.hawaii.edu/wessel/gshhs/}. \cr  At the time of
   writing, the most recent database is \code{gshhs+wdbii_2.2.0.zip}.
 
   The database \code{gshhs+wdbii_2.2.0.zip} contains geographical coordinates for 

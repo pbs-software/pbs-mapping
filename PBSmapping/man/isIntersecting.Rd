@@ -34,11 +34,14 @@ isIntersecting (polys, numericResult = FALSE)
   \link{PolySet}.
 }
 \examples{
-#--- load the data (if using R)
-if (!is.null(version$language) && (version$language == "R"))
-  data(nepacLL);
-#--- calculate then print the polygons that are self-intersecting
-p <- isIntersecting(nepacLL, numericResult = FALSE);
-print(p[p$intersecting, ]);
+local(envir=.PBSmapEnv,expr={
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+  data(nepacLL,envir=.PBSmapEnv)
+  #--- calculate then print the polygons that are self-intersecting
+  p <- isIntersecting(nepacLL, numericResult = FALSE)
+  print(p[p$intersecting,])
+})
 }
 \keyword{manip}
+

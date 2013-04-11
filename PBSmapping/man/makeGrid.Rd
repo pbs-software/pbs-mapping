@@ -55,9 +55,14 @@ makeGrid(x,y,byrow=TRUE,addSID=TRUE,projection=NULL,zone=NULL)
   \code{\link{thickenPolys}}.
 }
 \examples{
-#--- make a 10 x 10 grid
-polyGrid <- makeGrid(x=0:10, y=0:10)
-#--- plot the grid
-plotPolys(polyGrid, density=0, projection=1)
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- make a 10 x 10 grid
+  polyGrid <- makeGrid(x=0:10, y=0:10)
+  #--- plot the grid
+  plotPolys(polyGrid, density=0, projection=1)
+  par(oldpar)
+})
 }
 \keyword{manip}
+

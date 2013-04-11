@@ -1,6 +1,6 @@
 Package: PBSmapping
 Version: 2.65
-Date: 2012-11-28
+Date: 2013-04-11
 Title: Mapping Fisheries Data and Spatial Analysis Tools
 Author: Jon T. Schnute <schnutej-dfo@shaw.ca>,
         Nicholas Boers <boersn@macewan.ca>, and
@@ -25,5 +25,4 @@ License: GPL (>= 2)
 URL: http://code.google.com/p/pbs-mapping/,
      http://code.google.com/p/pbs-mapx/,
      http://www.angusj.com/delphi/clipper.php
-
 
