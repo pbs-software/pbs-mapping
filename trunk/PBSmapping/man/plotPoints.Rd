@@ -86,14 +86,17 @@ plotPoints (data, xlim = NULL, ylim = NULL, projection = FALSE,
   \code{\link{locateEvents}}.
 }
 \examples{
-#--- load the data (if using R)
-if (!is.null(version$language) && (version$language == "R")) {
-  data(nepacLL)
-  data(surveyData)
-}
-#--- plot a map
-plotMap(nepacLL, xlim=c(-136, -125), ylim=c(48, 57))
-#--- add events
-addPoints(surveyData, col=1:7)
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(nepacLL,surveyData,envir=.PBSmapEnv)
+  #--- plot a map
+  plotMap(nepacLL, xlim=c(-136, -125), ylim=c(48, 57))
+  #--- add events
+  addPoints(surveyData, col=1:7)
+  par(oldpar)
+})
 }
 \keyword{aplot}
+

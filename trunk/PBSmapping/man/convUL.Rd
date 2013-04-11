@@ -55,13 +55,18 @@ convUL (xydata, km=TRUE, southern=NULL)
   \code{\link[PBSmapping]{fixBound}}.
 }
 \examples{
-#--- load the data
-data(nepacLL, package="PBSmapping")
-#--- set the zone attribute
-#--- use a zone that is most central to the mapped region
-attr(nepacLL, "zone") <- 6
-#--- convert and plot the result
-nepacUTM <- convUL(nepacLL)
-plotMap(nepacUTM)
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- load the data
+  data(nepacLL,envir=.PBSmapEnv)
+  #--- set the zone attribute
+  #--- use a zone that is most central to the mapped region
+  attr(nepacLL, "zone") <- 6
+  #--- convert and plot the result
+  nepacUTM <- convUL(nepacLL)
+  plotMap(nepacUTM)
+  par(oldpar)
+})
 }
 \keyword{manip}
+

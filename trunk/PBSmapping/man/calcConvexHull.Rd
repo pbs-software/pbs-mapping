@@ -36,9 +36,14 @@ calcConvexHull (xydata, keepExtra=FALSE)
   \code{\link{plotPolys}}.
 }
 \examples{
-data(surveyData)
-#--- plot the convex hull, and then plot the points
-plotMap(calcConvexHull(surveyData),col="moccasin")
-addPoints(surveyData,col="blue",pch=17,cex=.6);
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  data(surveyData,envir=.PBSmapEnv)
+  #--- plot the convex hull, and then plot the points
+  plotMap(calcConvexHull(surveyData),col="moccasin")
+  addPoints(surveyData,col="blue",pch=17,cex=.6)
+  par(oldpar)
+})
 }
 \keyword{manip}
+

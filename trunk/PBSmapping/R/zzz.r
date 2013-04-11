@@ -1,3 +1,6 @@
+# Taking cue from Roger Bivand's maptools:
+.PBSmapEnv <- new.env(FALSE, parent=globalenv())  # be sure to exportPattern("^\\.PBS") in NAMESPACE
+
 .onLoad <- function(lib, pkg)
 {
 	library.dynam("PBSmapping", pkg, lib);
@@ -5,7 +8,9 @@
 
 .onAttach <- function(lib, pkg)
 {
-        # obtain values necessary for the start-up message
+	assign("PBSprint",FALSE,envir=.PBSmapEnv)
+
+	# obtain values necessary for the start-up message
 	pkg_info <- utils::sessionInfo( package="PBSmapping" )$otherPkgs$PBSmapping
 	if( is.character( pkg_info$Packaged ) )
 		pkg_date <- strsplit( pkg_info$Packaged, " " )[[1]][1]
@@ -36,6 +41,9 @@ To see demos, type '.PBSfigs()'.
 -----------------------------------------------------------
 
 ")
+}
+.onUnload <- function(libpath) {
+	rm(.PBSmapEnv)
 }
 
 # No Visible Bindings

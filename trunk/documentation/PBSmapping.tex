@@ -1,0 +1,4716 @@
+\documentclass[letterpaper]{book}
+\usepackage[times,inconsolata,hyper]{Rd}
+\usepackage{makeidx}
+\usepackage[utf8,latin1]{inputenc}
+% \usepackage{graphicx} % @USE GRAPHICX@
+\makeindex{}
+\topmargin -0.25in \oddsidemargin 0in \evensidemargin 0in
+\textheight 9in \textwidth 6.5in
+\begin{document}
+\setcounter{page}{45}
+\chapter*{}
+\begin{center}
+{\textbf{\huge Package `PBSmapping'}}
+\par\bigskip{\large \today}
+\end{center}
+\begin{description}
+\raggedright{}
+\item[Version]\AsIs{2.65}
+\item[Date]\AsIs{2012-11-28}
+\item[Title]\AsIs{Mapping Fisheries Data and Spatial Analysis Tools}
+\item[Author]\AsIs{Jon T. Schnute }\email{schnutej-dfo@shaw.ca}\AsIs{,
+Nicholas Boers }\email{boersn@macewan.ca}\AsIs{, and
+Rowan Haigh }\email{rowan.haigh@dfo-mpo.gc.ca}\AsIs{}
+\item[Maintainer]\AsIs{Jon T. Schnute }\email{schnutej-dfo@shaw.ca}\AsIs{}
+\item[Depends]\AsIs{R (>= 2.15.0)}
+\item[Suggests]\AsIs{foreign, maptools, deldir}
+\item[Description]\AsIs{This software has evolved from fisheries research conducted at the
+Pacific Biological Station (PBS) in Nanaimo, British Columbia, Canada. It
+extends the R language to include two-dimensional plotting features similar
+to those commonly available in a Geographic Information System (GIS).
+Embedded C code speeds algorithms from computational geometry, such as
+finding polygons that contain specified point events or converting between
+longitude-latitude and Universal Transverse Mercator (UTM) coordinates.
+Additionally, we include C++ code developed by Angus Johnson for the Clipper
+library.  PBSmapping also includes data for a global shoreline and other
+data sets in the public domain.
+The R directory '.../library/PBSmapping/doc' offers a complete user's
+guide PBSmapping-UG.pdf, which should be consulted to use all functions in
+the package effectively.}
+\item[License]\AsIs{GPL (>= 2)}
+\item[URL]\AsIs{}\url{http://code.google.com/p/pbs-mapping/,}\AsIs{
+}\url{http://code.google.com/p/pbs-mapx/,}\AsIs{
+}\url{http://www.angusj.com/delphi/clipper.php}\AsIs{}
+\end{description}
+\Rdcontents{\R{} topics documented:}
+\inputencoding{utf8}
+\HeaderA{addBubbles}{Add Bubbles to Maps}{addBubbles}
+\keyword{aplot}{addBubbles}
+%
+\begin{Description}\relax
+Add bubbles proportional to some \code{EventData}'s \code{Z} column
+(e.g., catch or effort) to an existing plot, where each unique
+\code{EID} describes a bubble.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+addBubbles(events, type=c("perceptual","surface","volume"),
+   z.max=NULL, min.size = 0, max.size=0.8, symbol.zero="+",
+   symbol.fg=rgb(0,0,0,0.6), symbol.bg=rgb(0,0,0,0.3),
+   legend.pos="bottomleft", legend.breaks=NULL,
+   show.actual=FALSE, legend.type=c("nested","horiz","vert"),
+   legend.title="Abundance", legend.cex=0.8, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{events}] \LinkA{EventData}{EventData} to use (\emph{required}).
+\item[\code{type}] scaling option for bubbles where \code{"perceptual"}
+emphasizes large z-values, \code{"volume"} emphasizes small z-values,
+and \code{"surface"} lies in between.
+\item[\code{z.max}] maximum value for z (default = \code{max(events\$Z)});
+determines the largest bubble; keeps the same legend for different
+maps.
+\item[\code{min.size}] minimum size (inches) for a bubble representing
+\code{min(events\$Z)}.  The legend may not actually include a bubble of
+this size because the calculated legend.breaks does not include the
+\code{min(events\$Z)}.
+\item[\code{max.size}] maximum size (inches) for a bubble representing
+\code{z.max}.  A legend bubble may exceed this size when
+\code{show.actual} is \code{FALSE} (on account of using
+\code{pretty(...)}).
+\item[\code{symbol.zero}] symbol to represent z-values equal to 0.
+\item[\code{symbol.fg}] bubble outline (border) colour.
+\item[\code{symbol.bg}] bubble interior (fill) colour.  If a vector, the
+first element represents \code{min(legend.breaks)} and the last
+element represents \code{max(legend.breaks)}; colours are interpolated
+for values of \code{events\$Z} between those boundaries.  For values
+outside of those boundaries, interiors remain unfilled.
+\item[\code{legend.pos}] position for the legend.
+\item[\code{legend.breaks}] break values for categorizing the z-values.
+The automatic method should work if zeroes are present;
+otherwise, you can specify your own break values for the legend.
+If a single number, specifies the number of breaks; if a vector,
+specifies the breaks.
+\item[\code{show.actual}] logical; if \code{FALSE}, legend values are
+obtained using \code{pretty(...)}, and consequently, the largest
+bubble may be larger than \code{z.max}.  If \code{TRUE}, the largest
+bubble in the legend will correspond to \code{z.max}.
+\item[\code{legend.type}] display format for legend.
+\item[\code{legend.title}] title for legend.
+\item[\code{legend.cex}] size of legend text.
+\item[\code{...}] additional arguments for \code{points} function that
+plots zero-value symbols.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+Modified from (and for the legend, strongly inspired by) Tanimura
+et al. (2006) by Denis Chabot to work with \pkg{PBSmapping}.
+
+Furthermore, Chabot's modifications make it possible to draw
+several maps with bubbles that all have the same scale
+(instead of each bubble plot having a scale that depends on
+the maximum z-value for that plot). This is done by making
+\code{z.max} equal to the largest z-value from all maps that will be
+plotted.
+
+The user can also add a legend in one of four corners
+(see \code{\LinkA{legend}{legend}}) or at a specific \code{c(X,Y)} position.
+If \code{legend.pos} is \code{NULL}, no legend is drawn.
+\end{Details}
+%
+\begin{Author}\relax
+Denis Chabot, Maurice Lamontagne Institute, Fisheries and Oceans Canada, Mont-Joli QC
+\end{Author}
+%
+\begin{References}\relax
+Tanimura, S., Kuroiwa, C., and Mizota, T. (2006)
+Proportional symbol mapping in R.
+\emph{Journal of Statistical Software} \bold{15}(5).
+\end{References}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addPolys}{addPolys}}, \code{\LinkA{surveyData}{surveyData}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- common code for both examples below
+  data(nepacLL,surveyData,envir=.PBSmapEnv)
+  surveyData$Z <- surveyData$catch
+
+  #--- plot a version that only varies the size
+  plotMap(nepacLL, xlim=c(-131.8,-127.2), ylim=c(50.5,52.7),
+    col="gainsboro",plt=c(.08,.99,.08,.99))
+  addBubbles(surveyData, symbol.bg=rgb(.9,.5,0,.6),
+    legend.type="nested", symbol.zero="+", col="grey")
+
+  #--- plot a version that uses different symbol colours
+  plotMap(nepacLL, xlim=c(-131.8,-127.2), ylim=c(50.5,52.7),
+  col="gainsboro",plt=c(.08,.99,.08,.99))
+  subset <- surveyData[surveyData$Z <= 1000, ]
+  addBubbles(subset, symbol.bg=c("red", "yellow", "green"),
+    legend.type="horiz", legend.breaks=pretty(range(subset$Z), n=11),
+    symbol.zero=FALSE, col="grey", min.size=0.1, max.size=0.4)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{addLabels}{Add Labels to an Existing Plot}{addLabels}
+\keyword{aplot}{addLabels}
+%
+\begin{Description}\relax
+Add the \code{label} column of \code{data} to the existing plot.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+addLabels (data, xlim = NULL, ylim = NULL, polyProps = NULL,
+           placement = "DATA", polys = NULL, rollup = 3,
+           cex = NULL, col = NULL, font = NULL, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{data}] \LinkA{EventData}{EventData} or \LinkA{PolyData}{PolyData} to add (\emph{required}).
+\item[\code{xlim}] range of X-coordinates.
+\item[\code{ylim}] range of Y-coordinates.
+\item[\code{polyProps}] \LinkA{PolyData}{PolyData} specifying which labels to plot and their
+properties.  \code{\LinkA{par}{par}} parameters passed as direct arguments
+supersede these data.
+\item[\code{placement}] one of \code{"DATA"}, \code{"CENTROID"},
+\code{"MEAN\_RANGE"}, or \code{"MEAN\_XY"}.
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to use for calculating label placement.
+\item[\code{rollup}] level of detail at which to process \code{polys}, and it
+should match that in \code{data}.  \code{1} = \code{PID}s only,
+\code{2} = outer contours only, and \code{3} = no roll-up.
+\item[\code{cex}] vector describing character expansion factors (cycled by
+\code{EID} or \code{PID}).
+\item[\code{col}] vector describing colours (cycled by \code{EID} or
+\code{PID}).
+\item[\code{font}] vector describing fonts (cycled by \code{EID} or
+\code{PID}).
+\item[\code{...}] additional \code{\LinkA{par}{par}} parameters for the
+\code{\LinkA{text}{text}} function.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+If \code{data} is \LinkA{EventData}{EventData}, it must minimally contain the columns
+\code{EID}, \code{X}, \code{Y}, and \code{label}.  Since the
+\code{EID} column does not match a column in \code{polys}, set
+\code{placement = "DATA"}.  The function plots each \code{label} at
+its corresponding \code{X}/\code{Y} coordinate.
+
+If \code{data} is \LinkA{PolyData}{PolyData}, it must minimally contain the columns
+\code{PID} and \code{label}.  If it also contains \code{X} and
+\code{Y} columns, set \code{placement = "DATA"} to plot labels at
+those coordinates.  Otherwise, set \code{placement} to one of
+\code{"CENTROID"}, \code{"MEAN\_RANGE"}, or \code{"MEAN\_XY"}.  When
+\code{placement != "DATA"}, supply a \LinkA{PolySet}{PolySet} \code{polys}.  Using this
+\LinkA{PolySet}{PolySet}, the function calculates a centroid, mean range, or mean X/Y
+coordinate for each polygon, and then links those \LinkA{PolyData}{PolyData} with
+\code{data} by \code{PID}/\code{SID} to determine label
+coordinates.
+
+If \code{data} contains both \code{PID} and \code{EID} columns, the
+function assumes it is \LinkA{PolyData}{PolyData} and ignores the \code{EID}
+column.
+
+For additional help on the arguments \code{cex}, \code{col}, and
+\code{font}, please see \code{\LinkA{par}{par}}.
+\end{Details}
+%
+\begin{Value}
+\LinkA{EventData}{EventData} or \LinkA{PolyData}{PolyData} with \code{X} and \code{Y} columns
+that can subsequently reproduce the labels on the plot.  Modify this
+data frame to tweak label positions.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addPoints}{addPoints}},
+\code{\LinkA{calcCentroid}{calcCentroid}},
+\code{\LinkA{calcMidRange}{calcMidRange}},
+\code{\LinkA{calcSummary}{calcSummary}},
+\LinkA{EventData}{EventData},
+\code{\LinkA{plotPoints}{plotPoints}},
+\LinkA{PolyData}{PolyData}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- create sample PolyData to label Vancouver Island
+  labelData <- data.frame(PID=33, label="Vancouver Island");
+  #--- load data
+  if (!is.null(version$language) && (version$language == "R"))
+    data(nepacLL,envir=.PBSmapEnv)
+  #--- plot the map
+  plotMap(nepacLL,xlim=c(-129,-122.6),ylim=c(48,51.1),col="lemonchiffon")
+  #--- add the labels
+  addLabels(labelData,placement="CENTROID",polys=nepacLL,cex=1.2,col=2,font=2)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{addLines}{Add a PolySet to an Existing Plot as Polylines}{addLines}
+\keyword{aplot}{addLines}
+%
+\begin{Description}\relax
+Add a \LinkA{PolySet}{PolySet} to an existing plot, where each unique (\code{PID},
+\code{SID}) describes a polyline.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+addLines (polys, xlim = NULL, ylim = NULL,
+    polyProps = NULL, lty = NULL, col = NULL, arrows = FALSE, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to add (\emph{required}).
+\item[\code{xlim}] range of X-coordinates.
+\item[\code{ylim}] range of Y-coordinates.
+\item[\code{polyProps}] \LinkA{PolyData}{PolyData} specifying which polylines to plot and their
+properties.  \code{\LinkA{par}{par}} parameters passed as direct arguments
+supersede these data.
+\item[\code{lty}] vector of line types (cycled by \code{PID}).
+\item[\code{col}] vector of colours (cycled by \code{PID}).
+\item[\code{arrows}] Boolean value; if \code{TRUE}, add arrows using the
+\LinkA{arrows}{arrows} function and consider the arguments \code{angle},
+\code{length}, and \code{code}.
+\item[\code{...}] additional \code{\LinkA{par}{par}} parameters for the
+\code{\LinkA{lines}{lines}} function.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+The plotting routine does not connect the last vertex of each discrete
+polyline to the first vertex of that polyline. It clips \code{polys}
+to \code{xlim} and \code{ylim} before plotting.
+
+For additional help on the arguments \code{lty} and \code{col}, please
+see \code{\LinkA{par}{par}}.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} consisting of the \code{PolyProp}s used to create the plot.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{calcLength}{calcLength}},
+\code{\LinkA{clipLines}{clipLines}},
+\code{\LinkA{closePolys}{closePolys}},
+\code{\LinkA{convLP}{convLP}},
+\code{\LinkA{fixBound}{fixBound}},
+\code{\LinkA{fixPOS}{fixPOS}},
+\code{\LinkA{locatePolys}{locatePolys}},
+\code{\LinkA{plotLines}{plotLines}},
+\code{\LinkA{thinPolys}{thinPolys}},
+\code{\LinkA{thickenPolys}{thickenPolys}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- create a PolySet to plot
+  polys <- data.frame(PID=rep(1,4),POS=1:4,X=c(0,1,1,0),Y=c(0,0,1,1))
+  polys <- as.PolySet(polys, projection=1)
+  #--- plot the PolySet
+  plotLines(polys, xlim=c(-.5,1.5), ylim=c(-.5,1.5), projection=1)
+  #--- add the PolySet to the plot (in a different style)
+  addLines(polys, lwd=5, col=3)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{addPoints}{Add EventData/PolyData to an Existing Plot as Points}{addPoints}
+\keyword{aplot}{addPoints}
+%
+\begin{Description}\relax
+Add \LinkA{EventData}{EventData}/\LinkA{PolyData}{PolyData} to an existing plot, where each
+unique \code{EID} describes a point.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+addPoints (data, xlim = NULL, ylim = NULL, polyProps = NULL,
+           cex = NULL, col = NULL, pch = NULL, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{data}] \LinkA{EventData}{EventData} or \LinkA{PolyData}{PolyData} to add (\emph{required}).
+\item[\code{xlim}] range of X-coordinates.
+\item[\code{ylim}] range of Y-coordinates.
+\item[\code{polyProps}] \LinkA{PolyData}{PolyData} specifying which points to plot and their
+properties.  \code{\LinkA{par}{par}} parameters passed as direct arguments
+supersede these data.
+\item[\code{cex}] vector describing character expansion factors (cycled by
+\code{EID} or \code{PID}).
+\item[\code{col}] vector describing colours (cycled by \code{EID} or
+\code{PID}).
+\item[\code{pch}] vector describing plotting characters (cycled by \code{EID}
+or \code{PID}).
+\item[\code{...}] additional \code{\LinkA{par}{par}} parameters for the
+\code{\LinkA{points}{points}} function.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function clips \code{data} to \code{xlim} and \code{ylim} before
+plotting.  It only adds \LinkA{PolyData}{PolyData} containing \code{X} and
+\code{Y} columns.
+
+For additional help on the arguments \code{cex}, \code{col}, and
+\code{pch}, please see \code{\LinkA{par}{par}}.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} consisting of the \code{PolyProp}s used to create the plot.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{combineEvents}{combineEvents}},
+\code{\LinkA{convDP}{convDP}},
+\code{\LinkA{findPolys}{findPolys}},
+\code{\LinkA{locateEvents}{locateEvents}},
+\code{\LinkA{plotPoints}{plotPoints}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(nepacLL,surveyData,envir=.PBSmapEnv)
+  #--- plot a map
+  plotMap(nepacLL, xlim=c(-136, -125), ylim=c(48, 57))
+  #--- add events
+  addPoints(surveyData, col=1:7)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{addPolys}{Add a PolySet to an Existing Plot as Polygons}{addPolys}
+\keyword{aplot}{addPolys}
+%
+\begin{Description}\relax
+Add a \LinkA{PolySet}{PolySet} to an existing plot, where each unique (\code{PID},
+\code{SID}) describes a polygon.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+addPolys (polys, xlim = NULL, ylim = NULL, polyProps = NULL,
+          border = NULL, lty = NULL, col = NULL, colHoles = NULL,
+          density = NA, angle = NULL, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to add (\emph{required}).
+\item[\code{xlim}] range of X-coordinates.
+\item[\code{ylim}] range of Y-coordinates.
+\item[\code{polyProps}] \LinkA{PolyData}{PolyData} specifying which polygons to plot and their
+properties.  \code{\LinkA{par}{par}} parameters passed as direct arguments
+supersede these data.
+\item[\code{border}] vector describing edge colours (cycled by \code{PID}).
+\item[\code{lty}] vector describing line types (cycled by \code{PID}).
+\item[\code{col}] vector describing fill colours (cycled by \code{PID}).
+\item[\code{colHoles}] vector describing hole colours (cycled by \code{PID}).
+The default, \code{NULL}, should be used in most cases as it renders holes 
+transparent. \code{colHoles} is designed solely to eliminate retrace lines 
+when images are converted to PDF format. If \code{colHoles} is specified, 
+underlying information (i.e., previously plotted shapes) will be obliterated.
+If \code{NA} is specified, only outer polygons are drawn, consequently filling holes.
+\item[\code{density}] vector describing shading line densities (lines per
+inch, cycled by \code{PID}).
+\item[\code{angle}] vector describing shading line angles (degrees, cycled by
+\code{PID}).
+\item[\code{...}] additional \code{\LinkA{par}{par}} parameters for the
+\code{\LinkA{polygon}{polygon}} function.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+The plotting routine connects the last vertex of each discrete polygon
+to the first vertex of that polygon.  It supports both
+borders (\code{border}, \code{lty}) and fills (\code{col},
+\code{density}, \code{angle}). It clips \code{polys} to \code{xlim}
+and \code{ylim} before plotting.
+
+For additional help on the arguments \code{border}, \code{lty},
+\code{col}, \code{density}, and \code{angle}, please see
+\code{\LinkA{polygon}{polygon}} and \code{\LinkA{par}{par}}.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} consisting of the \code{PolyProp}s used to create the plot.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addLabels}{addLabels}},
+\code{\LinkA{addStipples}{addStipples}},
+\code{\LinkA{clipPolys}{clipPolys}},
+\code{\LinkA{closePolys}{closePolys}},
+\code{\LinkA{fixBound}{fixBound}},
+\code{\LinkA{fixPOS}{fixPOS}},
+\code{\LinkA{locatePolys}{locatePolys}},
+\code{\LinkA{plotLines}{plotLines}},
+\code{\LinkA{plotMap}{plotMap}},
+\code{\LinkA{plotPoints}{plotPoints}},
+\code{\LinkA{plotPolys}{plotPolys}},
+\code{\LinkA{thinPolys}{thinPolys}},
+\code{\LinkA{thickenPolys}{thickenPolys}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- create a PolySet to plot
+  polys <- data.frame(PID=rep(1,4),POS=1:4,X=c(0,1,1,0),Y=c(0,0,1,1))
+  polys <- as.PolySet(polys, projection=1)
+  #--- plot the PolySet
+  plotPolys(polys,xlim=c(-.5,1.5),ylim=c(-.5,1.5),density=0,projection=1)
+  #--- add the PolySet to the plot (in a different style)
+  addPolys(polys,col="green",border="blue",lwd=3)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{addStipples}{Add Stipples to an Existing Plot}{addStipples}
+\keyword{aplot}{addStipples}
+%
+\begin{Description}\relax
+Add stipples to an existing plot.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+addStipples (polys, xlim=NULL, ylim=NULL, polyProps=NULL,
+   side=1, density=1, distance=4, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} that provides the stipple boundaries
+(\emph{required}).
+\item[\code{xlim}] range of X-coordinates.
+\item[\code{ylim}] range of Y-coordinates.
+\item[\code{polyProps}] \LinkA{PolyData}{PolyData} specifying which polygons to stipple
+and their properties.  \code{\LinkA{par}{par}} parameters passed as direct
+arguments supersede these data.
+\item[\code{side}] one of \code{-1}, \code{0}, or \code{1}, corresponding to
+outside, both sides, or inside, respectively.
+\item[\code{density}] density of points, relative to the default.
+\item[\code{distance}] distance to offset points, measured as a percentage of
+the absolute difference in \code{xlim}.
+\item[\code{...}] additional \code{\LinkA{par}{par}} parameters for the
+\code{\LinkA{points}{points}} function.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function locates stipples based on the \LinkA{PolySet}{PolySet}
+\code{polys} and does not stipple degenerate lines.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} consisting of the \code{PolyProp}s used to create the plot.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addPoints}{addPoints}},
+\code{\LinkA{addPolys}{addPolys}},
+\code{\LinkA{plotMap}{plotMap}},
+\code{\LinkA{plotPoints}{plotPoints}},
+\code{\LinkA{plotPolys}{plotPolys}},
+\code{\LinkA{points}{points}},
+\LinkA{PolySet}{PolySet}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(nepacLL,envir=.PBSmapEnv)
+  #--- plot a map
+  plotMap(nepacLL,xlim=c(-128.66,-122.83),ylim=c(48.00,51.16))
+  #--- add stippling
+  addStipples(nepacLL,col="purple",pch=20,cex=0.25,distance=2)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{appendPolys}{Append a Two-Column Matrix to a PolySet}{appendPolys}
+\keyword{manip}{appendPolys}
+%
+\begin{Description}\relax
+Append a two-column matrix to a \LinkA{PolySet}{PolySet}, assigning \code{PID} and
+possibly \code{SID} values automatically or as specified in its
+arguments.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+appendPolys (polys, mat, PID = NULL, SID = NULL, isHole = FALSE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] existing \LinkA{PolySet}{PolySet}; if \code{NULL}, creates a new
+\LinkA{PolySet}{PolySet} (\emph{required}).
+\item[\code{mat}] two-column matrix to append (\emph{required}).
+\item[\code{PID}] new polygon's \code{PID}.
+\item[\code{SID}] new polygon's \code{SID}.
+\item[\code{isHole}] Boolean value; if \code{TRUE}, \code{mat} represents a
+hole.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+If the \code{PID} argument is \code{NULL}, the appended polygon's
+\code{PID} will be one greater than the maximum within \code{polys}
+(if defined); otherwise, it will be 1.
+
+If \code{polys} contains an \code{SID} column and the \code{SID}
+argument equals \code{NULL}, this function uses the next available
+\code{SID} for the corresponding \code{PID}.
+
+If \code{polys} does not contain an \code{SID} column and the
+caller passes an \code{SID} argument, all existing polygons will
+receive an \code{SID} of 1.  The new polygon's \code{SID} will
+match the \code{SID} argument.
+
+If \code{isHole = TRUE}, the polygon's \code{POS} values will
+appropriately represent a hole (reverse order of POS).
+
+If (\code{PID}, \code{SID}) already exists in the \LinkA{PolySet}{PolySet}, the
+function will issue a warning and duplicate those identifiers.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet} containing \code{mat} appended to \code{polys}.  The
+function retains attributes from \code{polys}.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addPolys}{addPolys}},
+\code{\LinkA{clipPolys}{clipPolys}},
+\code{\LinkA{closePolys}{closePolys}},
+\code{\LinkA{convLP}{convLP}},
+\code{\LinkA{fixBound}{fixBound}},
+\code{\LinkA{fixPOS}{fixPOS}},
+\code{\LinkA{joinPolys}{joinPolys}},
+\code{\LinkA{plotMap}{plotMap}},
+\code{\LinkA{plotPolys}{plotPolys}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  #--- create two simple matrices
+  a <- matrix(data=c(0,0,1,0,1,1,0,1),ncol=2,byrow=TRUE);
+  b <- matrix(data=c(2,2,3,2,3,3,2,3), ncol=2,byrow=TRUE);
+  #--- build a PolySet from them
+  polys <- appendPolys(NULL, a);
+  polys <- appendPolys(polys, b);
+  #--- print the result
+  print (polys);
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{bcBathymetry}{Data: Bathymetry Spanning British Columbia's Coast}{bcBathymetry}
+\keyword{datasets}{bcBathymetry}
+%
+\begin{Description}\relax
+Bathymetry data spanning British Columbia's coast.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+data(bcBathymetry)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+Three-element list: \code{x} = vector of horizontal grid line
+locations, \code{y} = vector of vertical grid line locations, \code{z}
+= (\code{x} by \code{y}) matrix containing water depths measured in
+meters.  Positive values indicate distance below sea level and
+negative values above it.
+
+\code{\LinkA{contour}{contour}} and \code{\LinkA{contourLines}{contourLines}} expect data in
+this format.  \code{\LinkA{convCP}{convCP}} converts the output from
+\code{\LinkA{contourLines}{contourLines}} into a \LinkA{PolySet}{PolySet}.
+\end{Format}
+%
+\begin{Note}\relax
+In R, the data must be loaded using the \code{\LinkA{data}{data}} function.
+\end{Note}
+%
+\begin{Source}\relax
+Bathymetry data acquired from the Scripps Institution of Oceanography
+at the University of San Diego.
+
+Using their online form, we requested bathymetry data for the complete
+\code{\LinkA{nepacLL}{nepacLL}} region.  At forty megabytes, the data were not
+suitable for distribution in our mapping package.  Therefore, we
+reduced the data to the range \eqn{-140^\circ \le x \le -122^\circ}{} and \eqn{47^\circ \le y \le 61^\circ}{}.
+\end{Source}
+%
+\begin{References}\relax
+Smith, W.H.F. and Sandwell, D.T. (1997) Global seafloor topography from
+satellite altimetry and ship depth soundings. \emph{Science} \bold{277},
+1957--1962. \\{}
+\url{http://topex.ucsd.edu/WWW_html/mar_topo.html}
+\end{References}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{contour}{contour}},
+\code{\LinkA{contourLines}{contourLines}},
+\code{\LinkA{convCP}{convCP}},
+\code{\LinkA{nepacLL}{nepacLL}},
+\code{\LinkA{nepacLLhigh}{nepacLLhigh}}.
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{calcArea}{Calculate the Areas of Polygons}{calcArea}
+\keyword{manip}{calcArea}
+%
+\begin{Description}\relax
+Calculate the areas of polygons found in a \LinkA{PolySet}{PolySet}.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+calcArea (polys, rollup = 3)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to use.
+\item[\code{rollup}] level of detail in the results; \code{1} = \code{PID}s
+only, by summing all the polygons with the same \code{PID}, \code{2} =
+outer contours only, by subtracting holes from their parent, and
+\code{3} = no roll-up.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+If \code{rollup} equals \code{1}, the results contain an area for each
+unique \code{PID} only.  When it equals \code{2}, they contain entries
+for outer contours only.  Finally, setting it to \code{3} prevents
+roll-up, and they contain areas for each unique (\code{PID},
+\code{SID}).
+
+Outer polygons have positive areas and inner polygons negative areas.
+When polygons are rolled up, the routine sums the positive and
+negative areas and consequently accounts for holes.
+
+If the \LinkA{PolySet}{PolySet}'s \code{projection} attribute equals
+\code{"LL"}, the function projects the \LinkA{PolySet}{PolySet} in UTM first.
+If the \LinkA{PolySet}{PolySet}'s \code{zone} attribute exists, it uses it for
+the conversion.  Otherwise, it computes the mean longitude and uses
+that value to determine the zone.  The longitude range of zone
+\emph{i} is \eqn{-186 + 6\emph{i}^\circ < x \le -180 + 6\emph{i}^\circ}{}.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} with columns \code{PID}, \code{SID} (\emph{may be
+missing}), and \code{area}.  If the projection equals \code{"LL"} or
+\code{"UTM"}, the units of area are square kilometres.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{calcCentroid}{calcCentroid}},
+\code{\LinkA{calcLength}{calcLength}},
+\code{\LinkA{calcMidRange}{calcMidRange}},
+\code{\LinkA{calcSummary}{calcSummary}},
+\code{\LinkA{locatePolys}{locatePolys}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language == "R"))
+    data(nepacLL,envir=.PBSmapEnv)
+  #--- convert LL to UTM so calculation makes sense
+  attr(nepacLL, "zone") <- 9
+  nepacUTM <- convUL(nepacLL)
+  #--- calculate and print the areas
+  print(calcArea(nepacUTM))
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{calcCentroid}{Calculate the Centroids of Polygons}{calcCentroid}
+\keyword{manip}{calcCentroid}
+%
+\begin{Description}\relax
+Calculate the centroids of polygons found in a \LinkA{PolySet}{PolySet}.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+calcCentroid (polys, rollup = 3)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to use.
+\item[\code{rollup}] level of detail in the results; \code{1} = \code{PID}s
+only, \code{2} = outer contours only, and \code{3} = no roll-up.  When
+\code{rollup} equals \code{1} and \code{2}, the function appropriately
+adjusts for polygons with holes.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+If \code{rollup} equals \code{1}, the results contain a centroid for
+each unique \code{PID} only.  When it equals \code{2}, they contain
+entries for outer contours only.  Finally, setting it to \code{3}
+prevents roll-up, and they contain a centroid for each unique
+(\code{PID}, \code{SID}).
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} with columns \code{PID}, \code{SID} (\emph{may be missing}),
+\code{X}, and \code{Y}.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{calcArea}{calcArea}},
+\code{\LinkA{calcLength}{calcLength}},
+\code{\LinkA{calcMidRange}{calcMidRange}},
+\code{\LinkA{calcSummary}{calcSummary}},
+\code{\LinkA{locateEvents}{locateEvents}},
+\code{\LinkA{locatePolys}{locatePolys}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(nepacLL,envir=.PBSmapEnv)
+  #--- calculate and print the centroids for several polygons
+  print(calcCentroid(nepacLL[is.element(nepacLL$PID,c(33,39,47)),]))
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{calcConvexHull}{Calculate the Convex Hull for a Set of Points}{calcConvexHull}
+\keyword{manip}{calcConvexHull}
+%
+\begin{Description}\relax
+Calculate the convex hull for a set of points.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+calcConvexHull (xydata, keepExtra=FALSE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{xydata}] a data frame with columns \code{X} and \code{Y}
+containing spatial coordinates.
+\item[\code{keepExtra}] logical: if \code{TRUE}, retain any additional columns
+from the input data frame \code{xydata}.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This routine uses the function \code{chull()} in the package grDevices.
+By default, it ignores all columns other than \code{X} and \code{Y};
+however, the user can choose to retain additional columns in \code{xydata}
+by specifying \code{keepExtra=TRUE}. 
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet} with columns \code{PID}, \code{POS}, \code{X}, \code{Y},
+and additional columns in \code{xydata} if \code{keepExtra=TRUE}.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addPoints}{addPoints}},
+\code{\LinkA{addPolys}{addPolys}},
+\code{\LinkA{calcArea}{calcArea}},
+\code{\LinkA{calcCentroid}{calcCentroid}},
+\code{\LinkA{calcMidRange}{calcMidRange}},
+\code{\LinkA{calcSummary}{calcSummary}},
+\code{\LinkA{locateEvents}{locateEvents}},
+\code{\LinkA{plotMap}{plotMap}},
+\code{\LinkA{plotPoints}{plotPoints}},
+\code{\LinkA{plotPolys}{plotPolys}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  data(surveyData,envir=.PBSmapEnv)
+  #--- plot the convex hull, and then plot the points
+  plotMap(calcConvexHull(surveyData),col="moccasin")
+  addPoints(surveyData,col="blue",pch=17,cex=.6)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{calcLength}{Calculate the Length of Polylines}{calcLength}
+\keyword{manip}{calcLength}
+%
+\begin{Description}\relax
+Calculate the length of polylines found in a \LinkA{PolySet}{PolySet}.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+calcLength (polys, rollup = 3, close = FALSE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to use.
+\item[\code{rollup}] level of detail in the results; \code{1} = \code{PID}s
+only, summing the lengths of each \code{SID} within each \code{PID},
+and \code{3} = no roll-up. Note: rollup \code{2} has no meaning in
+this function and, if specified, will be reset to \code{3}.
+\item[\code{close}] Boolean value; if \code{TRUE}, include the distance
+between each polygon's last and first vertex, if necessary.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+If \code{rollup} equals \code{1}, the results contain an entry for
+each unique \code{PID} only.  Setting it to \code{3} prevents roll-up,
+and they contain an entry for each unique (\code{PID}, \code{SID}).
+
+If the \code{projection} attribute equals \code{"LL"}, this routine uses
+Great Circle distances to compute the surface length of each polyline.
+In doing so, the algorithm simplifies Earth to a sphere.
+
+If the \code{projection} attribute equals \code{"UTM"} or \code{1}, this
+routine uses Pythagoras' Theorem to calculate lengths.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} with columns \code{PID}, \code{SID} (\emph{may be missing}),
+and \code{length}.  If \code{projection} equals \code{"UTM"} or
+\code{"LL"}, lengths are in kilometres.  Otherwise, lengths are in the
+same unit as the input \LinkA{PolySet}{PolySet}.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{calcArea}{calcArea}},
+\code{\LinkA{calcCentroid}{calcCentroid}},
+\code{\LinkA{calcMidRange}{calcMidRange}},
+\code{\LinkA{calcSummary}{calcSummary}},
+\code{\LinkA{locatePolys}{locatePolys}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(nepacLL,envir=.PBSmapEnv)
+  #--- calculate the perimeter of Vancouver Island
+  print(calcLength(nepacLL[nepacLL$PID==33, ]))
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{calcMidRange}{Calculate the Midpoint of the X/Y Ranges of Polygons}{calcMidRange}
+\keyword{manip}{calcMidRange}
+%
+\begin{Description}\relax
+Calculate the midpoint of the \code{X}/\code{Y} ranges of polygons
+found in a \LinkA{PolySet}{PolySet}.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+calcMidRange (polys, rollup = 3)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to use.
+\item[\code{rollup}] level of detail in the results; \code{1} = \code{PID}s
+only, \code{2} = outer contours only, and \code{3} = no roll-up.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+If \code{rollup} equals \code{1}, the results contain a mean range for
+each unique \code{PID} only.  When it equals \code{2}, they contain
+entries for outer contours only.  Finally, setting it to \code{3}
+prevents roll-up, and they contain a mean range for each unique
+(\code{PID}, \code{SID}).
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} with columns \code{PID}, \code{SID} (\emph{may be missing}),
+\code{X}, and \code{Y}.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{calcArea}{calcArea}},
+\code{\LinkA{calcCentroid}{calcCentroid}},
+\code{\LinkA{calcLength}{calcLength}},
+\code{\LinkA{calcSummary}{calcSummary}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(nepacLL,envir=.PBSmapEnv)
+  #--- calculate and print the centroids for several polygons
+  print(calcMidRange(nepacLL[is.element(nepacLL$PID,c(33,39,47)),]))
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{calcSummary}{Apply Functions to Polygons in a PolySet}{calcSummary}
+\keyword{manip}{calcSummary}
+%
+\begin{Description}\relax
+Apply functions to polygons in a \LinkA{PolySet}{PolySet}.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+calcSummary (polys, rollup = 3, FUN, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to use.
+\item[\code{rollup}] level of detail in the results; \code{1} = \code{PID}s
+only, by removing the \code{SID} column, and then passing each
+\code{PID} into \code{FUN}, \code{2} = outer contours only, by making
+hole \code{SID}s equal to their parent's \code{SID}, and then passing
+each (\code{PID}, \code{SID}) into \code{FUN}, and \code{3} = no
+roll-up.
+\item[\code{FUN}] the function to apply; it must accept a vector and return a
+vector or scalar.
+\item[\code{...}] optional arguments for \code{FUN}.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+If \code{rollup} equals \code{1}, the results contain an entry for
+each unique \code{PID} only.  When it equals \code{2}, they contain
+entries for outer contours only.  Finally, setting it to \code{3}
+prevents roll-up, and they contain an entry for each unique
+(\code{PID}, \code{SID}).
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} with columns \code{PID}, \code{SID} (\emph{may be missing}),
+\code{X}, and \code{Y}.  If \code{FUN} returns a vector of length
+greater than 1 (say \emph{n}), names the columns \code{X1}, \code{X2},
+..., \code{X}\emph{n} and \code{Y1}, \code{Y2}, ..., \code{Y}\emph{n}.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{calcArea}{calcArea}},
+\code{\LinkA{calcCentroid}{calcCentroid}},
+\code{\LinkA{calcConvexHull}{calcConvexHull}},
+\code{\LinkA{calcLength}{calcLength}},
+\code{\LinkA{calcMidRange}{calcMidRange}},
+\code{\LinkA{combineEvents}{combineEvents}},
+\code{\LinkA{findPolys}{findPolys}},
+\code{\LinkA{locateEvents}{locateEvents}},
+\code{\LinkA{locatePolys}{locatePolys}},
+\code{\LinkA{makeGrid}{makeGrid}},
+\code{\LinkA{makeProps}{makeProps}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(nepacLL,envir=.PBSmapEnv)
+  #--- calculate and print the centroids for several polygons
+  print(calcSummary(nepacLL[is.element(nepacLL$PID,c(33,39,47)),],
+    rollup=3, FUN=mean))
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{calcVoronoi}{Calculate the Voronoi (Dirichlet) Tesselation for a Set of Points}{calcVoronoi}
+\keyword{manip}{calcVoronoi}
+%
+\begin{Description}\relax
+Calculate the Voronoi (Dirichlet) tesselation for a set of points.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+calcVoronoi (xydata, xlim = NULL, ylim = NULL, eps = 1e-09, frac = 0.0001)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{xydata}] a data frame with columns \code{X} and \code{Y}
+containing the points.
+\item[\code{xlim}] range of X-coordinates; a bounding box for the
+coordinates.
+\item[\code{ylim}] range of Y-coordinates; a bounding box for the
+coordinates.
+\item[\code{eps}] the value of epsilon used in testing whether a quantity is
+zero.
+\item[\code{frac}] used to detect duplicate input points, which meet the
+condition \eqn{\left | x1 - x2 \right | < \mbox{frac} \times
+    (\mbox{xmax} - \mbox{xmin}) \mbox{and} \left | y1 - y2 \right | <
+    \mbox{frac} \times (\mbox{ymax} - \mbox{ymin})}{}.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This routine ignores all columns other than \code{X} and \code{Y}.
+
+If the user leaves \code{xlim} and \code{ylim} unspecified, the
+function defaults to the range of the data with each extent expanded
+by ten percent of the range.
+
+This function sets the attribute \code{projection} to \code{1} and the
+attribute \code{zone} to \code{NULL} as it assumes this projection in
+its calculations.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet} with columns \code{PID}, \code{POS}, \code{X}, and \code{Y}.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addPoints}{addPoints}},
+\code{\LinkA{addPolys}{addPolys}},
+\code{\LinkA{calcArea}{calcArea}},
+\code{\LinkA{calcCentroid}{calcCentroid}},
+\code{\LinkA{calcConvexHull}{calcConvexHull}},
+\code{\LinkA{calcMidRange}{calcMidRange}},
+\code{\LinkA{calcSummary}{calcSummary}},
+\code{\LinkA{locateEvents}{locateEvents}},
+\code{\LinkA{plotMap}{plotMap}},
+\code{\LinkA{plotPoints}{plotPoints}},
+\code{\LinkA{plotPolys}{plotPolys}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- create some EventData
+  events <- as.EventData(data.frame(
+    EID=1:200, X=rnorm(200), Y=rnorm(200)), projection=1)
+  #--- calculate the Voronoi tesselation
+  polys <- calcVoronoi(events)
+  #--- create PolyData to color it based on area
+  polyData <- calcArea(polys)
+  names(polyData)[is.element(names(polyData), "area")] <- "Z"
+  colSeq <- seq(0.4, 0.95, length=4)
+  polyData <- makeProps(polyData,
+    breaks=quantile(polyData$Z,c(0,.25,.5,.75,1)),
+    propName="col", propVals=rgb(colSeq,colSeq,colSeq))
+  #--- plot the tesselation
+  plotMap(polys, polyProps=polyData)
+  #--- plot the points
+  addPoints(events, pch=19)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{clipLines}{Clip a PolySet as Polylines}{clipLines}
+\keyword{manip}{clipLines}
+%
+\begin{Description}\relax
+Clip a \LinkA{PolySet}{PolySet}, where each unique (\code{PID}, \code{SID})
+describes a polyline.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+clipLines (polys, xlim, ylim, keepExtra = FALSE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to clip.
+\item[\code{xlim}] range of X-coordinates.
+\item[\code{ylim}] range of Y-coordinates.
+\item[\code{keepExtra}] Boolean value; if \code{TRUE}, tries to
+carry forward any non-standard columns into the result.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+For each discrete polyline, the function does not connect vertices 1
+and N.  It recalculates the \code{POS} values for each vertex, saving
+the old values in a column named \code{oldPOS}.  For new vertices, it
+sets \code{oldPOS} to \code{NA}.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet} containing the input data, with some points added or
+removed.  A new column \code{oldPOS} records the original \code{POS}
+value for each vertex.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{clipPolys}{clipPolys}},
+\code{\LinkA{fixBound}{fixBound}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- create a triangle to clip
+  polys <- data.frame(PID=rep(1, 3), POS=1:3, X=c(0,1,0), Y=c(0,0.5,1))
+  #--- clip the triangle in the X direction, and plot the results
+  plotLines(clipLines(polys, xlim=c(0,.75), ylim=range(polys[, "Y"])))
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{clipPolys}{Clip a PolySet as Polygons}{clipPolys}
+\keyword{manip}{clipPolys}
+%
+\begin{Description}\relax
+Clip a \LinkA{PolySet}{PolySet}, where each unique (\code{PID}, \code{SID}) describes
+a polygon.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+clipPolys (polys, xlim, ylim, keepExtra = FALSE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to clip.
+\item[\code{xlim}] range of X-coordinates.
+\item[\code{ylim}] range of Y-coordinates.
+\item[\code{keepExtra}] Boolean value; if \code{TRUE}, tries to
+carry forward any non-standard columns into the result.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+For each discrete polygon, the function connects vertices 1 and N.  It
+recalculates the \code{POS} values for each vertex, saving the old
+values in a column named \code{oldPOS}.  For new vertices, it sets
+\code{oldPOS} to \code{NA}.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet} containing the input data, with some points added or
+removed.  A new column \code{oldPOS} records the original \code{POS}
+value for each vertex.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{clipLines}{clipLines}},
+\code{\LinkA{fixBound}{fixBound}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- create a triangle that will be clipped
+  polys <- data.frame(PID=rep(1, 3), POS=1:3, X=c(0,1,.5), Y=c(0,0,1))
+  #--- clip the triangle in the X direction, and plot the results
+  plotPolys(clipPolys(polys,xlim=c(0,.75),ylim=range(polys[,"Y"])),col=2)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{closePolys}{Close a PolySet}{closePolys}
+\keyword{manip}{closePolys}
+%
+\begin{Description}\relax
+Close a \LinkA{PolySet}{PolySet} of polylines to form polygons.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+closePolys (polys)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to close.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+Generally, run \code{fixBound} before this function. The ranges of a
+\LinkA{PolySet}{PolySet}'s \code{X} and \code{Y} columns define the boundary.
+For each discrete polygon, this function determines if the first and
+last points lie on a boundary.  If both points lie on the same
+boundary, it adds no points.  However, if they lie on different
+boundaries, it may add one or two corners to the polygon.
+
+When the boundaries are adjacent, one corner will be added as
+follows:
+\begin{itemize}
+
+\item top boundary + left boundary implies add top-left corner;
+\item top boundary + right boundary implies add top-right corner;
+\item bottom boundary + left boundary implies add bottom-left
+corner;
+\item bottom boundary + right boundary implies add bottom-right
+corner.
+
+\end{itemize}
+
+When the boundaries are opposite, it first adds the corner closest to
+a starting or ending polygon vertex.  This determines a side
+(left-right or bottom-top) that connects the opposite boundaries.
+Then, it adds the other corner of that side to close the polygon.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet} identical to \code{polys}, except for possible
+additional corner points.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{fixBound}{fixBound}},
+\code{\LinkA{fixPOS}{fixPOS}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- 4 corners
+  polys <- data.frame(
+    PID = c(1, 1, 2, 2, 3, 3, 4, 4),
+    POS = c(1, 2, 1, 2, 1, 2, 1, 2),
+    X   = c(0, 1, 2, 3, 0, 1, 2, 3),
+    Y   = c(1, 0, 0, 1, 2, 3, 3, 2))
+  plotPolys(closePolys(polys), col=2)
+
+  #--- 2 corners and 1 opposite
+  polys <- data.frame(
+    PID = c(1, 1, 2, 2, 3, 3, 3),
+    POS = c(1, 2, 1, 2, 1, 2, 3),
+    X   = c(0, 1, 0, 1, 5, 6, 1.5),
+    Y   = c(1, 0, 2, 3, 0, 1.5, 3))
+  plotPolys(closePolys(polys), col=2)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{combineEvents}{Combine Measurements of Events}{combineEvents}
+\keyword{manip}{combineEvents}
+%
+\begin{Description}\relax
+Combine measurements associated with events that occur in the same
+polygon.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+combineEvents (events, locs, FUN, ..., bdryOK = TRUE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{events}] \LinkA{EventData}{EventData} with at least four columns (\code{EID},
+\code{X}, \code{Y}, \code{Z}).
+\item[\code{locs}] \LinkA{LocationSet}{LocationSet} usually resulting from a call to
+\code{\LinkA{findPolys}{findPolys}}.
+\item[\code{FUN}] a function that produces a scalar from a vector
+(e.g., \code{\LinkA{mean}{mean}}, \code{\LinkA{sum}{sum}}).
+\item[\code{...}] optional arguments for \code{FUN}.
+\item[\code{bdryOK}] Boolean value; if \code{TRUE}, include boundary points.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function combines measurements associated with events that occur
+in the same polygon.  Each event (\code{EID}) has a corresponding
+measurement \code{Z}.  The \code{locs} data frame (usually output from
+\code{\LinkA{findPolys}{findPolys}}) places events within polygons.  Thus, each
+polygon (\code{PID}, \code{SID}) determines a set of events within it,
+and a corresponding vector of measurements \code{Zv}.  The function
+returns \code{FUN(Zv)}, a summary of measurements within each polygon.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} with columns \code{PID}, \code{SID} (\emph{if in}
+\code{locs}), and \code{Z}.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{findCells}{findCells}},
+\code{\LinkA{findPolys}{findPolys}},
+\code{\LinkA{locateEvents}{locateEvents}},
+\code{\LinkA{locatePolys}{locatePolys}},
+\code{\LinkA{makeGrid}{makeGrid}},
+\code{\LinkA{makeProps}{makeProps}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  #--- create an EventData data frame: let each event have Z = 1
+  events <- data.frame(EID=1:10, X=1:10, Y=1:10, Z=rep(1, 10))
+  #--- example output from findPolys where 1 event occurred in the first
+  #--- polygon, 3 in the second, and 6 in the third
+  locs <- data.frame(EID=1:10,PID=c(rep(1,1),rep(2,3),rep(3,6)),Bdry=rep(0,10))
+  #--- sum the Z column of the events in each polygon, and print the result
+  print(combineEvents(events=events, locs=locs, FUN=sum))
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{combinePolys}{Combine Several Polygons into a Single Polygon}{combinePolys}
+\keyword{manip}{combinePolys}
+%
+\begin{Description}\relax
+Combine several polygons into a single polygon by modifying the
+\code{PID} and \code{SID} indices.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+combinePolys (polys)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} with one or more polygons, each with
+possibly several components/holes.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function accepts a \LinkA{PolySet}{PolySet} containing one or more polygons
+(\code{PID}s), each with one or more components or holes
+(\code{SID}s).  The \code{SID} column need not exist in the input.
+The function combines these polygons into a single polygon by simply
+renumbering the \code{PID} and \code{SID} indices.  The resulting
+\LinkA{PolySet}{PolySet} contains a single \code{PID} (with the value 1) and uses
+the \code{SID} value to differentiate between polygons, their
+components, and holes.  
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet}, possibly with the addition of an \code{SID} column if
+it did not already exist.  The function may also reorder columns such
+that \code{PID}, \code{SID}, \code{POS}, \code{X} and \code{Y} appear
+first, in that order.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{dividePolys}{dividePolys}}
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{convCP}{Convert Contour Lines into a PolySet}{convCP}
+\keyword{manip}{convCP}
+%
+\begin{Description}\relax
+Convert output from \code{\LinkA{contourLines}{contourLines}} into a \LinkA{PolySet}{PolySet}.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+convCP (data, projection = NULL, zone = NULL)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{data}] contour line data, often from the
+\code{\LinkA{contourLines}{contourLines}} function.
+\item[\code{projection}] optional \code{projection} attribute to add to
+the PolySet.
+\item[\code{zone}] optional \code{zone} attribute to add to the PolySet.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+\code{data} contains a list as described below. The
+\code{\LinkA{contourLines}{contourLines}} function create a list suitable for the
+\code{data} argument.
+
+A three-element list describes each contour.  The named elements in
+this list include the scalar \code{level}, the vector \code{x}, and
+the vector \code{y}.  Vectors \code{x} and \code{y} must have equal
+lengths.  A higher-level list (\code{data}) contains one or more of
+these contours lists.
+\end{Details}
+%
+\begin{Value}
+A list with two named elements \LinkA{PolySet}{PolySet} and \LinkA{PolyData}{PolyData}.
+The \LinkA{PolySet}{PolySet} element contains a \LinkA{PolySet}{PolySet} representation of the
+contour lines.  The \LinkA{PolyData}{PolyData} element links each contour line
+(\code{PID}, \code{SID}) with a \code{level}.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{contour}{contour}},
+\code{\LinkA{contourLines}{contourLines}},
+\code{\LinkA{convLP}{convLP}},
+\code{\LinkA{makeTopography}{makeTopography}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- create sample data for the contourLines() function
+  x <- seq(-0.5, 0.8, length=50);  y <- x
+  z <- outer(x, y, FUN = function(x,y) { sin(2*pi*(x^2+y^2))^2; } )
+  data <- contourLines(x, y, z, levels=c(0.2, 0.8))
+  #--- pass that sample data into convCP()
+  result <- convCP(data)
+  #--- plot the result
+  plotLines(result$PolySet, projection=1)
+  print(result$PolyData)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{convDP}{Convert EventData/PolyData into a PolySet}{convDP}
+\keyword{manip}{convDP}
+%
+\begin{Description}\relax
+Convert \LinkA{EventData}{EventData}/\LinkA{PolyData}{PolyData} into a \LinkA{PolySet}{PolySet}.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+convDP (data, xColumns, yColumns)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{data}] \LinkA{PolyData}{PolyData} or \LinkA{EventData}{EventData}.
+\item[\code{xColumns}] vector of X-column names.
+\item[\code{yColumns}] vector of Y-column names.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function expects \code{data} to contain several X- and Y-columns.
+For example, consider \code{data} with columns \code{x1}, \code{y1},
+\code{x2}, and \code{y2}.  Suppose \code{xColumns = c("x1", "x2")} and
+\code{yColumns = c("y1", "y2")}.  The result will contain
+\code{nrow(data)} polygons.  Each one will have two vertices,
+\code{(x1, y1)} and \code{(x2, y2)} and \code{POS} values 1 and 2,
+respectively.  If \code{data} includes an \code{SID} column, so will
+the result.
+
+If \code{data} contains an \code{EID} and not a \code{PID} column,
+the function uses the \code{EID}s as \code{PID}s.
+
+If \code{data} contains both \code{PID} and \code{EID} columns,
+the function assumes it is \LinkA{PolyData}{PolyData} and ignores the \code{EID}
+column.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet} with the same \code{PID}s as those given in \code{data}.  If
+\code{data} has an \code{SID} column, the result will include it.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addPoints}{addPoints}},
+\code{\LinkA{plotPoints}{plotPoints}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- create sample PolyData
+  polyData <- data.frame(PID=c(1, 2, 3),
+     x1=c(1, 3, 5), y1=c(1, 3, 2),
+     x2=c(1, 4, 5), y2=c(2, 4, 1),
+     x3=c(2, 4, 6), y3=c(2, 3, 1))
+  #--- print PolyData
+  print(polyData)
+  #--- make a PolySet from PolyData
+  polys <- convDP(polyData,
+    xColumns=c("x1", "x2", "x3"),
+    yColumns=c("y1", "y2", "y3"))
+  #--- print and plot the PolySet
+  print(polys)
+  plotLines(polys, xlim=c(0,7), ylim=c(0,5), col=2)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{convLP}{Convert Polylines into a Polygon}{convLP}
+\keyword{manip}{convLP}
+%
+\begin{Description}\relax
+Convert two polylines into a polygon.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+convLP (polyA, polyB, reverse = TRUE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polyA}] \LinkA{PolySet}{PolySet} containing a polyline.
+\item[\code{polyB}] \LinkA{PolySet}{PolySet} containing a polyline.
+\item[\code{reverse}] Boolean value; if \code{TRUE}, reverse \code{polyB}'s
+vertices.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+The resulting \LinkA{PolySet}{PolySet} contains all the vertices from
+\code{polyA} in their original order.  If \code{reverse = TRUE}, this
+function appends the vertices from \code{polyB} in the reverse order
+(\code{nrow(polyB):1}).  Otherwise, it appends them in their original
+order.  The \code{PID} column equals the \code{PID} of \code{polyA}.
+No \code{SID} column appears in the result.  The resulting polygon is
+an exterior boundary.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet} with a single \code{PID} that is the same as
+\code{polyA}. The result contains all the vertices in \code{polyA} and
+\code{polyB}. It has the same \code{projection} and \code{zone}
+attributes as those in the input PolySets.  If an input PolySet's
+attributes equal \code{NULL}, the function uses the other
+PolySet's. If the PolySet attributes conflict, the result's attribute
+equals \code{NULL}.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addLines}{addLines}},
+\code{\LinkA{appendPolys}{appendPolys}},
+\code{\LinkA{closePolys}{closePolys}},
+\code{\LinkA{convCP}{convCP}},
+\code{\LinkA{joinPolys}{joinPolys}},
+\code{\LinkA{plotLines}{plotLines}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- create two polylines
+  polyline1 <- data.frame(PID=rep(1,2),POS=1:2,X=c(1,4),Y=c(1,4))
+  polyline2 <- data.frame(PID=rep(1,2),POS=1:2,X=c(2,5),Y=c(1,4))
+  #--- create two plots to demonstrate the effect of `reverse'
+  par(mfrow=c(2, 1))
+  plotPolys(convLP(polyline1, polyline2, reverse=TRUE), col=2)
+  plotPolys(convLP(polyline1, polyline2, reverse=FALSE), col=3)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{convUL}{Convert Coordinates between UTM and Lon/Lat}{convUL}
+\keyword{manip}{convUL}
+%
+\begin{Description}\relax
+Convert coordinates between UTM and Lon/Lat.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+convUL (xydata, km=TRUE, southern=NULL)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{xydata}] data frame with columns \code{X} and \code{Y}.
+\item[\code{km}] Boolean value; if \code{TRUE}, UTM coordinates within
+\code{xydata} are in kilometres; otherwise, metres.
+\item[\code{southern}] Boolean value; if \code{TRUE}, forces conversions from
+UTM to longitude/latitude to produce coordinates within the
+southern hemisphere.  For conversions from UTM, this argument defaults to
+\code{FALSE}. For conversions from LL, the function determines 
+\code{southern} from \code{xydata}.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+The object \code{xydata} must possess a \code{projection} attribute that
+identifies the current projection.  If the data frame contains UTM
+coordinates, it must also have a \code{zone} attribute equal to a
+number between 1 and 60 (inclusive).  If it contains
+geographic (longitude/latitude) coordinates and the \code{zone} attribute is
+missing, the function computes the mean longitude and uses that value
+to determine the zone.  The longitude range of zone \emph{i} is
+\eqn{-186 + 6\emph{i}^\circ < x \le -180 + 6\emph{i}^\circ}{}.
+
+This function converts the \code{X} and \code{Y} columns of
+\code{xydata} from \code{"LL"} to \code{"UTM"} or vice-versa.  If the
+data span more than \bold{one} zone to the right or left of the intended
+central zone, the underlying algorithm may produce erroneous
+results. This limitation means that the user should use 
+the most central zone of the mapped region, or allow the function to determine
+the central zone when converting from geographic to UTM coordinates.
+After the conversion, this routine adjusts the data frame's attributes accordingly.
+\end{Details}
+%
+\begin{Value}
+A data frame identical to \code{xydata}, except that the \code{X} and
+\code{Y} columns contain the results of the conversion, and the
+\code{projection} attribute matches the new projection.
+\end{Value}
+%
+\begin{Author}\relax
+Nicholas Boers, Dept. of Computer Science, Grant MacEwan University, Edmonton AB
+\end{Author}
+%
+\begin{References}\relax
+Ordnance Survey. (2010) A guide to coordinate systems
+in Great Britain. \emph{Report D00659} \bold{(v2.1)}. Southampton, UK. \\{}
+\url{http://www.ordnancesurvey.co.uk/oswebsite/gps/docs/A_Guide_to_Coordinate_Systems_in_Great_Britain.pdf}.
+\end{References}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{closePolys}{closePolys}},
+\code{\LinkA{fixBound}{fixBound}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- load the data
+  data(nepacLL,envir=.PBSmapEnv)
+  #--- set the zone attribute
+  #--- use a zone that is most central to the mapped region
+  attr(nepacLL, "zone") <- 6
+  #--- convert and plot the result
+  nepacUTM <- convUL(nepacLL)
+  plotMap(nepacUTM)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{dividePolys}{Divide a Single Polygon into Several Polygons}{dividePolys}
+\keyword{manip}{dividePolys}
+%
+\begin{Description}\relax
+Divide a single polygon (with several outer-contour components) into
+several polygons, a polygon for each outer contour, by modifying the
+\code{PID} and \code{SID} indices.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+dividePolys (polys)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} with one or more polygons, each with
+possibly several components/holes.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+Given the input \LinkA{PolySet}{PolySet}, this function renumbers the \code{PID}
+and \code{SID} indices so that each outer contour has a unique PID and
+is followed by all of its holes, identifying them with \code{SID}s
+greater than one.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet}, possibly with the addition of an \code{SID} column if
+it did not already exist.  The function may also reorder columns such
+that \code{PID}, \code{SID}, \code{POS}, \code{X} and \code{Y} appear
+first, in that order.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{combinePolys}{combinePolys}}.
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{EventData}{EventData Objects}{EventData}
+\aliasA{as.EventData}{EventData}{as.EventData}
+\aliasA{is.EventData}{EventData}{is.EventData}
+\keyword{classes}{EventData}
+\keyword{documentation}{EventData}
+%
+\begin{Description}\relax
+PBS Mapping functions that expect EventData will accept properly
+formatted data frames in their place (see 'Details').
+
+\code{as.EventData} attempts to coerce a data frame to an object with
+class EventData.
+
+\code{is.EventData} returns \code{TRUE} if its argument is of class
+EventData.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+as.EventData(x, projection = NULL, zone = NULL)
+is.EventData(x, fullValidation = TRUE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] data frame to be coerced or tested.
+\item[\code{projection}] optional \code{projection} attribute to add to
+EventData, possibly overwriting an existing attribute.
+\item[\code{zone}] optional \code{zone} attribute to add to EventData,
+possibly overwriting an existing attribute.
+\item[\code{fullValidation}] Boolean value; if \code{TRUE}, fully test
+\code{x}.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+We define EventData as a data frame with at least three fields named
+(\code{EID}, \code{X}, \code{Y}). Conceptually, an EventData object describes events that
+take place at specific points (\code{X}, \code{Y}) in two-dimensional
+space. Additional fields specify measurements associated with these
+events. For example, in a fishery context EventData could describe
+fishing events associated with trawl tows, based on the fields:
+\begin{itemize}
+
+\item \code{EID} - fishing event (tow) identification number;
+\item \code{X}, \code{Y} - fishing location;
+\item \code{Duration} - length of time for the tow;
+\item \code{Depth} - average depth of the tow;
+\item \code{Catch} - biomass captured.
+
+\end{itemize}
+
+Like \LinkA{PolyData}{PolyData}, EventData can have attributes \code{projection}
+and \code{zone}, which may be absent. Inserting the string
+\code{"EventData"} as the class attribute's first element alters the
+behaviour of some functions, including \code{\LinkA{print}{print}} (if
+\code{\LinkA{PBSprint}{PBSprint}} is \code{TRUE}) and \code{\LinkA{summary}{summary}}.
+\end{Details}
+%
+\begin{Value}
+The \code{as.EventData} method returns an object with classes
+\code{"EventData"} and \code{"data.frame"}, in that order.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\LinkA{LocationSet}{LocationSet},
+\LinkA{PolyData}{PolyData},
+\LinkA{PolySet}{PolySet}.
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{extractPolyData}{Extract PolyData from a PolySet}{extractPolyData}
+\keyword{manip}{extractPolyData}
+%
+\begin{Description}\relax
+Extract \LinkA{PolyData}{PolyData} from a \LinkA{PolySet}{PolySet}.  Columns for the
+\LinkA{PolyData}{PolyData} include those other than \code{PID}, \code{SID},
+\code{POS}, \code{oldPOS}, \code{X}, and \code{Y}.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+extractPolyData (polys)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to use.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function identifies the \LinkA{PolySet}{PolySet}'s extra columns and
+determines if those columns contain unique values for each
+(\code{PID}, \code{SID}).  Where they do, the (\code{PID}, \code{SID})
+will appear in the \LinkA{PolyData}{PolyData} output with that unique value.
+Where they do not, the extra column will contain \code{NA}s for that
+(\code{PID}, \code{SID}).
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} with columns \code{PID}, \code{SID}, and any extra
+columns.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{makeProps}{makeProps}},
+\LinkA{PolyData}{PolyData},
+\LinkA{PolySet}{PolySet}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  #--- create a PolySet with an extra column
+  polys <- data.frame(PID = c(rep(1, 10), rep(2, 10)),
+    POS = c(1:10, 1:10),
+    X = c(rep(1, 10), rep(1, 10)),
+    Y = c(rep(1, 10), rep(1, 10)),
+    colour = (c(rep("green", 10), rep("red", 10))))
+  #--- extract the PolyData
+  print(extractPolyData(polys))
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{findCells}{Find the Grid Cells that Contain Events}{findCells}
+\keyword{manip}{findCells}
+%
+\begin{Description}\relax
+Find the grid cells in a \LinkA{PolySet}{PolySet} that contain events specified in
+\LinkA{EventData}{EventData}.  Similar to \code{\LinkA{findPolys}{findPolys}}, except this
+function requires a \LinkA{PolySet}{PolySet} resulting from
+\code{\LinkA{makeGrid}{makeGrid}}.  This restriction allows this function to
+calculate the result with greater efficiency.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+findCells (events, polys)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{events}] \LinkA{EventData}{EventData} to use.
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to use.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+The resulting data frame, a \LinkA{LocationSet}{LocationSet}, contains the columns
+\code{EID}, \code{PID}, \code{SID} (\emph{if in} \code{polys}), and
+\code{Bdry}, where an event (\code{EID}) occurs in a polygon
+(\code{PID}, \code{SID}). The Boolean variable \code{Bdry} indicates
+whether an event lies on a polygon's edge.  Note that if an event lies
+properly outside of all the polygons, then a record with (\code{EID},
+\code{PID}, \code{SID}) does not occur in the output.  It may happen,
+however, that an event occurs in multiple polygons (i.e., on two or
+more boundaries).  Thus, the same \code{EID} can occur more than once
+in the output.
+\end{Details}
+%
+\begin{Value}
+\LinkA{LocationSet}{LocationSet} that links events with polygons.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{combineEvents}{combineEvents}},
+\code{\LinkA{findPolys}{findPolys}},
+\code{\LinkA{locateEvents}{locateEvents}},
+\code{\LinkA{locatePolys}{locatePolys}},
+\LinkA{LocationSet}{LocationSet},
+\code{\LinkA{makeGrid}{makeGrid}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- create some EventData: points in a diagonal line
+  events <- data.frame(EID=1:11, X=seq(0, 2, length=11),
+     Y=seq(0, 2, length=11))
+  events <- as.EventData(events, projection=1);
+  #--- create a PolySet (a grid)
+  polys <- makeGrid (x=seq(0, 2, by=0.50), y=seq(0, 2, by=0.50), projection=1)
+  #--- show a picture
+  plotPolys(polys, xlim=range(polys$X)+c(-0.1, 0.1),
+    ylim=range(polys$Y)+c(-0.1, 0.1), projection=1)
+  addPoints(events, col=2)
+  #--- run findCells and print the results
+  fc <- findCells(events, polys)
+  fc <- fc[order(fc$EID, fc$PID, fc$SID), ]
+  fc$label <- paste(fc$PID, fc$SID, sep=", ")
+  print (fc)
+  #--- add labels to the graph
+  addLabels(as.PolyData(fc[!duplicated(paste(fc$PID,fc$SID)), ],
+    projection=1), placement="CENTROID", 
+    polys=as.PolySet(polys, projection=1), col=4)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{findPolys}{Find the Polygons that Contain Events}{findPolys}
+\keyword{manip}{findPolys}
+%
+\begin{Description}\relax
+Find the polygons in a \LinkA{PolySet}{PolySet} that contain events specified in
+\LinkA{EventData}{EventData}.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+findPolys (events, polys, maxRows = 1e+05)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{events}] \LinkA{EventData}{EventData} to use.
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to use.
+\item[\code{maxRows}] estimated maximum number of rows in the output
+\LinkA{LocationSet}{LocationSet}.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+The resulting data frame, a \LinkA{LocationSet}{LocationSet}, contains the columns
+\code{EID}, \code{PID}, \code{SID} (\emph{if in} \code{polys}), and
+\code{Bdry}, where an event (\code{EID}) occurs in a polygon
+(\code{PID}, \code{SID}) and \code{SID} does not correspond to an
+inner boundary.  The Boolean variable \code{Bdry} indicates whether an
+event lies on a polygon's edge.  Note that if an event lies properly
+outside of all the polygons, then a record with (\code{EID},
+\code{PID}, \code{SID}) does not occur in the output.  It may happen,
+however, that an event occurs in multiple polygons.  Thus, the same
+\code{EID} can occur more than once in the output.
+\end{Details}
+%
+\begin{Value}
+\LinkA{LocationSet}{LocationSet} that links events with polygons.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{combineEvents}{combineEvents}},
+\code{\LinkA{findCells}{findCells}},
+\code{\LinkA{locateEvents}{locateEvents}},
+\code{\LinkA{locatePolys}{locatePolys}},
+\LinkA{LocationSet}{LocationSet},
+\code{\LinkA{makeGrid}{makeGrid}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- create some EventData: a column of points at X = 0.5
+  events <- data.frame(EID=1:10, X=.5, Y=seq(0, 2, length=10))
+  events <- as.EventData(events, projection=1)
+  #--- create a PolySet: two squares with the second above the first
+  polys <- data.frame(PID=c(rep(1, 4), rep(2, 4)), POS=c(1:4, 1:4),
+    X=c(0, 1, 1, 0, 0, 1, 1, 0),
+    Y=c(0, 0, 1, 1, 1, 1, 2, 2))
+  polys <- as.PolySet(polys, projection=1)
+  #--- show a picture
+  plotPolys(polys, xlim=range(polys$X)+c(-0.1, 0.1),
+    ylim=range(polys$Y)+c(-0.1, 0.1), projection=1);
+  addPoints(events, col=2);
+  #--- run findPolys and print the results
+  print(findPolys(events, polys))
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{fixBound}{Fix the Boundary Points of a PolySet}{fixBound}
+\keyword{manip}{fixBound}
+%
+\begin{Description}\relax
+The ranges of a \LinkA{PolySet}{PolySet}'s \code{X} and \code{Y} columns define
+its boundary.  This function fixes a \LinkA{PolySet}{PolySet}'s vertices by
+moving vertices near a boundary to the actual boundary.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+fixBound (polys, tol)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to fix.
+\item[\code{tol}] vector (length 1 or 2) specifying a percentage of
+the ranges to use in defining \emph{near} to a boundary. If
+\code{tol} has two elements, the first specifies the tolerance for
+the x-axis and the second the y-axis.  If it has only one element,
+the function uses the same tolerance for both axes.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+When moving vertices to a boundary, the function moves them strictly
+horizontally or vertically, as appropriate.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet} identical to the input, except for possible changes in
+the \code{X} and \code{Y} columns.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{closePolys}{closePolys}},
+\code{\LinkA{fixPOS}{fixPOS}},
+\code{\LinkA{isConvex}{isConvex}},
+\code{\LinkA{isIntersecting}{isIntersecting}},
+\LinkA{PolySet}{PolySet}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- set up a long horizontal and long vertical line to extend the plot's
+  #--- limits, and then try fixing the bounds of a line in the top-left
+  #--- corner and a line in the bottom-right corner
+  polys <- data.frame(PID=c(1, 1, 2, 2,  3, 3, 4, 4),
+    POS=c(1, 2, 1, 2,  1, 2, 1, 2),
+    X = c(0, 10, 5, 5, 0.1, 4.9, 5.1, 9.9),
+    Y = c(5, 5, 0, 10, 5.1, 9.9, 0.1, 4.9))
+  polys <- fixBound(polys, tol=0.0100001)
+  plotLines(polys)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{fixPOS}{Fix the POS Column of a PolySet}{fixPOS}
+\keyword{manip}{fixPOS}
+%
+\begin{Description}\relax
+Fix the \code{POS} column of a \LinkA{PolySet}{PolySet} by recalculating it
+using sequential integers.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+fixPOS (polys, exteriorCCW = NA)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to fix.
+\item[\code{exteriorCCW}] Boolean value; if \code{TRUE}, orders exterior
+polygon vertices in a counter-clockwise direction.  If \code{FALSE},
+orders them in a clockwise direction.  If \code{NA}, maintains their
+original order.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function recalculates the \code{POS} values of each (\code{PID},
+\code{SID}) as either 1 to N or N to 1, depending on the order of
+\code{POS} (ascending or descending) in the input data.  \code{POS}
+values in the input must be properly ordered (ascending or
+descending), but they may contain fractional values.  For example,
+\code{POS = 2.5} might correspond to a point manually added between
+\code{POS = 2} and \code{POS = 3}.  If \code{exteriorCCW = NA}, all
+other columns remain unchanged.  Otherwise, it orders the \code{X} and
+\code{Y} columns according to \code{exteriorCCW}.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet} with the same columns as the input, except for possible
+changes to the \code{POS}, \code{X}, and \code{Y} columns.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{closePolys}{closePolys}},
+\code{\LinkA{fixBound}{fixBound}},
+\code{\LinkA{isConvex}{isConvex}},
+\code{\LinkA{isIntersecting}{isIntersecting}},
+\LinkA{PolySet}{PolySet}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  #--- create a PolySet with broken POS numbering
+  polys <- data.frame(PID = c(rep(1, 10), rep(2, 10)),
+    POS = c(seq(2, 10, length = 10), seq(10, 2, length = 10)),
+    X = c(rep(1, 10), rep(1, 10)),
+    Y = c(rep(1, 10), rep(1, 10)))
+  #--- fix the POS numbering
+  polys <- fixPOS(polys)
+  #--- print the results
+  print(polys)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{importEvents}{Import EventData from a Text File}{importEvents}
+\keyword{file}{importEvents}
+%
+\begin{Description}\relax
+Import a text file and convert into \code{EventData}.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+importEvents(EventData, projection=NULL, zone=NULL)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{EventData}] filename of \code{EventData} text file.
+\item[\code{projection}] optional \code{projection} attribute to add to \code{EventData}.
+\item[\code{zone}] optional \code{zone} attribute to add to \code{EventData}.
+
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+An imported \code{EventData}.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{importPolys}{importPolys}}, \code{\LinkA{importLocs}{importLocs}}, \code{\LinkA{importGSHHS}{importGSHHS}}, \code{\LinkA{importShapefile}{importShapefile}}
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{importGSHHS}{Import Data from a GSHHS Database}{importGSHHS}
+\keyword{file}{importGSHHS}
+%
+\begin{Description}\relax
+Import data from a GSHHS database and convert data into a \code{PolySet}
+with a \code{PolyData} attribute.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+importGSHHS(gshhsDB, xlim, ylim, maxLevel=4, n=0)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{gshhsDB}] path name to binary GSHHS database. If unspecified,
+looks for \code{gshhs\_f.b} in the root of the PBSmapping library
+directory.
+\item[\code{xlim}] range of X-coordinates (for clipping).
+The range should be between 0 and 360.
+\item[\code{ylim}] range of Y-coordinates (for clipping).
+\item[\code{maxLevel}] maximum level of polygons to import:
+1 (land), 2 (lakes on land), 3 (islands in lakes), or 4 (ponds on
+islands); ignored when importing lines.
+\item[\code{n}] minimum number of vertices that must exist in a line/polygon
+in order for it to be imported.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This routine requires a binary GSHHS (Global Self-consistent,
+Hierarchical, High-resolution Shoreline) database file. The GSHHS
+database has been released in the public domain and may be downloaded
+from \\{} \url{http://www.soest.hawaii.edu/wessel/gshhs/}. \\{}  At the time of
+writing, the most recent database is \code{gshhs+wdbii\_2.2.0.zip}.
+
+The database \code{gshhs+wdbii\_2.2.0.zip} contains geographical coordinates for 
+shorelines (\code{gshhs}), rivers (\code{wbd\_rivers}), and borders (\code{wdb\_borders}).
+The latter two come from World DataBank II (WDBII): \\{}
+\url{http://meta.wikimedia.org/wiki/Geographical_data#CIA_World_DataBank_II_and_derivates} \\{}
+The five resolutions available are: \\{}
+full (\code{f}), high (\code{h}), intermediate (\code{i}), low (\code{l}), and coarse (\code{c}).
+
+This routine returns a \code{PolySet} object with an associated
+\code{PolyData} attribute. The attribute contains four fields: (a)
+\code{PID}, (b) \code{SID}, (c) \code{Level}, and (d) \code{Source}.
+Each record corresponds to a line/polygon in the \code{PolySet}.  The
+\code{Level} indicates the line's/polygon's level (1=land, 2=lake,
+3=island, 4=pond). The \code{Source} identifies the data source
+(1=WVS, 0=CIA (WDBII)).
+\end{Details}
+%
+\begin{Value}
+A \code{PolySet} with a \code{PolyData} attribute.
+\end{Value}
+%
+\begin{Author}\relax
+Nicholas Boers, Dept. of Computer Science, Grant MacEwan University, Edmonton AB
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{importEvents}{importEvents}}, \code{\LinkA{importLocs}{importLocs}}, 
+\code{\LinkA{importPolys}{importPolys}},  \code{\LinkA{importShapefile}{importShapefile}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+## Not run: 
+pbsfun = function(ex=1) {
+  switch(ex, {
+  #--- EXAMPLE 1
+  #--- set some limits appropriate for a map of Canada
+  limits <- list(x = c(216.0486, 307.1274), y = c(42.87209, 77.35183))
+  #--- extract data from the GSHHS binary files; you will need to download
+  #--- these files from http://www.soest.hawaii.edu/wessel/gshhs/
+  #--- and place them in an appropriate location
+  polys <- importGSHHS ("./gshhs+wdbii_2.2.0/gshhs/gshhs_l.b",
+                   xlim=limits$x, limits$y, maxLevel=4)
+  rivers <- importGSHHS ("./gshhs+wdbii_2.2.0/gshhs/wdb_rivers_i.b",
+                         xlim=limits$x, limits$y)
+  borders <- importGSHHS ("./gshhs+wdbii_2.2.0/gshhs/wdb_borders_i.b",
+                          xlim=limits$x, limits$y)
+  #--- create a PNG for the output
+  png ("./Canada.png", width=1600, height=1200, pointsize=24)
+  #--- plot the polygons, river, and then borders
+  plotMap (polys, plt=c(.05,.99,.075,.99), col="moccasin", bg="skyblue")
+  addLines (rivers, col="lightblue")
+  addLines (borders, col="red")
+  #--- close the output file
+  dev.off ()
+  },{
+  #--- EXAMPLE 2
+  #--- clip out Manitoulin Island area which includes all four levels
+  polys <- importGSHHS ("./gshhs+wdbii_2.2.0/gshhs/gshhs_f.b",
+                        xlim=c(276, 279), ylim=c(45.3, 46.5), maxLevel=4)
+  #--- plot the map and add a label
+  plotMap (polys, col="beige", bg="lightblue");
+  text (-82.08, 45.706, "Manitoulin Isl")
+  })
+  invisible()
+}
+pbsfun(1); pbsfun(2)
+
+## End(Not run)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{importLocs}{Import LocationSet from a text file}{importLocs}
+\keyword{file}{importLocs}
+%
+\begin{Description}\relax
+Import a text file and convert into a LocationSet.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+importLocs(LocationSet)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{LocationSet}] filename of LocationSet text file.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+An imported LocationSet.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{importPolys}{importPolys}}, \code{\LinkA{importEvents}{importEvents}}, \code{\LinkA{importGSHHS}{importGSHHS}}, \code{\LinkA{importShapefile}{importShapefile}}
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{importPolys}{Import PolySet from a text file}{importPolys}
+\keyword{file}{importPolys}
+%
+\begin{Description}\relax
+Import a text file and convert into a PolySet with optional PolyData attribute.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+importPolys(PolySet, PolyData=NULL, projection=NULL, zone=NULL)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{PolySet}] filename of PolySet text file.
+\item[\code{PolyData}] optional filename of PolyData text file.
+\item[\code{projection}] optional \code{projection} attribute to add to
+EventData.
+\item[\code{zone}] optional \code{zone} attribute to add to EventData.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+An imported PolySet with optional PolyData attribute.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{importEvents}{importEvents}}, \code{\LinkA{importLocs}{importLocs}}, \code{\LinkA{importGSHHS}{importGSHHS}}, \code{\LinkA{importShapefile}{importShapefile}}
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{importShapefile}{Import an ESRI Shapefile}{importShapefile}
+\keyword{file}{importShapefile}
+%
+\begin{Description}\relax
+Import an ESRI shapefile (\code{.shp}) into either a 
+\code{\LinkA{PolySet}{PolySet}} or \code{\LinkA{EventData}{EventData}}.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+importShapefile (fn, readDBF=TRUE, projection=NULL, zone=NULL, 
+     placeholes=FALSE, minverts=3)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{fn}] file name of the shapefile to import; specifying the
+extension is optional.
+\item[\code{readDBF}] Boolean value; if \code{TRUE}, it also imports the 
+\code{.dbf} (a database containing the feature attributes) associated with the
+shapefile.
+\item[\code{projection}] optional \code{projection} attribute to override the
+internally derived value.
+\item[\code{zone}] optional \code{zone} attribute to override the default
+value of \code{NULL}.
+\item[\code{placeholes}] logical: if \code{TRUE} then for every \code{PID} 
+identify solids and holes, and place holes under appropriate solids.
+\item[\code{minverts}] minimum number of vertices required for a polygon 
+representing a hole to be retained (does not affect solids).
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This routine imports an ESRI shapefile (\code{.shp}) into either a
+\code{PolySet} or \code{EventData}, depending on the type of
+shapefile.  It supports types 1 (Point), 3 (PolyLine), and 5 (Polygon)
+and imports type 1 into \code{EventData} and types 3 and 5 into a
+\code{PolySet}.  In addition to the shapefile (\code{.shp}), it
+requires the related index file (\code{.shx}).
+
+If a database containing feature attributes (\code{.dbf}) exists, it
+also imports this database by default.  For \code{EventData}, it binds
+the database columns to the \code{EventData} object.  For a
+\code{PolySet}, it saves the database in a \code{\LinkA{PolyData}{PolyData}} object and
+attaches that object to the \code{PolySet} in an attribute named
+``PolyData''.
+
+If a \code{.prj} file exists, this information is attached as an attribute.
+If the first 3 characters are `GEO', then a geographic projection 
+is assumed and \code{projection="LL"}. If the first 4 characters are 
+`PROJ', and `UTM' occurs elsewhere in the string, then the 
+Universal Transverse Mercator projection is assumed and \code{projection="UTM"}. 
+Otherwise, \code{projection=1}.
+
+If an \code{.xml} file exists, this information is attached as an attribute.
+
+Shapes of numeric shape type \code{5} exported from \pkg{ArcView} in geographic 
+projection identify solids as polygons with vertices following a clockwise 
+path and holes as polygons that follow a counter-clockwise path. 
+Unfortuantely, either the export from \pkg{ArcView} or the import using a C-routine 
+from the package \pkg{maptools} often does not report solids followed by their holes. 
+We employ a new R function \code{placeHoles} to do this for us. 
+Ideally, this routine should be rendered in C, but for now we use this 
+function if the user sets the argument \code{placeholes=TRUE}. 
+Depending on the size and complexity of your shapefile, the computation may take a while.
+\end{Details}
+%
+\begin{Value}
+For points, \code{EventData} with columns \code{EID}, \code{X}, and
+\code{Y}, possibly with other columns from the attribute database. For
+polylines and polygons, a \code{PolySet} with columns \code{PID},
+\code{SID}, \code{POS}, \code{X}, \code{Y} and attribute \code{projection}.
+Other attributes that may or may not be attached: \code{parent.child} 
+(boolean vector from original input), \code{shpType} (numeric shape 
+type: 1, 3, or 5), \code{prj} (projection information from \code{.prj} 
+file, \code{xml} (metadata from an \code{.xml} file), \code{PolyData} 
+(data from the attribute database \code{.dbf}), and \code{zone} (UTM zone).
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{importGSHHS}{importGSHHS}}, \code{\LinkA{importEvents}{importEvents}}, 
+\code{\LinkA{importLocs}{importLocs}}, \code{\LinkA{importPolys}{importPolys}}, 
+\code{\LinkA{placeHoles}{placeHoles}} \\{}
+In the package \pkg{sp}, see the function \code{\LinkA{point.in.polygon}{point.in.polygon}}
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{isConvex}{Determine Whether Polygons are Convex}{isConvex}
+\keyword{manip}{isConvex}
+%
+\begin{Description}\relax
+Determine whether polygons found in a \LinkA{PolySet}{PolySet} are convex.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+isConvex (polys)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to use.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+Convex polygons do not self-intersect.  In a convex polygon, only the
+first and last vertices may share the same coordinates (i.e., the
+polygons are optionally closed).
+
+The function does not give special consideration to holes.  It returns
+a value for each unique (\code{PID}, \code{SID}), regardless of
+whether a contour represents a hole.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} with columns \code{PID}, \code{SID} (\emph{may be missing}),
+and \code{convex}.  Column \code{convex} contains Boolean values.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{isIntersecting}{isIntersecting}},
+\LinkA{PolySet}{PolySet}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(nepacLL,envir=.PBSmapEnv)
+  #--- calculate then print the polygons that are convex
+  p <- isConvex(nepacLL);
+  #--- nepacLL actually contains no convex polygons
+  print(p[p$convex,])
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{isIntersecting}{Determine Whether Polygons are Self-Intersecting}{isIntersecting}
+\keyword{manip}{isIntersecting}
+%
+\begin{Description}\relax
+Determine whether polygons found in a \LinkA{PolySet}{PolySet} are
+self-intersecting.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+isIntersecting (polys, numericResult = FALSE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to use.
+\item[\code{numericResult}] Boolean value; if \code{TRUE}, returns the number
+of intersections.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+When \code{numericResult = TRUE}, this function counts intersections
+as the algorithm processes them.  It counts certain types (i.e., those
+involving vertices and those where an edge retraces over an edge) more
+than once.
+
+The function does not give special consideration to holes.  It returns
+a value for each unique (\code{PID}, \code{SID}), regardless of
+whether a contour represents a hole.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} with columns \code{PID}, \code{SID} (\emph{may be missing}),
+and \code{intersecting}.  If \code{numericResult} is \code{TRUE},
+\code{intersecting} contains the number of intersections.  Otherwise,
+it contains a Boolean value.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{isConvex}{isConvex}},
+\LinkA{PolySet}{PolySet}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+  data(nepacLL,envir=.PBSmapEnv)
+  #--- calculate then print the polygons that are self-intersecting
+  p <- isIntersecting(nepacLL, numericResult = FALSE)
+  print(p[p$intersecting,])
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{joinPolys}{Join One or Two PolySets using a Logic Operation}{joinPolys}
+\keyword{manip}{joinPolys}
+\keyword{logic}{joinPolys}
+%
+\begin{Description}\relax
+Join one or two \LinkA{PolySet}{PolySet}s using a logic operation.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+joinPolys(polysA,polysB=NULL,operation="INT")
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polysA}] \LinkA{PolySet}{PolySet} to join.
+\item[\code{polysB}] optional second \LinkA{PolySet}{PolySet} with which to join.
+\item[\code{operation}] one of \code{"DIFF"}, \code{"INT"}, \code{"UNION"},
+or \code{"XOR"}, representing difference, intersection, union, and
+exclusive-or, respectively.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function now (Mar. 2013) interfaces with the Clipper library \\{}
+(\url{http://www.angusj.com/delphi/clipper.php}) developed by Angus
+Johnson.  Previously, it interfaced with the General Polygon Clipper
+library \\{} (\url{http://www.cs.man.ac.uk/aig/staff/alan/software/}) by
+Alan Murta at the University of Manchester.  We keep this historic
+reference to GPC because \LinkA{joinPolys}{joinPolys} remains faithful to Murta's
+definition of a generic polygon, which we describe below.
+
+Murta (2004) defines a \emph{generic polygon} (or \emph{polygon set})
+as zero or more disjoint boundaries of arbitrary configuration.  He
+relates a \emph{boundary} to a contour, where each may be convex,
+concave or self-intersecting. In a PolySet, the polygons associated
+with each unique \code{PID} loosely correspond to a generic polygon,
+as they can represent both inner and outer boundaries.  Our use of the
+term \emph{generic polygon} includes the restrictions imposed by a
+PolySet.  For example, the polygons for a given \code{PID} cannot
+be arranged arbitrarily.
+
+If \code{polysB} is \code{NULL}, this function sequentially applies
+the \code{operation} between the generic polygons in \code{polysA}.
+For example, suppose \code{polysA} contains three generic polygons (A,
+B, C).  The function outputs the \LinkA{PolySet}{PolySet} containing ((A op B)
+op C).
+
+If \code{polysB} is not \code{NULL}, this function applies
+\code{operation} between each generic polygon in \code{polysA} and
+each one in \code{polysB}.  For example, suppose \code{polysA}
+contains two generic polygons (A, B) and \code{polysB} contains two
+generic polygons (C, D).  The function's output is the concatenation
+of A \emph{op} C, B \emph{op} C, A \emph{op} D, B \emph{op} D, with
+\code{PID}s 1 to 4, respectively.  Generally there are \emph{n}
+times \emph{m} comparisons, where \emph{n} = number of polygons in
+\code{polysA} and \emph{m} = number of polygons in \code{polysB}.  If
+\code{polysB} contains only one generic polygon, the function
+maintains the \code{PID}s from \code{polysA}.  It also maintains them
+when \code{polysA} contains only one generic polygon and the
+\code{operation} is difference.  Otherwise, if \code{polysA} contains
+only one generic polygon, it maintains the \code{PID}s from
+\code{polysB}.
+\end{Details}
+%
+\begin{Value}
+If \code{polysB} is \code{NULL}, the resulting \LinkA{PolySet}{PolySet} contains
+a single generic polygon (one \code{PID}), possibly with several
+components (\code{SID}s).  The function recalculates the \code{PID}
+and \code{SID} columns.
+
+If \code{polysB} is not \code{NULL}, the resulting \LinkA{PolySet}{PolySet}
+contains one or more generic polygons (\code{PID}s), each with
+possibly several components (\code{SID}s).  The function recalculates
+the \code{SID} column, and depending on the input, it may recalculate
+the \code{PID} column.
+\end{Value}
+%
+\begin{References}\relax
+Murta, A. (2004) \emph{A General Polygon Clipping Library}.
+Accessed: July 29, 2004.\\{}
+\url{http://www.cs.man.ac.uk/aig/staff/alan/software/gpc.html}
+\end{References}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addPolys}{addPolys}},
+\code{\LinkA{appendPolys}{appendPolys}},
+\code{\LinkA{clipPolys}{clipPolys}},
+\code{\LinkA{closePolys}{closePolys}},
+\code{\LinkA{fixBound}{fixBound}},
+\code{\LinkA{fixPOS}{fixPOS}},
+\code{\LinkA{locatePolys}{locatePolys}},
+\code{\LinkA{plotMap}{plotMap}},
+\code{\LinkA{plotPoints}{plotPoints}},
+\code{\LinkA{thickenPolys}{thickenPolys}},
+\code{\LinkA{thinPolys}{thinPolys}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(nepacLL,envir=.PBSmapEnv)
+  #--- create a triangle to use in clipping
+  polysB <- data.frame(PID=rep(1, 3), POS=1:3,
+    X=c(-127.5, -124.5, -125.6), Y = c(49.2, 50.3, 48.6))
+  #--- intersect nepacLL with the single polygon, and plot the result
+  plotMap(joinPolys(nepacLL, polysB), col=5)
+  #--- add nepacLL in a different line type to emphasize the intersection
+  addPolys(nepacLL, border=2, lty=8, density=0)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{locateEvents}{Locate Events on the Current Plot}{locateEvents}
+\keyword{iplot}{locateEvents}
+%
+\begin{Description}\relax
+Locate events on the current plot (using the \code{\LinkA{locator}{locator}}
+function).
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+locateEvents (EID, n = 512, type = "p", ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{EID}] vector of event IDs (\emph{optional}).
+\item[\code{n}] maximum number of events to locate.
+\item[\code{type}] one of \code{"n"}, \code{"p"}, \code{"l"}, or
+\code{"o"}. If \code{"p"} or \code{"o"}, then the points are
+plotted; if \code{"l"} or \code{"o"}, then the points are joined by
+lines.
+\item[\code{...}] additional \code{\LinkA{par}{par}} parameters for the
+\code{\LinkA{locator}{locator}} function.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function allows its user to define events with mouse clicks on
+the current plot via the \code{\LinkA{locator}{locator}} function.  The
+arguments \code{n} and \code{type} are the usual parameters of the
+\code{\LinkA{locator}{locator}} function.  If \code{EID} is not missing, then
+\code{n = length(EID)}.
+
+On exit from \code{\LinkA{locator}{locator}}, suppose the user defined \emph{m}
+events.  If \code{EID} was missing, then the output data frame will
+contain \emph{m} events. However, if \code{EID} exists, then the
+output data frame will contain \code{length(EID)} events, and both
+\code{X} and \code{Y} will be \code{NA} for events
+\code{EID[(}\emph{m}\code{+1):n]}.  The \code{\LinkA{na.omit}{na.omit}} function
+can remove rows with \code{NA}s.
+\end{Details}
+%
+\begin{Value}
+\LinkA{EventData}{EventData} with columns \code{EID}, \code{X}, and \code{Y}, and
+\code{projection} attribute equal to the map's projection.  The
+function does not set the \code{zone} attribute.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addPoints}{addPoints}},
+\code{\LinkA{combineEvents}{combineEvents}},
+\code{\LinkA{convDP}{convDP}},
+\LinkA{EventData}{EventData},
+\code{\LinkA{findCells}{findCells}},
+\code{\LinkA{findPolys}{findPolys}},
+\code{\LinkA{plotPoints}{plotPoints}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+#--- define five events on the current plot, numbering them 10 to 14
+## Not run: events <- locateEvents(EID = 10:14)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{locatePolys}{Locate Polygons on the Current Plot}{locatePolys}
+\keyword{iplot}{locatePolys}
+%
+\begin{Description}\relax
+Locate polygons on the current plot (using the \code{\LinkA{locator}{locator}}
+function).
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+locatePolys (pdata, n = 512, type = "o", ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{pdata}] \LinkA{PolyData}{PolyData} (\emph{optional}) with
+columns \code{PID} and \code{SID} (\emph{optional}), with two more
+optional columns \code{n} and \code{type}.
+\item[\code{n}] maximum number of points to locate.
+\item[\code{type}] one of \code{"n"}, \code{"p"}, \code{"l"}, or
+\code{"o"}. If \code{"p"} or \code{"o"}, then the points are
+plotted; if \code{"l"}  or \code{"o"}, then the points are joined by
+lines.
+\item[\code{...}] additional \code{\LinkA{par}{par}} parameters for the
+\code{\LinkA{locator}{locator}} function.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function allows its user to define polygons with mouse clicks on
+the current plot via the \code{\LinkA{locator}{locator}} function.  The
+arguments \code{n} and \code{type} are the usual parameters for the
+\code{\LinkA{locator}{locator}} function, but the user can specify them for each
+individual (\code{PID}, \code{SID}) in a \code{pdata} object.
+
+If a \code{pdata} object exists, the function ignores columns other
+than \code{PID}, \code{SID}, \code{n}, and \code{type}.  If \code{pdata}
+includes \code{n}, then an outer boundary has \code{n > 0} and an
+inner boundary has \code{n < 0}.
+
+On exit from \code{\LinkA{locator}{locator}}, suppose the user defined \emph{m}
+vertices for a given polygon. For that polygon, the \code{X} and
+\code{Y} columns will contain \code{NA}s where \code{POS =
+  (}\emph{m}\code{+1):n} for outer-boundaries and \code{POS =
+  (|n|-}\emph{m}\code{):1} for inner-boundaries.  The
+\code{\LinkA{na.omit}{na.omit}} function can remove rows with \code{NA}s.
+
+If a \code{pdata} object does not exist, the output contains only one
+polygon with a \code{PID} equal to 1.  One inner-boundary polygon
+(\code{POS} goes from \code{n} to \code{1}) can be generated by
+supplying a negative \code{n}.
+
+If \code{type = "o"} or \code{type = "l"}, the function draws a line
+connecting the last and first vertices.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet} with \code{projection} attribute equal to the map's
+projection.  The function does not set the \code{zone} attribute.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addPolys}{addPolys}},
+\code{\LinkA{appendPolys}{appendPolys}},
+\code{\LinkA{clipPolys}{clipPolys}},
+\code{\LinkA{closePolys}{closePolys}},
+\code{\LinkA{findCells}{findCells}},
+\code{\LinkA{findPolys}{findPolys}},
+\code{\LinkA{fixPOS}{fixPOS}},
+\code{\LinkA{joinPolys}{joinPolys}},
+\code{\LinkA{plotMap}{plotMap}},
+\code{\LinkA{plotPolys}{plotPolys}},
+\code{\LinkA{thickenPolys}{thickenPolys}},
+\code{\LinkA{thinPolys}{thinPolys}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+#--- define one polygon with up to 5 vertices on the current plot
+## Not run: polys <- locatePolys(n = 5)
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{LocationSet}{LocationSet Objects}{LocationSet}
+\aliasA{as.LocationSet}{LocationSet}{as.LocationSet}
+\aliasA{is.LocationSet}{LocationSet}{is.LocationSet}
+\keyword{classes}{LocationSet}
+\keyword{documentation}{LocationSet}
+%
+\begin{Description}\relax
+PBS Mapping functions that expect LocationSet's will accept properly
+formatted data frames in their place (see 'Details').
+
+\code{as.LocationSet} attempts to coerce a data frame to an object with
+class LocationSet.
+
+\code{is.LocationSet} returns \code{TRUE} if its argument is of class
+LocationSet.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+as.LocationSet(x)
+is.LocationSet(x, fullValidation = TRUE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] data frame to be coerced or tested.
+\item[\code{fullValidation}] Boolean value; if \code{TRUE}, fully test
+\code{x}.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+A \LinkA{PolySet}{PolySet} can define regional boundaries for drawing a map, and
+\LinkA{EventData}{EventData} can give event points on the map. Which events occur in
+which regions? Our function \code{\LinkA{findPolys}{findPolys}} resolves this
+problem. The output lies in a LocationSet, a data frame with three or
+four columns (\code{EID}, \code{PID}, \code{SID}, \code{Bdry}), where
+\code{SID} may be missing. One row in a LocationSet means that the event
+\code{EID} occurs in the polygon (\code{PID}, \code{SID}). The boundary
+(\code{Bdry}) field specifies whether (\code{Bdry=T}) or not
+(\code{Bdry=F}) the event lies on the polygon boundary. If \code{SID}
+refers to an inner polygon boundary, then \code{EID} occurs in
+(\code{PID}, \code{SID}) only if \code{Bdry=T}. An event may occur in
+multiple polygons. Thus, the same \code{EID} can occur in multiple
+records. If an \code{EID} does not fall in any (\code{PID}, \code{SID}),
+or if it falls within a hole, it does not occur in the output
+LocationSet. Inserting the string \code{"LocationSet"} as the first
+element of a LocationSet's \code{class} attribute alters the behaviour
+of some functions, including \code{\LinkA{print}{print}} (if
+\code{\LinkA{PBSprint}{PBSprint}} is \code{TRUE}) and \code{\LinkA{summary}{summary}}.
+\end{Details}
+%
+\begin{Value}
+The \code{as.LocationSet} method returns an object with classes
+\code{"LocationSet"} and \code{"data.frame"}, in that order.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\LinkA{EventData}{EventData},
+\LinkA{PolyData}{PolyData},
+\LinkA{PolySet}{PolySet}.
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{makeGrid}{Make a Grid of Polygons}{makeGrid}
+\keyword{manip}{makeGrid}
+%
+\begin{Description}\relax
+Make a grid of polygons, using \code{PID}s and \code{SID}s according
+to the input arguments.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+makeGrid(x,y,byrow=TRUE,addSID=TRUE,projection=NULL,zone=NULL)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] vector of X-coordinates (of length \eqn{m}{}).
+\item[\code{y}] vector of Y-coordinates (of length \eqn{n}{}).
+\item[\code{byrow}] Boolean value; if \code{TRUE}, increment \code{PID} along X.
+\item[\code{addSID}] Boolean value; if \code{TRUE}, include an \code{SID} column in
+the resulting \LinkA{PolySet}{PolySet}.
+\item[\code{projection}] optional \code{projection} attribute to add to
+the PolySet.
+\item[\code{zone}] optional \code{zone} attribute to add to the PolySet.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function makes a grid of polygons, labeling them according to
+\code{byrow} and \code{addSID}.  In the following description, the
+variables \eqn{i}{} and \eqn{j}{} indicate column and row numbers,
+respectively, where the lower-left cell of the grid is (1, 1).
+\begin{itemize}
+
+\item \code{byrow} \eqn{=}{} \code{TRUE} and \code{addSID} \eqn{=}{}
+\code{FALSE} implies \code{PID} \eqn{= i + (j - 1) \times (m -
+        1)}{}
+\item \code{byrow} \eqn{=}{} \code{FALSE} and \code{addSID} \eqn{=}{}
+\code{FALSE} implies \code{PID} \eqn{= j + (i - 1) \times (n -
+        1)}{}
+\item \code{byrow} \eqn{=}{} \code{TRUE} and \code{addSID} \eqn{=}{}
+\code{TRUE} implies \code{PID} \eqn{= i}{}, \code{SID} \eqn{= j}{}
+\item \code{byrow} \eqn{=}{} \code{FALSE} and \code{addSID} \eqn{=}{}
+\code{TRUE} implies \code{PID} \eqn{= j}{}, \code{SID} \eqn{= i}{}
+
+\end{itemize}
+
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet} with columns \code{PID}, \code{SID}
+(\emph{if} \code{addSID = TRUE}), \code{POS}, \code{X}, and \code{Y}.
+The \LinkA{PolySet}{PolySet} is a set of rectangular grid cells with
+vertices:\\{}
+\eqn{(x_{i}, y_{j}), (x_{i+1}, y_{j}), (x_{i+1}, y_{j+1}), (x_{i},
+    y_{j+1})}{}.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addPolys}{addPolys}},
+\code{\LinkA{clipPolys}{clipPolys}},
+\code{\LinkA{combineEvents}{combineEvents}},
+\code{\LinkA{findCells}{findCells}},
+\code{\LinkA{findPolys}{findPolys}},
+\LinkA{PolySet}{PolySet},
+\code{\LinkA{thickenPolys}{thickenPolys}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- make a 10 x 10 grid
+  polyGrid <- makeGrid(x=0:10, y=0:10)
+  #--- plot the grid
+  plotPolys(polyGrid, density=0, projection=1)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{makeProps}{Make Polygon Properties}{makeProps}
+\keyword{manip}{makeProps}
+%
+\begin{Description}\relax
+Append a column for a polygon property (e.g., \code{border} or
+\code{lty}) to \LinkA{PolyData}{PolyData} based on measurements in the
+\LinkA{PolyData}{PolyData}'s \code{Z} column.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+makeProps(pdata,breaks,propName="col",propVals=1:(length(breaks)-1))
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{pdata}] \LinkA{PolyData}{PolyData} with a \code{Z} column.
+\item[\code{breaks}] either a vector of cut points or a scalar denoting the
+number of intervals that \code{Z} is to be cut into.
+\item[\code{propName}] name of the new column to append to \code{pdata}.
+\item[\code{propVals}] vector of values to associate with \code{Z} breaks.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function acts like the \code{\LinkA{cut}{cut}} function to produce
+\LinkA{PolyData}{PolyData} suitable for the \code{polyProps} plotting argument
+(see \code{\LinkA{addLabels}{addLabels}}, \code{\LinkA{addLines}{addLines}},
+\code{\LinkA{addPoints}{addPoints}}, \code{\LinkA{addPolys}{addPolys}},
+\code{\LinkA{addStipples}{addStipples}}, \code{\LinkA{plotLines}{plotLines}},
+\code{\LinkA{plotMap}{plotMap}},\code{\LinkA{plotPoints}{plotPoints}}, and
+\code{\LinkA{plotPolys}{plotPolys}}).  The \code{Z} column of \code{pdata} is
+equivalent to the data vector \code{x} of the \code{\LinkA{cut}{cut}}
+function.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} with the same columns as \code{pdata} plus an
+additional column \code{propName}.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addLabels}{addLabels}},
+\code{\LinkA{addLines}{addLines}},
+\code{\LinkA{addPoints}{addPoints}},
+\code{\LinkA{addPolys}{addPolys}},
+\code{\LinkA{addStipples}{addStipples}},
+\code{\LinkA{plotLines}{plotLines}},
+\code{\LinkA{plotMap}{plotMap}},
+\code{\LinkA{plotPoints}{plotPoints}},
+\code{\LinkA{plotPolys}{plotPolys}},
+\LinkA{PolyData}{PolyData},
+\LinkA{PolySet}{PolySet}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  #--- create a PolyData object
+  pd <- data.frame(PID=1:10, Z=1:10)
+
+  #--- using 3 intervals, create a column named `col' and populate it with
+  #--- the supplied values
+  makeProps(pdata=pd, breaks=3, propName="col", propVals=c(1:3))
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{makeTopography}{Make Topography Data From Freely Available Online Data}{makeTopography}
+\keyword{manip}{makeTopography}
+%
+\begin{Description}\relax
+Make topography data suitable for the \code{\LinkA{contour}{contour}} and
+\code{\LinkA{contourLines}{contourLines}} functions using freely available global
+seafloor topography data.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+makeTopography (dat, digits=2, func=NULL)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{dat}] data frame with three optionally-named columns: \code{X},
+\code{Y}, and \code{Z}.  The columns must appear in that order.
+\item[\code{digits}] integer indicating the precision to be used by the function
+\code{round} on (X,Y) values.
+\item[\code{func}] function to summarize Z if (X,Y) points are duplicated. 
+Defaults to \code{mean()} if no function is specified.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+Data obtained through the acquisition form at
+\url{http://topex.ucsd.edu/cgi-bin/get_data.cgi} is suitable for this
+function.  \code{\LinkA{read.table}{read.table}} will import its ASCII files into
+R/S, creating the \code{data} argument for this function.
+
+When creating data for regions with longitude values spanning
+-180\eqn{^\circ}{} to 0\eqn{^\circ}{}, consider
+subtracting 360 from the result's X coordinates (\code{x}).
+
+When creating bathymetry data, consider negating the result's
+elevations (\code{z}) to give depths positive values.
+
+Combinations of (X,Y) do not need to be complete (\code{z[x,y]=NA}) or 
+unique (\code{z[x,y]=func(Z[x,y])}).
+\end{Details}
+%
+\begin{Value}
+List with elements \code{x}, \code{y}, and \code{z}.  \code{x} and
+\code{y} are vectors, while \code{z} is a matrix with rownames \code{x}
+and colnames \code{y}.
+\code{\LinkA{contour}{contour}} and \code{\LinkA{contourLines}{contourLines}} expect data
+conforming to this list format.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{graphics::contour}, \code{grDevices::contourLines},
+\code{\LinkA{convCP}{convCP}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- Example 1: Sample data frame and conversion.
+  file <- data.frame(X=c(1,1,2,2),Y=c(3,4,3,4),Z=c(5,6,7,8))
+  print(makeTopography(file))
+
+  #--- Example 2: Aleutian Islands bathymetry
+  isob <- c(100,500,1000,2500,5000)
+  icol <- rgb(0,0,seq(255,100,len=length(isob)),max=255)
+  afile <- paste(system.file(package="PBSmapping"),
+    "/Extra/aleutian.txt",sep="")
+  aleutian <- read.table(afile, header=FALSE, col.names=c("x","y","z"))
+  aleutian$x <- aleutian$x - 360
+  aleutian$z <- -aleutian$z
+  alBathy <- makeTopography(aleutian)
+  alCL <- contourLines(alBathy,levels=isob)
+  alCP <- convCP(alCL)
+  alPoly <- alCP$PolySet
+  attr(alPoly,"projection") <- "LL"
+  plotMap(alPoly,type="n")
+  addLines(alPoly,col=icol)
+  data(nepacLL,envir=.PBSmapEnv)
+  addPolys(nepacLL,col="gold")
+  legend(x="topleft",bty="n",col=icol,lwd=2,legend=as.character(isob))
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{nepacLL}{Data: Shoreline of the NE Pacific Ocean (Normal Resolution)}{nepacLL}
+\keyword{datasets}{nepacLL}
+%
+\begin{Description}\relax
+\LinkA{PolySet}{PolySet} of polygons for the northeast Pacific Ocean shoreline.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+data(nepacLL)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+Data frame consisting of 4 columns: \code{PID} = primary polygon ID,
+\code{POS} = position of each vertex within a given polygon, \code{X}
+= longitude coordinate, and \code{Y} = latitude coordinate.   Attributes:
+\code{projection = "LL"}.
+\end{Format}
+%
+\begin{Note}\relax
+In R, the data must be loaded using the \code{\LinkA{data}{data}} function.
+\end{Note}
+%
+\begin{Source}\relax
+Polygon data from the GSHHS (Global Self-consistent, Hierarchical,
+High-resolution Shoreline) database \code{gshhs\_h.b}. \\{}
+Download from \url{http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html}
+
+\begin{alltt}
+nepacLL <-importGSHHS("gshhs_h.b", xlim=c(-190,-110), ylim=c(34,72), 
+                      level=1, n=15, xoff=-360)
+\end{alltt}
+
+\end{Source}
+%
+\begin{References}\relax
+Wessel, P. and Smith, W.H.F. (1996) A global, self-consistent,
+hierarchical, high-resolution shoreline database. \emph{Journal of
+Geophysical Research} \bold{101}, 8741--8743. \\{}
+\url{http://www.soest.hawaii.edu/pwessel/pwessel_pubs.html}
+\end{References}
+%
+\begin{SeeAlso}\relax
+Data:  \code{\LinkA{nepacLLhigh}{nepacLLhigh}}, \code{\LinkA{worldLL}{worldLL}}, \code{\LinkA{worldLLhigh}{worldLLhigh}}, \code{\LinkA{bcBathymetry}{bcBathymetry}}
+
+\code{\LinkA{importGSHHS}{importGSHHS}}, \code{\LinkA{addPolys}{addPolys}}, \code{\LinkA{clipPolys}{clipPolys}}, 
+\code{\LinkA{plotPolys}{plotPolys}}, \code{\LinkA{plotMap}{plotMap}}, \code{\LinkA{thickenPolys}{thickenPolys}},
+\code{\LinkA{thinPolys}{thinPolys}}
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{nepacLLhigh}{Data: Shoreline of the NE Pacific Ocean (High Resolution)}{nepacLLhigh}
+\keyword{datasets}{nepacLLhigh}
+%
+\begin{Description}\relax
+\LinkA{PolySet}{PolySet} of polygons for the northeast Pacific Ocean shoreline.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+data(nepacLLhigh)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+Data frame consisting of 4 columns: \code{PID} = primary polygon ID,
+\code{POS} = position of each vertex within a given polygon, \code{X}
+= longitude coordinate, and \code{Y} = latitude coordinate.  Attributes:
+\code{projection = "LL"}.
+\end{Format}
+%
+\begin{Note}\relax
+In R, the data must be loaded using the \code{\LinkA{data}{data}} function.
+\end{Note}
+%
+\begin{Source}\relax
+Polygon data from the GSHHS (Global Self-consistent, Hierarchical,
+High-resolution Shoreline) database \code{gshhs\_f.b}. \\{}
+Download from \url{http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html}
+
+\begin{alltt}
+nepacLLhigh <-importGSHHS("gshhs_f.b", xlim=c(-190,-110),
+                 ylim=c(34,72), level=1, n=0, xoff=-360)
+nepacLLhigh <- thinPolys(nepacLLhigh, tol=0.1, filter=3)
+\end{alltt}
+
+\end{Source}
+%
+\begin{References}\relax
+Wessel, P. and Smith, W.H.F. (1996) A global, self-consistent,
+hierarchical, high-resolution shoreline database. \emph{Journal of
+Geophysical Research} \bold{101}, 8741--8743. \\{}
+\url{http://www.soest.hawaii.edu/pwessel/pwessel_pubs.html}
+\end{References}
+%
+\begin{SeeAlso}\relax
+Data:  \code{\LinkA{nepacLL}{nepacLL}}, \code{\LinkA{worldLL}{worldLL}}, \code{\LinkA{worldLLhigh}{worldLLhigh}}, \code{\LinkA{bcBathymetry}{bcBathymetry}}
+
+\code{\LinkA{importGSHHS}{importGSHHS}}, \code{\LinkA{addPolys}{addPolys}}, \code{\LinkA{clipPolys}{clipPolys}},
+\code{\LinkA{plotPolys}{plotPolys}}, \code{\LinkA{plotMap}{plotMap}}, \code{\LinkA{thickenPolys}{thickenPolys}},
+\code{\LinkA{thinPolys}{thinPolys}}
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{PBSmapping}{PBS Mapping: Draw Maps and Implement Other GIS Procedures}{PBSmapping}
+\aliasA{PBSmapping-package}{PBSmapping}{PBSmapping.Rdash.package}
+\keyword{documentation}{PBSmapping}
+%
+\begin{Description}\relax
+This software has evolved from fisheries research
+conducted at the Pacific Biological Station (PBS) in Nanaimo,
+British Columbia, Canada. It extends the R language to include
+two-dimensional plotting features similar to those commonly
+available in a Geographic Information System (GIS).  Embedded
+C code speeds algorithms from computational geometry, such as
+finding polygons that contain specified point events or
+converting between longitude-latitude and Universal Transverse
+Mercator (UTM) coordinates.  It includes data for a global
+shoreline and other data sets in the public domain.
+
+For a complete user's guide, see the file \code{PBSmapping-UG.pdf} 
+in the R directory \code{.../library/PBSmapping/doc}.
+
+\code{PBSmapping} includes 10 demos that appear as figures in 
+the User's Guide. To see them, run the function \code{.PBSfigs()}.
+
+More generally, a user can view all demos available from locally 
+installed packages with the function \code{runDemos()} in our 
+related (and recommended) package \code{PBSmodelling}.
+\end{Description}
+\inputencoding{utf8}
+\HeaderA{PBSprint}{Specify Whether to Print Summaries}{PBSprint}
+\keyword{sysdata}{PBSprint}
+%
+\begin{Description}\relax
+Specify whether PBS Mapping should print object summaries or not. If
+not, data objects are displayed as normal.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+PBSprint
+\end{verbatim}
+\end{Usage}
+%
+\begin{Details}\relax
+If \code{PBSprint = TRUE}, the mapping software will print summaries
+rather than the data frames for EventData, LocationSet, PolyData, and
+PolySet objects.  If \code{PBSprint = FALSE}, it will print the data
+frames.
+
+This variable's default value is \code{FALSE}.
+\end{Details}
+%
+\begin{Value}
+\code{TRUE} or \code{FALSE}, depending on the user's preference.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{summary}{summary}}.
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{placeHoles}{Place Holes Under Correct Solids}{placeHoles}
+\keyword{manip}{placeHoles}
+%
+\begin{Description}\relax
+Place secondary polygons (\code{SID}s) identified as holes 
+(counter-clockwise rotation) under \code{SID}s identified as 
+solids (clockwise rotation) if the vertices of the holes lie 
+completely within the vertices of the solids. 
+This operation is performed for each primary polygon (\code{PID}).
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+placeHoles(polyset, minVerts=3)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polyset}] a valid \pkg{PBSmapping} PolySet.
+\item[\code{minVerts}] minimum number of vertices required for a polygon 
+representing a hole to be retained (does not affect solids).
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+The algorith identifies the rotation of each polygon down to the 
+\code{SID} level using the \pkg{PBSmapping} function \code{.calcOrientation},
+where output values of \code{1} = solids (clockwise rotation) and 
+\code{-1} = holes (counter-clockwise rotation).
+Then for each solid, the function tests whether each hole 
+occurs within the solid. 
+To facilitate computation, the algorithm assumes that once a 
+hole is located in a solid, it will not occur in any other solid.
+This means that for each successive solid, the number of 
+candidate holes will either decrease or stay the same.
+
+This function makes use of the \code{point.in.polygon} function 
+contained in the package \pkg{sp}. For each hole vertex, the latter
+algorithm returns a numeric value: \\{}
+\code{0} = hole vertex is strictly exterior to the solid; \\{}
+\code{1} = hole vertex is strictly interior to the solid; \\{}
+\code{2} = hole vertex lies on the relative interior of an edge of the solid; \\{}
+\code{3} = hole vertex coincides with a solid vertex.
+\end{Details}
+%
+\begin{Value}
+Returns the input PolySet where \code{SID} holes have been arranged 
+beneath appropriate \code{SID} solids for each \code{PID}.
+\end{Value}
+%
+\begin{Author}\relax
+Rowan Haigh, Pacific Biological Station, Fisheries and Oceans Canada, Nanaimo BC.
+\end{Author}
+%
+\begin{References}\relax
+See copyright notice in \code{\LinkA{point.in.polygon}{point.in.polygon}}.
+\end{References}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{importShapefile}{importShapefile}}, \code{\LinkA{point.in.polygon}{point.in.polygon}}
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{plotLines}{Plot a PolySet as Polylines}{plotLines}
+\keyword{hplot}{plotLines}
+%
+\begin{Description}\relax
+Plot a \LinkA{PolySet}{PolySet} as polylines.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+plotLines (polys, xlim = NULL, ylim = NULL, projection = FALSE,
+           plt = c(0.11, 0.98, 0.12, 0.88), polyProps = NULL,
+           lty = NULL, col = NULL, bg = 0, axes = TRUE,
+           tckLab = TRUE, tck = 0.014, tckMinor = 0.5 * tck, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to plot (\emph{required}).
+\item[\code{xlim}] range of X-coordinates.
+\item[\code{ylim}] range of Y-coordinates.
+\item[\code{projection}] desired projection when \LinkA{PolySet}{PolySet} lacks a
+\code{projection} attribute; one of \code{"LL"}, \code{"UTM"},
+or a numeric value.  If Boolean, specifies whether to check
+\code{polys} for a \code{projection} attribute.
+\item[\code{plt}] four element numeric vector \code{(x1, x2, y1, y2)} giving
+the coordinates of the plot region measured as a fraction of the
+figure region. Set to \code{NULL} if \code{mai} in \code{par} is
+desired.
+\item[\code{polyProps}] \LinkA{PolyData}{PolyData} specifying which polylines to plot and their
+properties.  \code{\LinkA{par}{par}} parameters passed as direct arguments
+supersede these data.
+\item[\code{lty}] vector describing line types (cycled by \code{PID}).
+\item[\code{col}] vector describing colours (cycled by \code{PID}).
+\item[\code{bg}] background colour of the plot.
+\item[\code{axes}] Boolean value; if \code{TRUE}, plot axes.
+\item[\code{tckLab}] Boolean vector (length 1 or 2); if \code{TRUE}, 
+label the major tick marks.  If given a two-element
+vector, the first element describes the tick marks on the
+x-axis and the second element describes those on the y-axis.
+\item[\code{tck}] numeric vector (length 1 or 2) describing the length
+of tick marks as a fraction of the smallest dimension. If
+\code{tckLab = TRUE}, these tick marks will be automatically
+labelled.  If given a two-element vector, the first element
+describes the tick marks on the x-axis and the second element
+describes those on the y-axis.
+\item[\code{tckMinor}] numeric vector (length 1 or 2) describing the length
+of tick marks as a fraction of the smallest dimension.  These tick
+marks can not be automatically labelled.  If given a two-element vector,
+the first element describes the tick marks on the x-axis and
+the second element describes those on the y-axis.
+\item[\code{...}] additional \code{\LinkA{par}{par}} parameters, or the arguments
+\code{main}, \code{sub}, \code{xlab}, or \code{ylab} for the
+\code{\LinkA{title}{title}} function.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function plots a \LinkA{PolySet}{PolySet}, where each unique (\code{PID},
+\code{SID}) describes a polyline.  It does not connect each polyline's
+last vertex to its first.  Unlike \code{\LinkA{plotMap}{plotMap}}, the function
+ignores the aspect ratio.  It clips \code{polys} to \code{xlim} and
+\code{ylim} before plotting.
+
+The function creates a blank plot when \code{polys} equals
+\code{NULL}.  In this case, the user must supply both \code{xlim} and
+\code{ylim} arguments.  Alternatively, it accepts the argument
+\code{type = "n"} as part of \dots, which is equivalent to specifying
+\code{polys = NULL}, but requires a \LinkA{PolySet}{PolySet}.  In both cases,
+the function's behaviour changes slightly.  To resemble the
+\code{\LinkA{plot}{plot}} function, it plots the border, labels, and other
+parts according to \code{\LinkA{par}{par}} parameters such as \code{col}.
+
+For additional help on the arguments \code{lty} and \code{col}, please
+see \code{\LinkA{par}{par}}.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} consisting of the \code{PolyProp}s used to create the plot.
+\end{Value}
+%
+\begin{Note}\relax
+To satisfy the aspect ratio, this plotting routine resizes the plot
+region.  Consequently, \code{\LinkA{par}{par}} parameters such as
+\code{plt}, \code{mai}, and \code{mar} will change.  When the function
+terminates, these changes persist to allow for additions to the plot.
+\end{Note}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addLines}{addLines}}, \code{\LinkA{calcLength}{calcLength}}, \code{\LinkA{clipLines}{clipLines}},
+\code{\LinkA{closePolys}{closePolys}}, \code{\LinkA{convLP}{convLP}}, \code{\LinkA{fixBound}{fixBound}},
+\code{\LinkA{fixPOS}{fixPOS}},
+
+\code{\LinkA{locatePolys}{locatePolys}}, \code{\LinkA{thinPolys}{thinPolys}}, \code{\LinkA{thickenPolys}{thickenPolys}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- create a PolySet to plot
+  polys <- data.frame(PID=rep(1,4),POS=1:4,X=c(0,1,1,0),Y=c(0,0,1,1))
+  #--- plot the PolySet
+  plotLines(polys, xlim=c(-.5,1.5), ylim=c(-.5,1.5))
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{plotMap}{Plot a PolySet as a Map}{plotMap}
+\keyword{hplot}{plotMap}
+%
+\begin{Description}\relax
+Plot a \LinkA{PolySet}{PolySet} as a map, using the correct aspect ratio.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+plotMap (polys, xlim = NULL, ylim = NULL, projection = TRUE,
+         plt = c(0.11, 0.98, 0.12, 0.88), polyProps = NULL,
+         border = NULL, lty = NULL, col = NULL, colHoles = NULL,
+         density = NA, angle = NULL, bg = 0, axes = TRUE,
+         tckLab = TRUE, tck = 0.014, tckMinor = 0.5 * tck, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to plot (\emph{required}).
+\item[\code{xlim}] range of X-coordinates.
+\item[\code{ylim}] range of Y-coordinates.
+\item[\code{projection}] desired projection when \LinkA{PolySet}{PolySet} lacks a
+\code{projection} attribute; one of \code{"LL"}, \code{"UTM"},
+or a numeric value.  If Boolean, specifies whether to check
+\code{polys} for a \code{projection} attribute.
+\item[\code{plt}] four element numeric vector \code{(x1, x2, y1, y2)} giving
+the coordinates of the plot region measured as a fraction of the
+figure region. Set to \code{NULL} if \code{mai} in \code{par} is
+desired.
+\item[\code{polyProps}] \LinkA{PolyData}{PolyData} specifying which polygons to plot and their
+properties.  \code{\LinkA{par}{par}} parameters passed as direct arguments
+supersede these data.
+\item[\code{border}] vector describing edge colours (cycled by \code{PID}).
+\item[\code{lty}] vector describing line types (cycled by \code{PID}).
+\item[\code{col}] vector describing fill colours (cycled by \code{PID}).
+\item[\code{colHoles}] vector describing hole colours (cycled by \code{PID}).
+The default, \code{NULL}, should be used in most cases as it renders
+holes transparent. \code{colHoles} is designed solely to eliminate
+retrace lines when images are converted to PDF format. If
+\code{colHoles} is specified, underlying information (i.e., previously
+plotted shapes) will be obliterated.  If \code{NA} is specified, only
+outer polygons are drawn, consequently filling holes.
+\item[\code{density}] vector describing shading line densities (lines per
+inch, cycled by \code{PID}).
+\item[\code{angle}] vector describing shading line angles (degrees, cycled by
+\code{PID}).
+\item[\code{bg}] background colour of the plot.
+\item[\code{axes}] Boolean value; if \code{TRUE}, plot axes.
+\item[\code{tckLab}] Boolean vector (length 1 or 2); if \code{TRUE},
+label the major tick marks.  If given a two-element
+vector, the first element describes the tick marks on the
+x-axis and the second element describes those on the y-axis.
+\item[\code{tck}] numeric vector (length 1 or 2) describing the length
+of tick marks as a fraction of the smallest dimension. If
+\code{tckLab = TRUE}, these tick marks will be automatically
+labelled.  If given a two-element vector, the first element
+describes the tick marks on the x-axis and the second element
+describes those on the y-axis.
+\item[\code{tckMinor}] numeric vector (length 1 or 2) describing the length
+of tick marks as a fraction of the smallest dimension.  These tick
+marks can not be automatically labelled.  If given a two-element vector,
+the first element describes the tick marks on the x-axis and
+the second element describes those on the y-axis.
+\item[\code{...}] additional \code{\LinkA{par}{par}} parameters, or the arguments
+\code{main}, \code{sub}, \code{xlab}, or \code{ylab} for the
+\code{\LinkA{title}{title}} function.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function plots a \LinkA{PolySet}{PolySet}, where each unique (\code{PID},
+\code{SID}) describes a polygon.  It connects each polygon's last
+vertex to its first.  The function supports both borders
+(\code{border}, \code{lty}) and fills (\code{col}, \code{density},
+\code{angle}).  When supplied with the appropriate arguments, it can
+draw only borders or only fills .  Unlike \code{\LinkA{plotLines}{plotLines}} and
+\code{\LinkA{plotPolys}{plotPolys}}, it uses the aspect ratio supplied in the
+\code{projection} attribute of \code{polys}.  If this attribute is
+missing, it attempts to use its \code{projection} argument.  In the
+absence of both, it uses a default aspect ratio of 1:1.  It clips
+\code{polys} to \code{xlim} and \code{ylim} before plotting.
+
+The function creates a blank plot when \code{polys} equals
+\code{NULL}.  In this case, the user must supply both \code{xlim} and
+\code{ylim} arguments.  Alternatively, it accepts the argument
+\code{type = "n"} as part of \dots, which is equivalent to specifying
+\code{polys = NULL}, but requires a \LinkA{PolySet}{PolySet}.  In both cases,
+the function's behaviour changes slightly.  To resemble the
+\code{\LinkA{plot}{plot}} function, it plots the border, labels, and other
+parts according to \code{\LinkA{par}{par}} parameters such as \code{col}.
+
+For additional help on the arguments \code{border}, \code{lty},
+\code{col}, \code{density}, and \code{angle}, please see
+\code{\LinkA{polygon}{polygon}} and \code{\LinkA{par}{par}}.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} consisting of the \code{PolyProp}s used to create the plot.
+\end{Value}
+%
+\begin{Note}\relax
+To satisfy the aspect ratio, this plotting routine resizes the plot
+region.  Consequently, \code{\LinkA{par}{par}} parameters such as
+\code{plt}, \code{mai}, and \code{mar} will change.  When the function
+terminates, these changes persist to allow for additions to the plot.
+\end{Note}
+%
+\begin{Author}\relax
+Nicholas Boers, Dept. of Computer Science, Grant MacEwan University, Edmonton AB
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addLabels}{addLabels}},
+\code{\LinkA{addPolys}{addPolys}},
+\code{\LinkA{addStipples}{addStipples}},
+\code{\LinkA{clipPolys}{clipPolys}},
+\code{\LinkA{closePolys}{closePolys}},
+\code{\LinkA{fixBound}{fixBound}},
+\code{\LinkA{fixPOS}{fixPOS}},
+\code{\LinkA{locatePolys}{locatePolys}},
+\code{\LinkA{plotLines}{plotLines}},
+\code{\LinkA{plotPoints}{plotPoints}},
+\code{\LinkA{thinPolys}{thinPolys}},
+\code{\LinkA{thickenPolys}{thickenPolys}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- create a PolySet to plot
+  polys <- data.frame(PID=rep(1,4),POS=1:4,X=c(0,1,1,0),Y=c(0,0,1,1))
+  #--- plot the PolySet
+  plotMap(polys,xlim=c(-.5,1.5),ylim=c(-.5,1.5),density=0,projection=1)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{plotPoints}{Plot EventData/PolyData as Points}{plotPoints}
+\keyword{aplot}{plotPoints}
+%
+\begin{Description}\relax
+Plot \LinkA{EventData}{EventData}/\LinkA{PolyData}{PolyData}, where each unique \code{EID} or
+(\code{PID}, \code{SID}) describes a point.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+plotPoints (data, xlim = NULL, ylim = NULL, projection = FALSE,
+            plt = c(0.11, 0.98, 0.12, 0.88), polyProps = NULL,
+            cex = NULL, col = NULL, pch = NULL, axes = TRUE,
+            tckLab = TRUE, tck = 0.014, tckMinor = 0.5 * tck, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{data}] \LinkA{EventData}{EventData} or \LinkA{PolyData}{PolyData} to plot (\emph{required}).
+\item[\code{xlim}] range of X-coordinates.
+\item[\code{ylim}] range of Y-coordinates.
+\item[\code{projection}] desired projection when \LinkA{PolySet}{PolySet} lacks a
+\code{projection} attribute; one of \code{"LL"}, \code{"UTM"},
+or a numeric value.  If Boolean, specifies whether to check
+\code{polys} for a \code{projection} attribute.
+\item[\code{plt}] four element numeric vector \code{(x1, x2, y1, y2)} giving
+the coordinates of the plot region measured as a fraction of the
+figure region. Set to \code{NULL} if \code{mai} in \code{par} is
+desired.
+\item[\code{polyProps}] \LinkA{PolyData}{PolyData} specifying which points to plot and their
+properties.  \code{\LinkA{par}{par}} parameters passed as direct arguments
+supersede these data.
+\item[\code{cex}] vector describing character expansion factors (cycled by
+\code{EID} or \code{PID}).
+\item[\code{col}] vector describing colours (cycled by \code{EID} or
+\code{PID}).
+\item[\code{pch}] vector describing plotting characters (cycled by \code{EID}
+or \code{PID}).
+\item[\code{axes}] Boolean value; if \code{TRUE}, plot axes.
+\item[\code{tckLab}] Boolean vector (length 1 or 2); if \code{TRUE},
+label the major tick marks.  If given a two-element
+vector, the first element describes the tick marks on the
+x-axis and the second element describes those on the y-axis.
+\item[\code{tck}] numeric vector (length 1 or 2) describing the length
+of tick marks as a fraction of the smallest dimension. If
+\code{tckLab = TRUE}, these tick marks will be automatically
+labelled.  If given a two-element vector, the first element
+describes the tick marks on the x-axis and the second element
+describes those on the y-axis.
+\item[\code{tckMinor}] numeric vector (length 1 or 2) describing the length
+of tick marks as a fraction of the smallest dimension.  These tick
+marks can not be automatically labelled.  If given a two-element vector,
+the first element describes the tick marks on the x-axis and
+the second element describes those on the y-axis.
+\item[\code{...}] additional \code{\LinkA{par}{par}} parameters, or the arguments
+\code{main}, \code{sub}, \code{xlab}, or \code{ylab} for the
+\code{\LinkA{title}{title}} function.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function clips \code{data} to \code{xlim} and \code{ylim} before
+plotting.  It only adds \LinkA{PolyData}{PolyData} containing \code{X} and
+\code{Y} columns.
+
+The function creates a blank plot when \code{polys} equals
+\code{NULL}.  In this case, the user must supply both \code{xlim} and
+\code{ylim} arguments.  Alternatively, it accepts the argument
+\code{type = "n"} as part of \dots, which is equivalent to specifying
+\code{polys = NULL}, but requires a \LinkA{PolySet}{PolySet}.  In both cases,
+the function's behaviour changes slightly.  To resemble the
+\code{\LinkA{plot}{plot}} function, it plots the border, labels, and other
+parts according to \code{\LinkA{par}{par}} parameters such as \code{col}.
+
+For additional help on the arguments \code{cex}, \code{col}, and
+\code{pch}, please see \code{\LinkA{par}{par}}.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} consisting of the \code{PolyProp}s used to create the plot.
+\end{Value}
+%
+\begin{Note}\relax
+To satisfy the aspect ratio, this plotting routine resizes the plot
+region.  Consequently, \code{\LinkA{par}{par}} parameters such as
+\code{plt}, \code{mai}, and \code{mar} will change.  When the function
+terminates, these changes persist to allow for additions to the plot.
+\end{Note}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addPoints}{addPoints}},
+\code{\LinkA{combineEvents}{combineEvents}},
+\code{\LinkA{convDP}{convDP}},
+\code{\LinkA{findPolys}{findPolys}},
+\code{\LinkA{locateEvents}{locateEvents}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(nepacLL,surveyData,envir=.PBSmapEnv)
+  #--- plot a map
+  plotMap(nepacLL, xlim=c(-136, -125), ylim=c(48, 57))
+  #--- add events
+  addPoints(surveyData, col=1:7)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{plotPolys}{Plot a PolySet as Polygons}{plotPolys}
+\keyword{hplot}{plotPolys}
+%
+\begin{Description}\relax
+Plot a \LinkA{PolySet}{PolySet} as polygons.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+plotPolys (polys, xlim = NULL, ylim = NULL, projection = FALSE,
+           plt = c(0.11, 0.98, 0.12, 0.88), polyProps = NULL,
+           border = NULL, lty = NULL, col = NULL, colHoles = NULL,
+           density = NA, angle = NULL, bg = 0, axes = TRUE,
+           tckLab = TRUE, tck = 0.014, tckMinor = 0.5 * tck, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to plot (\emph{required}).
+\item[\code{xlim}] range of X-coordinates.
+\item[\code{ylim}] range of Y-coordinates.
+\item[\code{projection}] desired projection when \LinkA{PolySet}{PolySet} lacks a
+\code{projection} attribute; one of \code{"LL"}, \code{"UTM"},
+or a numeric value.  If Boolean, specifies whether to check
+\code{polys} for a \code{projection} attribute.
+\item[\code{plt}] four element numeric vector \code{(x1, x2, y1, y2)} giving
+the coordinates of the plot region measured as a fraction of the
+figure region. Set to \code{NULL} if \code{mai} in \code{par} is
+desired.
+\item[\code{polyProps}] \LinkA{PolyData}{PolyData} specifying which polygons to
+plot and their properties.  \code{\LinkA{par}{par}} parameters passed as
+direct arguments supersede these data.
+\item[\code{border}] vector describing edge colours (cycled by \code{PID}).
+\item[\code{lty}] vector describing line types (cycled by \code{PID}).
+\item[\code{col}] vector describing fill colours (cycled by \code{PID}).
+\item[\code{colHoles}] vector describing hole colours (cycled by \code{PID}).
+The default, \code{NULL}, should be used in most cases as it renders holes 
+transparent. \code{colHoles} is designed solely to eliminate retrace lines 
+when images are converted to PDF format. If \code{colHoles} is specified, 
+underlying information (i.e., previously plotted shapes) will be obliterated.
+If \code{NA} is specified, only outer polygons are drawn, consequently filling holes.
+\item[\code{density}] vector describing shading line densities (lines per
+inch, cycled by \code{PID}).
+\item[\code{angle}] vector describing shading line angles (degrees, cycled by
+\code{PID}).
+\item[\code{bg}] background colour of the plot.
+\item[\code{axes}] Boolean value; if \code{TRUE}, plot axes.
+\item[\code{tckLab}] Boolean vector (length 1 or 2); if \code{TRUE},
+label the major tick marks.  If given a two-element
+vector, the first element describes the tick marks on the
+x-axis and the second element describes those on the y-axis.
+\item[\code{tck}] numeric vector (length 1 or 2) describing the length
+of tick marks as a fraction of the smallest dimension. If
+\code{tckLab = TRUE}, these tick marks will be automatically
+labelled.  If given a two-element vector, the first element
+describes the tick marks on the x-axis and the second element
+describes those on the y-axis.
+\item[\code{tckMinor}] numeric vector (length 1 or 2) describing the length
+of tick marks as a fraction of the smallest dimension.  These tick
+marks can not be automatically labelled.  If given a two-element
+vector, the first element describes the tick marks on the x-axis and
+the second element describes those on the y-axis.
+\item[\code{...}] additional \code{\LinkA{par}{par}} parameters, or the arguments
+\code{main}, \code{sub}, \code{xlab}, or \code{ylab} for the
+\code{\LinkA{title}{title}} function.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function plots a \LinkA{PolySet}{PolySet}, where each unique (\code{PID},
+\code{SID}) describes a polygon.  It connects each polygon's last
+vertex to its first.  The function supports both borders
+(\code{border}, \code{lty}) and fills (\code{col}, \code{density},
+\code{angle}).  When supplied with the appropriate arguments, it can
+draw only borders or only fills.  Unlike \code{\LinkA{plotMap}{plotMap}}, it
+ignores the aspect ratio.  It clips \code{polys} to \code{xlim} and
+\code{ylim} before plotting.
+
+This function creates a blank plot when \code{polys} equals
+\code{NULL}.  In this case, the user must supply both \code{xlim} and
+\code{ylim} arguments.  Alternatively, it accepts the argument
+\code{type = "n"} as part of \dots, which is equivalent to specifying
+\code{polys = NULL}, but requires a \LinkA{PolySet}{PolySet}.  In both cases,
+the function's behaviour changes slightly.  To resemble the
+\code{\LinkA{plot}{plot}} function, it plots the border, labels, and other
+parts according to \code{\LinkA{par}{par}} parameters such as \code{col}.
+
+For additional help on the arguments \code{border}, \code{lty},
+\code{col}, \code{density}, and \code{angle}, please see
+\code{\LinkA{polygon}{polygon}} and \code{\LinkA{par}{par}}.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolyData}{PolyData} consisting of the \code{PolyProp}s used to create the plot.
+\end{Value}
+%
+\begin{Note}\relax
+To satisfy the aspect ratio, this plotting routine resizes the plot
+region.  Consequently, \code{\LinkA{par}{par}} parameters such as
+\code{plt}, \code{mai}, and \code{mar} will change.  When the function
+terminates, these changes persist to allow for additions to the plot.
+\end{Note}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addLabels}{addLabels}},
+\code{\LinkA{addPolys}{addPolys}},
+\code{\LinkA{addStipples}{addStipples}},
+\code{\LinkA{clipPolys}{clipPolys}},
+\code{\LinkA{closePolys}{closePolys}},
+\code{\LinkA{fixBound}{fixBound}},
+\code{\LinkA{fixPOS}{fixPOS}},
+\code{\LinkA{locatePolys}{locatePolys}},
+\code{\LinkA{plotLines}{plotLines}},
+\code{\LinkA{plotMap}{plotMap}},
+\code{\LinkA{plotPoints}{plotPoints}},
+\code{\LinkA{thinPolys}{thinPolys}},
+\code{\LinkA{thickenPolys}{thickenPolys}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- create a PolySet to plot
+  polys <- data.frame(PID=rep(1,4),POS=1:4,X=c(0,1,1,0),Y=c(0,0,1,1))
+  #--- plot the PolySet
+  plotPolys(polys, xlim=c(-.5,1.5), ylim=c(-.5,1.5), density=0)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{PolyData}{PolyData Objects}{PolyData}
+\aliasA{as.PolyData}{PolyData}{as.PolyData}
+\aliasA{is.PolyData}{PolyData}{is.PolyData}
+\keyword{classes}{PolyData}
+\keyword{documentation}{PolyData}
+%
+\begin{Description}\relax
+PBS Mapping functions that expect PolyData will accept properly
+formatted data frames in their place (see 'Details').
+
+\code{as.PolyData} attempts to coerce a data frame to an object with
+class PolyData.
+
+\code{is.PolyData} returns \code{TRUE} if its argument is of class
+PolyData.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+as.PolyData(x, projection = NULL, zone = NULL)
+is.PolyData(x, fullValidation = TRUE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] data frame to be coerced or tested.
+\item[\code{projection}] optional \code{projection} attribute to add to
+PolyData, possibly overwriting an existing attribute.
+\item[\code{zone}] optional \code{zone} attribute to add to PolyData,
+possibly overwriting an existing attribute.
+\item[\code{fullValidation}] Boolean value; if \code{TRUE}, fully test
+\code{x}.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+We define PolyData as a data frame with a first column named \code{PID}
+and (optionally) a second column named \code{SID}. Unlike a
+\LinkA{PolySet}{PolySet}, where each contour has many records corresponding
+to the vertices, a PolyData object must have only one record for each
+\code{PID} or each (\code{PID}, \code{SID}) combination. Conceptually,
+this object associates data with contours, where the data correspond to
+additional fields in the data frame. The R/S language conveniently
+allows data frames to contain fields of various atomic modes
+(\code{"logical"}, \code{"numeric"}, \code{"complex"},
+\code{"character"}, and \code{"null"}). For example, PolyData with the
+fields (\code{PID}, \code{PName}) might assign character names to a set
+of primary polygons. Additionally, if fields \code{X} and \code{Y} exist
+(perhaps representing locations for placing labels), consider adding
+attributes \code{zone} and \code{projection}. Inserting the string
+\code{"PolyData"} as the class attribute's first element alters the
+behaviour of some functions, including \code{\LinkA{print}{print}} (if
+\code{\LinkA{PBSprint}{PBSprint}} is \code{TRUE}) and \code{\LinkA{summary}{summary}}.
+
+Our software particularly uses PolyData to set various plotting
+characteristics. Consistent with graphical parameters used by the R/S
+functions \code{\LinkA{lines}{lines}} and \code{\LinkA{polygon}{polygon}}, column names
+can specify graphical properties:
+\begin{itemize}
+
+\item \code{lty} - line type in drawing the border and/or shading
+lines;
+\item \code{col} - line or fill colour;
+\item \code{border} - border colour;
+\item \code{density} - density of shading lines;
+\item \code{angle} - angle of shading lines.
+
+\end{itemize}
+
+When drawing polylines (as opposed to closed polygons), only \code{lty}
+and \code{col} have meaning.
+\end{Details}
+%
+\begin{Value}
+The \code{as.PolyData} method returns an object with classes
+\code{"PolyData"} and \code{"data.frame"}, in that order.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\LinkA{EventData}{EventData},
+\LinkA{LocationSet}{LocationSet},
+\LinkA{PolySet}{PolySet}.
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{PolySet}{PolySet Objects}{PolySet}
+\aliasA{as.PolySet}{PolySet}{as.PolySet}
+\aliasA{is.PolySet}{PolySet}{is.PolySet}
+\keyword{classes}{PolySet}
+\keyword{documentation}{PolySet}
+%
+\begin{Description}\relax
+PBS Mapping functions that expect PolySet's will accept properly
+formatted data frames in their place (see 'Details').
+
+\code{as.PolySet} attempts to coerce a data frame to an object with
+class PolySet.
+
+\code{is.PolySet} returns \code{TRUE} if its argument is of class
+PolySet.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+as.PolySet(x, projection = NULL, zone = NULL)
+is.PolySet(x, fullValidation = TRUE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] data frame to be coerced or tested.
+\item[\code{projection}] optional \code{projection} attribute to add to
+the PolySet, possibly overwriting an existing attribute.
+\item[\code{zone}] optional \code{zone} attribute to add to the PolySet,
+possibly overwriting an existing attribute.
+\item[\code{fullValidation}] Boolean value; if \code{TRUE}, fully test
+\code{x}.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+In our software, a PolySet data frame defines a collection of polygonal
+contours (i.e., line segments joined at vertices), based on four or five
+numerical fields:
+\begin{itemize}
+
+\item \code{PID} - the primary identification number for a contour;
+\item \code{SID} - optional, the secondary identification number for a
+contour;
+\item \code{POS} - the position number associated with a vertex;
+\item \code{X} - the horizontal coordinate at a vertex;
+\item \code{Y} - the vertical coordinate at a vertex.
+
+\end{itemize}
+
+The simplest PolySet lacks an \code{SID} column, and each \code{PID}
+corresponds to a different contour. By analogy with a child's
+``follow the dots'' game, the \code{POS} field enumerates the
+vertices to be connected by straight lines. Coordinates (\code{X},
+\code{Y}) specify the location of each vertex. Thus, in familiar
+mathematical notation, a contour consists of \emph{n} points (\eqn{x_i,
+y_i}{}) with \eqn{i = 1, ..., n}{}, where \emph{i} corresponds to the
+\code{POS} index. A PolySet has two potential interpretations. The first
+associates a line segment with each successive pair of points from 1 to
+\emph{n}, giving a \emph{polyline} (in GIS terminology) composed of the
+sequential segments. The second includes a final line segment joining
+points \emph{n} and 1, thus giving a \emph{polygon}.
+
+The secondary ID field allows us to define regions as composites of
+polygons. From this point of view, each primary ID identifies a
+collection of polygons distinguished by secondary IDs. For example, a
+single management area (\code{PID}) might consist of two fishing areas,
+each defined by a unique \code{SID}. A secondary polygon can also
+correspond to an inner boundary, like the hole in a doughnut. We adopt
+the convention that \code{POS} goes from 1 to \emph{n} along an outer
+boundary, but from \emph{n} to 1 along an inner boundary, regardless of
+rotational direction. This contrasts with other GIS software, such as
+ArcView (ESRI 1996), in which outer and inner boundaries correspond to
+clockwise and counter-clockwise directions, respectively.
+
+The SID field in a PolySet with secondary IDs must have integer values
+that appear in ascending order for a given \code{PID}. Furthermore,
+inner boundaries must follow the outer boundary that encloses them. The
+\code{POS} field for each contour (\code{PID}, \code{SID}) must
+similarly appear as integers in strictly increasing or decreasing order,
+for outer and inner boundaries respectively. If the \code{POS} field
+erroneously contains floating-point numbers, \code{\LinkA{fixPOS}{fixPOS}} can
+renumber them as sequential integers, thus simplifying the insertion of
+a new point, such as point 3.5 between points 3 and 4.
+
+A PolySet can have a \code{projection} attribute, which may be missing,
+that specifies a map projection. In the current version of PBS Mapping,
+projection can have character values \code{"LL"} or \code{"UTM"},
+referring to ``Longitude-Latitude'' and ``Universal
+Transverse Mercator''. We explain these projections more completely
+below. If projection is numeric, it specifies the aspect ratio \emph{r},
+the number of \emph{x} units per \emph{y} unit. Thus, \emph{r} units of
+\emph{x} on the graph occupy the same distance as one unit of
+\emph{y}. Another optional attribute \code{zone} specifies the UTM zone
+(if \code{projection="UTM"}) or the preferred zone for conversion from
+Longitude-Latitude (if \code{projection="LL"}).
+
+A data frame's class attribute by default contains the string
+\code{"data.frame"}. Inserting the string \code{"PolySet"} as the class
+vector's first element alters the behaviour of some functions. For
+example, the \code{\LinkA{summary}{summary}} function will print details specific
+to a PolySet. Also, when \code{\LinkA{PBSprint}{PBSprint}} is \code{TRUE}, the
+print function will display a PolySet's summary rather than the contents
+of the data frame.
+\end{Details}
+%
+\begin{Value}
+The \code{as.PolySet} method returns an object with classes
+\code{"PolySet"} and \code{"data.frame"}, in that order.
+\end{Value}
+%
+\begin{References}\relax
+Environmental Systems Research Institute (ESRI). (1996) \emph{ArcView GIS:
+The Geographic Information System for Everyone}. ESRI Press, Redlands,
+California. 340 pp.
+\end{References}
+%
+\begin{SeeAlso}\relax
+\LinkA{EventData}{EventData},
+\LinkA{LocationSet}{LocationSet},
+\LinkA{PolyData}{PolyData}.
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{print}{Print PBS Mapping Objects}{print}
+\methaliasA{print.EventData}{print}{print.EventData}
+\methaliasA{print.LocationSet}{print}{print.LocationSet}
+\methaliasA{print.PolyData}{print}{print.PolyData}
+\methaliasA{print.PolySet}{print}{print.PolySet}
+\methaliasA{print.summary.PBS}{print}{print.summary.PBS}
+\keyword{IO}{print}
+%
+\begin{Description}\relax
+This function displays information about a PBS Mapping object.
+
+\code{\LinkA{summary.EventData}{summary.EventData}}, \code{\LinkA{summary.LocationSet}{summary.LocationSet}},
+\code{\LinkA{summary.PolyData}{summary.PolyData}}, and \code{\LinkA{summary.PolySet}{summary.PolySet}}
+produce an object with class \code{summary.PBS}.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+## S3 method for class 'EventData'
+print(x, ...)
+## S3 method for class 'LocationSet'
+print(x, ...)
+## S3 method for class 'PolyData'
+print(x, ...)
+## S3 method for class 'PolySet'
+print(x, ...)
+## S3 method for class 'summary.PBS'
+print(x, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] a PBS Mapping object of appropriate \code{class}.
+\item[\code{...}] additional arguments to \code{\LinkA{print}{print}}.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{SeeAlso}\relax
+\LinkA{EventData}{EventData},
+\LinkA{LocationSet}{LocationSet},
+\code{\LinkA{PBSprint}{PBSprint}},
+\LinkA{PolyData}{PolyData},
+\LinkA{PolySet}{PolySet},
+\code{\LinkA{summary}{summary}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(nepacLL,envir=.PBSmapEnv)
+  #--- change to summary printing style
+  PBSprint <- TRUE
+  #--- print the PolySet
+  print(nepacLL)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{pythagoras}{Data: Pythagoras' Theorem Diagram PolySet}{pythagoras}
+\keyword{datasets}{pythagoras}
+%
+\begin{Description}\relax
+\LinkA{PolySet}{PolySet} of shapes to prove Pythagoras' Theorem:
+\eqn{a^2 + b^2 = c^2}{}.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+data(pythagoras)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+4 column data frame: \code{PID} = primary polygon ID,
+\code{POS} = position of each vertex within a given polyline, \code{X}
+= X-coordinate, and \code{Y} = Y-coordinate. Attributes:
+\code{projection = 1}.
+\end{Format}
+%
+\begin{Note}\relax
+In R, the data must be loaded using the \code{\LinkA{data}{data}} function.
+\end{Note}
+%
+\begin{Source}\relax
+An artificial construct to illustrate the proof of Pythagoras' Theorem
+using trigonometry.
+\end{Source}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addPolys}{addPolys}},
+\code{\LinkA{plotPolys}{plotPolys}},
+\code{\LinkA{plotMap}{plotMap}},
+\LinkA{PolySet}{PolySet}.
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{refocusWorld}{Refocus the \code{worldLL}/\code{worldLLhigh} Data Sets}{refocusWorld}
+\keyword{manip}{refocusWorld}
+%
+\begin{Description}\relax
+Refocus the \code{worldLL}/\code{worldLLhigh} data sets, e.g., refocus
+them so that Eastern Canada appears to the west of Western Europe.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+refocusWorld (polys, xlim = NULL, ylim = NULL)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} with one or more polygons; typically
+\code{worldLL} or \code{worldLLhigh} (\emph{required}).
+\item[\code{xlim}] range of X-coordinates.
+\item[\code{ylim}] range of Y-coordinates.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function accepts a \LinkA{PolySet}{PolySet} containing one or more polygons
+with X-coordinates that collectively span approximately 360 degrees.
+The function effectively joins the \LinkA{PolySet}{PolySet} into a cylinder and
+then splits it at an arbitrary longitude according to the
+user-specified limits.  Modifications in the resulting \LinkA{PolySet}{PolySet}
+are restricted to shifting X-coordinates by +/- multiples of 360
+degrees, and instead of clipping polygons, the return value simply
+omits out-of-range polygons.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet}, likely a subset of the input \LinkA{PolySet}{PolySet}, which
+retains the same \code{PID}/\code{SID} values.
+\end{Value}
+%
+\begin{Author}\relax
+Nicholas Boers, Dept. of Computer Science, Grant MacEwan University, Edmonton AB
+\end{Author}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{joinPolys}{joinPolys}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- load appropriate data
+  data(worldLL,envir=.PBSmapEnv)
+  #--- set limits
+  xlim <- c(-100,25)
+  ylim <- c(0,90)
+  #--- refocus and plot the world
+  polys <- refocusWorld(worldLL, xlim, ylim)
+  plotMap(polys, xlim, ylim)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{summary}{Summarize PBS Mapping Objects}{summary}
+\methaliasA{summary.EventData}{summary}{summary.EventData}
+\methaliasA{summary.LocationSet}{summary}{summary.LocationSet}
+\methaliasA{summary.PolyData}{summary}{summary.PolyData}
+\methaliasA{summary.PolySet}{summary}{summary.PolySet}
+\keyword{methods}{summary}
+%
+\begin{Description}\relax
+\code{summary} method for PBS Mapping classes.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+## S3 method for class 'EventData'
+summary(object, ...)
+## S3 method for class 'LocationSet'
+summary(object, ...)
+## S3 method for class 'PolyData'
+summary(object, ...)
+## S3 method for class 'PolySet'
+summary(object, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{object}] a PBS Mapping object, such as EventData, a LocationSet,
+PolyData, or a PolySet.
+\item[\code{...}] further arguments passed to or from other methods.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+After creating a list of summary statistics, this function assigns the
+class \code{"summary.PBS"} to the output in order to accomplish
+formatted printing via \code{\LinkA{print.summary.PBS}{print.summary.PBS}}.
+\end{Details}
+%
+\begin{Value}
+A list of summary statistics.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\LinkA{EventData}{EventData},
+\LinkA{LocationSet}{LocationSet},
+\code{\LinkA{PBSprint}{PBSprint}},
+\LinkA{PolyData}{PolyData},
+\LinkA{PolySet}{PolySet}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(surveyData,envir=.PBSmapEnv)
+  print(summary(surveyData))
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{surveyData}{Data: Tow Information from Pacific Ocean Perch Survey}{surveyData}
+\keyword{datasets}{surveyData}
+%
+\begin{Description}\relax
+\LinkA{EventData}{EventData} of Pacific ocean perch (POP) tow information (1966-89).
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+data(surveyData)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+Data frame consisting of 9 columns: \code{PID} = primary polygon ID,
+\code{POS} = position of each vertex within a given polygon, \code{X}
+= longitude coordinate, \code{Y} = latitude coordinate,  \code{trip}
+= trip ID, \code{tow} = tow number in trip, \code{catch} = catch of
+POP (kg), \code{effort} = tow effort (minutes), \code{depth} = fishing
+depth (m), and \code{year} = year of survey trip. Attributes:
+\code{projection = "LL"}, \code{zone = 9}.
+\end{Format}
+%
+\begin{Note}\relax
+In R, the data must be loaded using the \code{\LinkA{data}{data}} function.
+\end{Note}
+%
+\begin{Source}\relax
+The GFBio database, maintained at the Pacific Biological Station
+(Fisheries and Oceans Canada, Nanaimo, BC V9T 6N7), archives catches
+and related biological data from commercial groundfish fishing trips
+and research/assessment cruises off the west coast of British Columbia
+(BC).
+
+The POP (\emph{Sebastes alutus}) survey data were extracted from
+GFBio. The data extraction covers bottom trawl surveys that focus
+primarily on POP biomass estimation: 1966-89 for the central BC coast
+and 1970-85 for the west coast of Vancouver Island. Additionally, a
+1989 cruise along the entire BC coast concentrated on the collection
+of biological samples. Schnute et al. (2001) provide a more
+comprehensive history of POP surveys including the subset of data
+presented here.
+\end{Source}
+%
+\begin{References}\relax
+Schnute, J.T., Haigh, R., Krishka, B.A. and Starr, P. (2001) Pacific
+ocean perch assessment for the west coast of Canada in 2001. \emph{Canadian
+Science Advisory Secretariat, Research Document} \bold{2001/138}, 90 pp.
+\end{References}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addPoints}{addPoints}},
+\code{\LinkA{combineEvents}{combineEvents}},
+\LinkA{EventData}{EventData},
+\code{\LinkA{findPolys}{findPolys}},
+\code{\LinkA{makeGrid}{makeGrid}},
+\code{\LinkA{plotPoints}{plotPoints}}.
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{thickenPolys}{Thicken a PolySet of Polygons}{thickenPolys}
+\keyword{manip}{thickenPolys}
+%
+\begin{Description}\relax
+Thicken a \LinkA{PolySet}{PolySet}, where each unique (\code{PID}, \code{SID})
+describes a polygon.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+thickenPolys (polys, tol = 1, filter = 3, keepOrig = TRUE,
+              close = TRUE)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to thicken.
+\item[\code{tol}] tolerance (in kilometres when \code{proj} is
+\code{"LL"} and \code{"UTM"}; otherwise, same units as
+\code{polys}).
+\item[\code{filter}] minimum number of vertices per result polygon.
+\item[\code{keepOrig}] Boolean value; if \code{TRUE}, keep the original
+points in the \LinkA{PolySet}{PolySet}.
+\item[\code{close}] Boolean value; if \code{TRUE}, create intermediate vertices
+between each polygon's last and first vertex, if necessary.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function thickens each polygon within \code{polys} according to
+the input arguments.
+
+If \code{keepOrig = TRUE}, all of the original vertices appear in the
+result.  It calculates the distance between two sequential original
+vertices, and if that distance exceeds \code{tol}, it adds a
+sufficient number of vertices spaced evenly between the two original
+vertices so that the distance between vertices no longer exceeds
+\code{tol}.  If \code{close = TRUE}, it adds intermediate vertices
+between the last and first vertices when necessary.
+
+If \code{keepOrig = FALSE}, only the first vertex of each polygon is
+guaranteed to appear in the results.  From this first vertex, the
+algorithm walks the polygon summing the distance between vertices.
+When this cumulative distance exceeds \code{tol}, it adds a vertex on
+the line segment under inspection.  After doing so, it resets the
+distance sum, and walks the polygon from this new vertex.  If
+\code{close = TRUE}, it will walk the line segment from the last
+vertex to the first.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet} containing the thickened data.  The function
+recalculates the \code{POS} values for each polygon.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{thinPolys}{thinPolys}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(nepacLL,envir=.PBSmapEnv)
+  #--- plot Vancouver Island
+  plotMap(nepacLL[nepacLL$PID == 33, ])
+  #--- calculate a thickened version using a 30 kilometres tolerance,
+  #--- without keeping the original points
+  p <- thickenPolys(nepacLL[nepacLL$PID == 33, ], tol = 30, keepOrig = FALSE)
+  #--- convert the PolySet to EventData by dropping the PID column and
+  #--- renaming POS to EID
+  p <- p[-1]; names(p)[1] <- "EID"
+  #--- convert the now invalid PolySet into a data frame, and then into
+  #--- EventData
+  p <- as.EventData(as.data.frame(p), projection="LL")
+  #--- plot the results
+  addPoints(p, col=2, pch=19)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{thinPolys}{Thin a PolySet of Polygons}{thinPolys}
+\keyword{manip}{thinPolys}
+%
+\begin{Description}\relax
+Thin a \LinkA{PolySet}{PolySet}, where each unique (\code{PID}, \code{SID})
+describes a polygon.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+thinPolys (polys, tol = 1, filter = 3)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{polys}] \LinkA{PolySet}{PolySet} to thin.
+\item[\code{tol}] tolerance (in kilometres when \code{proj} is
+\code{"LL"} and \code{"UTM"}; otherwise, same units as
+\code{polys}).
+\item[\code{filter}] minimum number of vertices per result polygon.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}\relax
+This function executes the Douglas-Peuker line simplification
+algorithm on each polygon within \code{polys}.
+\end{Details}
+%
+\begin{Value}
+\LinkA{PolySet}{PolySet} containing the thinned data.  The function recalculates
+the \code{POS} values for each polygon.
+\end{Value}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{thickenPolys}{thickenPolys}}.
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+local(envir=.PBSmapEnv,expr={
+  oldpar = par(no.readonly=TRUE)
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(nepacLL,envir=.PBSmapEnv)
+  #--- plot a thinned version of Vancouver Island (3 km tolerance)
+  plotMap(thinPolys(nepacLL[nepacLL$PID == 33, ], tol = 3))
+  #--- add the original Vancouver Island in a different line type to
+  #--- emphasize the difference
+  addPolys(nepacLL[nepacLL$PID == 33, ], border=2, lty=8, density=0)
+  par(oldpar)
+})
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{towData}{Data: Tow Information from Longspine Thornyhead Survey}{towData}
+\keyword{datasets}{towData}
+%
+\begin{Description}\relax
+\LinkA{PolyData}{PolyData} of tow information for a longspine thornyhead survey (2001).
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+data(towData)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+Data frame consisting of 8 columns: \code{PID} = primary polygon ID,
+\code{POS} = position of each vertex within a given polygon, \code{X}
+= longitude coordinate, \code{Y} = latitude coordinate, \code{depth}
+= fishing depth (m), \code{effort} = tow effort (minutes), \code{distance}
+= tow track distance (km), \code{catch} = catch of longspine
+thornyhead (kg), and \code{year} = year of survey. Attributes:
+\code{projection = "LL"}, \code{zone = 9}.
+\end{Format}
+%
+\begin{Note}\relax
+In R, the data must be loaded using the \code{\LinkA{data}{data}} function.
+\end{Note}
+%
+\begin{Source}\relax
+The GFBio database, maintained at the Pacific Biological Station
+(Fisheries and Oceans Canada, Nanaimo, BC V9T 6N7), archives catches
+and related biological data from commercial groundfish fishing trips
+and research/assessment cruises off the west coast of British Columbia
+(BC).  The longspine thornyhead (\emph{Sebastolobus altivelis}) survey data
+were extracted from GFBio. Information on the first 45 tows from the
+2001 survey (Starr et al. 2002) are included here. Effort is time
+(minutes) from winch lock-up to winch release.
+\end{Source}
+%
+\begin{References}\relax
+Starr, P.J., Krishka, B.A. and Choromanski, E.M. (2002) Trawl survey
+for thornyhead biomass estimation off the west coast of Vancouver
+Island, September 15 - October 2, 2001. \emph{Canadian Technical Report of
+Fisheries and Aquatic Sciences} \bold{2421}, 60 pp.
+\end{References}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{makeProps}{makeProps}},
+\LinkA{PolyData}{PolyData},
+\code{\LinkA{towTracks}{towTracks}}.
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{towTracks}{Data: Tow Track Polylines from Longspine Thornyhead Survey}{towTracks}
+\keyword{datasets}{towTracks}
+%
+\begin{Description}\relax
+\LinkA{PolySet}{PolySet} of geo-referenced polyline tow track data from a
+longspine thornyhead survey (2001).
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+data(towTracks)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+Data frame consisting of 4 columns: \code{PID} = primary polygon ID,
+\code{POS} = position of each vertex within a given polyline, \code{X}
+= longitude coordinate, and \code{Y} = latitude
+coordinate. Attributes: \code{projection = "LL"}, \code{zone = 9}.
+\end{Format}
+%
+\begin{Note}\relax
+In R, the data must be loaded using the \code{\LinkA{data}{data}} function.
+\end{Note}
+%
+\begin{Source}\relax
+The longspine thornyhead (\emph{Sebastolobus altivelis}) tow
+track spatial coordinates are available at the Pacific Biological
+Station (Fisheries and Oceans Canada, Nanaimo, BC V9T 6N7). The
+geo-referenced coordinates of the first 45 tows from the 2001 survey (Starr
+et al. 2002) are included here. Coordinates are recorded once per
+minute between winch lock-up and winch release.
+\end{Source}
+%
+\begin{References}\relax
+Starr, P.J., Krishka, B.A. and Choromanski, E.M. (2002) Trawl survey
+for thornyhead biomass estimation off the west coast of Vancouver
+Island, September 15 - October 2, 2001. \emph{Canadian Technical Report of
+Fisheries and Aquatic Sciences} \bold{2421}, 60 pp.
+\end{References}
+%
+\begin{SeeAlso}\relax
+\code{\LinkA{addLines}{addLines}},
+\code{\LinkA{calcLength}{calcLength}},
+\code{\LinkA{clipLines}{clipLines}},
+\code{\LinkA{plotLines}{plotLines}},
+\LinkA{PolySet}{PolySet},
+\code{\LinkA{towData}{towData}}.
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{worldLL}{Data: Shorelines of the World (Normal Resolution)}{worldLL}
+\keyword{datasets}{worldLL}
+%
+\begin{Description}\relax
+\LinkA{PolySet}{PolySet} of polygons for the global shorelines.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+data(worldLL)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+Data frame consisting of 4 columns: \code{PID} = primary polygon ID,
+\code{POS} = position of each vertex within a given polygon, \code{X}
+= longitude coordinate, and \code{Y} = latitude coordinate. Attributes:
+\code{projection = "LL"}.
+\end{Format}
+%
+\begin{Note}\relax
+In R, the data must be loaded using the \code{\LinkA{data}{data}} function.
+\end{Note}
+%
+\begin{Source}\relax
+Polygon data from the GSHHS (Global Self-consistent, Hierarchical,
+High-resolution Shoreline) database \code{gshhs\_l.b}. \\{}
+Download from \url{http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html}
+
+\begin{alltt}
+worldLL <-importGSHHS("gshhs_l.b", xlim=c(-20,360), ylim=c(-90,90), 
+                      level=1, n=15, xoff=0)
+worldLL <- .fixGSHHSWorld(worldLL)
+\end{alltt}
+
+\end{Source}
+%
+\begin{References}\relax
+Wessel, P. and Smith, W.H.F. (1996) A global, self-consistent,
+hierarchical, high-resolution shoreline database. \emph{Journal of
+Geophysical Research} \bold{101}, 8741--8743. \\{}
+\url{http://www.soest.hawaii.edu/pwessel/pwessel_pubs.html}
+\end{References}
+%
+\begin{SeeAlso}\relax
+Data:  \code{\LinkA{worldLLhigh}{worldLLhigh}}, \code{\LinkA{nepacLL}{nepacLL}}, \code{\LinkA{nepacLLhigh}{nepacLLhigh}}
+
+\code{\LinkA{importGSHHS}{importGSHHS}}, \code{\LinkA{addPolys}{addPolys}}, \code{\LinkA{clipPolys}{clipPolys}},
+\code{\LinkA{plotPolys}{plotPolys}}, \code{\LinkA{plotMap}{plotMap}}, \code{\LinkA{thickenPolys}{thickenPolys}},
+\code{\LinkA{thinPolys}{thinPolys}}
+\end{SeeAlso}
+\inputencoding{utf8}
+\HeaderA{worldLLhigh}{Data: Shorelines of the World (High Resolution)}{worldLLhigh}
+\keyword{datasets}{worldLLhigh}
+%
+\begin{Description}\relax
+\LinkA{PolySet}{PolySet} of polygons for the global shorelines.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+data(worldLLhigh)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+Data frame consisting of 4 columns: \code{PID} = primary polygon ID,
+\code{POS} = position of each vertex within a given polygon, \code{X}
+= longitude coordinate, and \code{Y} = latitude coordinate. Attributes:
+\code{projection = "LL"}.
+\end{Format}
+%
+\begin{Note}\relax
+In R, the data must be loaded using the \code{\LinkA{data}{data}} function.
+\end{Note}
+%
+\begin{Source}\relax
+Polygon data from the GSHHS (Global Self-consistent, Hierarchical,
+High-resolution Shoreline) database \code{gshhs\_i.b}. \\{}
+Download from \url{http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html}
+
+\begin{alltt}
+worldLLhigh <-importGSHHS("gshhs_i.b", xlim=c(-20,360),
+                 ylim=c(-90,90), level=1, n=15, xoff=0)
+worldLLhigh <- .fixGSHHSWorld(worldLLhigh)
+\end{alltt}
+
+\end{Source}
+%
+\begin{References}\relax
+Wessel, P. and Smith, W.H.F. (1996) A global, self-consistent,
+hierarchical, high-resolution shoreline database. \emph{Journal of
+Geophysical Research} \bold{101}, 8741--8743. \\{}
+\url{http://www.soest.hawaii.edu/pwessel/pwessel_pubs.html}
+\end{References}
+%
+\begin{SeeAlso}\relax
+Data:  \code{\LinkA{worldLL}{worldLL}}, \code{\LinkA{nepacLL}{nepacLL}}, \code{\LinkA{nepacLLhigh}{nepacLLhigh}}
+
+\code{\LinkA{importGSHHS}{importGSHHS}}, \code{\LinkA{addPolys}{addPolys}}, \code{\LinkA{clipPolys}{clipPolys}},
+\code{\LinkA{plotPolys}{plotPolys}}, \code{\LinkA{plotMap}{plotMap}}, \code{\LinkA{thickenPolys}{thickenPolys}},
+\code{\LinkA{thinPolys}{thinPolys}}
+\end{SeeAlso}
+\printindex{}
+\end{document}

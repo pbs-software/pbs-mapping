@@ -36,7 +36,7 @@
 #    See PBSmapping/ChangeLog
 #==============================================================================
 
-PBSprint <- FALSE;
+PBSprint <- FALSE
 
 #==============================================================================
 .addAxis <- function(xlim, ylim, tckLab, tck, tckMinor, ...)
@@ -5205,7 +5205,7 @@ plotPolys <- function(polys, xlim = NULL, ylim = NULL, projection = FALSE,
 #==============================================================================
 print.EventData <- function(x, ...)
 {
-  if (exists("PBSprint") && PBSprint) {
+  if (exists("PBSprint") && (PBSprint || .PBSmapEnv$PBSprint)) {
     print(summary.EventData(x), ...);
   } else {
     print(data.frame(unclass(x)));
@@ -5216,7 +5216,7 @@ print.EventData <- function(x, ...)
 #==============================================================================
 print.LocationSet <- function(x, ...)
 {
-  if (exists("PBSprint") && PBSprint) {
+  if (exists("PBSprint") && (PBSprint || .PBSmapEnv$PBSprint)) {
     print(summary.LocationSet(x), ...);
   } else {
     print(data.frame(unclass(x)));
@@ -5227,7 +5227,7 @@ print.LocationSet <- function(x, ...)
 #==============================================================================
 print.PolyData <- function(x, ...)
 {
-  if (exists("PBSprint") && PBSprint) {
+  if (exists("PBSprint") && (PBSprint || .PBSmapEnv$PBSprint)) {
     print(summary.PolyData(x), ...);
   } else {
     print(data.frame(unclass(x)));
@@ -5238,7 +5238,7 @@ print.PolyData <- function(x, ...)
 #==============================================================================
 print.PolySet <- function(x, ...)
 {
-  if (exists("PBSprint") && PBSprint) {
+  if (exists("PBSprint") && (PBSprint || .PBSmapEnv$PBSprint)) {
     print(summary.PolySet(x), ...);
   } else {
     print(data.frame(unclass(x)));

@@ -27,10 +27,12 @@
   A list of summary statistics.
 }
 \examples{
-#--- load the data (if using R)
-if (!is.null(version$language) && (version$language == "R"))
-  data(surveyData)
-print(summary(surveyData))
+local(envir=.PBSmapEnv,expr={
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(surveyData,envir=.PBSmapEnv)
+  print(summary(surveyData))
+})
 }
 \seealso{
   \link{EventData},
@@ -40,3 +42,4 @@ print(summary(surveyData))
   \link{PolySet}.
 }
 \keyword{methods}
+

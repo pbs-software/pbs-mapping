@@ -24,13 +24,15 @@
   produce an object with class \code{summary.PBS}.
 }
 \examples{
-#--- load the data (if using R)
-if (!is.null(version$language) && (version$language == "R"))
-  data(nepacLL)
-#--- change to summary printing style
-PBSprint <- TRUE
-#--- print the PolySet
-print(nepacLL)
+local(envir=.PBSmapEnv,expr={
+  #--- load the data (if using R)
+  if (!is.null(version$language) && (version$language=="R"))
+    data(nepacLL,envir=.PBSmapEnv)
+  #--- change to summary printing style
+  PBSprint <- TRUE
+  #--- print the PolySet
+  print(nepacLL)
+})
 }
 \seealso{
   \link{EventData},
@@ -41,3 +43,4 @@ print(nepacLL)
   \code{\link{summary}}.
 }
 \keyword{IO}
+

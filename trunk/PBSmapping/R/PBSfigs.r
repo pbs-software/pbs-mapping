@@ -1,27 +1,20 @@
-# Figures for PBSmapping examples     (last modified: 2012-03-01)
-#----------------------------------------------------------------
-.initPBS <- function(new=FALSE) {
-#  Sets up colour table and global settings for the demo figures.
-#================================================================
-   PBSnam <- c("PBSclr","PBSdot","PBSdash")
-   PBSclr <- list(black=c(0,0,0),       sea=c(224,253,254),     land=c(255,255,195),
-                  red=c(255,0,0),       green=c(0,255,0),       blue=c(0,0,255),
-                  yellow=c(255,255,0),  cyan=c(0,255,255),      magenta=c(255,0,255),
-                  purple=c(150,0,150),  lettuce=c(205,241,203), moss=c(132,221,124),
-                  irish=c(54,182,48),   forest=c(29,98,27),     white=c(255,255,255),
-                  fog=c(223,223,223) )
-   if (!exists("PBSval") || new==TRUE || (exists("PBSval") && all(names(PBSval$PBSclr)!=names(PBSclr))) ) {
-      require(PBSmapping)
+# Figures for PBSmapping examples (last modified: 2013-04-10)
+#------------------------------------------------------------
+# Historical values for compatibilityy with S-Plus (defunct)
+.PBSdot <- 3; .PBSdash <- 2
+.PBSclr <- function(){
+   PBSclr = list(             black=c(0,0,0),
+      sea=c(224,253,254),     land=c(255,255,195),      red=c(255,0,0),
+      green=c(0,255,0),       blue=c(0,0,255),          yellow=c(255,255,0),
+      cyan=c(0,255,255),      magenta=c(255,0,255),     purple=c(150,0,150),
+      lettuce=c(205,241,203), moss=c(132,221,124),      irish=c(54,182,48),
+      forest=c(29,98,27),     white=c(255,255,255),     fog=c(223,223,223) )
       PBSclr <- lapply(PBSclr,function(v) {rgb(v[1],v[2],v[3],maxColorValue=255) })
-      PBSdot <- 3; PBSdash <- 2
-      PBSval <- as.list(PBSnam); names(PBSval) <- PBSnam
-      for (i in PBSnam)  PBSval[[i]] <- get(i)
-      assign("PBSval", PBSval, pos=1) } }
+      return(PBSclr) }
 
 .PBSfig01 <- function() { #  World UTM Zones
-   .initPBS()
-   clr <- PBSval$PBSclr
-   data(worldLL);  data(nepacLL) 
+   clr <- .PBSclr()
+   data(worldLL,nepacLL,envir=sys.frame(sys.nframe()))
    par(mfrow=c(1,1),omi=c(0,0,0,0)) #------Plot-the-figure------
    plotMap(worldLL, ylim=c(-90, 90), bg=clr$sea, col=clr$land, tck=-0.023,
            mgp=c(1.9, 0.7, 0), cex=1.2, plt=c(.08,.98,.08,.98))
@@ -42,9 +35,8 @@
    box() }
 
 .PBSfig02 <- function() {  # nepacLL UTM Zones in LL Space
-   .initPBS()
-   clr <- PBSval$PBSclr; dot <- PBSval$PBSdot
-   data(nepacLL)
+   clr <- .PBSclr(); dot <- .PBSdot
+   data(nepacLL,envir=sys.frame(sys.nframe()))
    par(mfrow=c(1,1),omi=c(0,0,0,0)) #------Plot-the-figure------
    plotMap(nepacLL, col=clr$land, bg=clr$sea, tck=-0.014,
            mgp=c(1.9,0.7,0), cex=1.2, plt=c(.08,.98,.08,.98))
@@ -61,9 +53,8 @@
    box()  }
 
 .PBSfig03 <- function() {  # nepacLL UTM Zones in UTM Space
-   .initPBS()
-   clr <- PBSval$PBSclr; dot <- PBSval$PBSdot
-   data(nepacLL)
+   clr <- .PBSclr(); dot <- .PBSdot
+   data(nepacLL,envir=sys.frame(sys.nframe()))
    zone  <- 6;  xlim  <- range(nepacLL$X);  ylim <- range(nepacLL$Y)
    utms  <- seq(-186,-110,6)  #'utms' vector for creating PolySet and EventData below
    # create UTM zones
@@ -90,9 +81,8 @@
    box()  }
 
 .PBSfig04 <- function() {  # thinPolys on Vancouver Island
-   .initPBS()
-   clr <- PBSval$PBSclr;
-   data(nepacLL)
+   clr <- .PBSclr();
+   data(nepacLL,envir=sys.frame(sys.nframe()))
    par(mfrow=c(1,2),omi=c(0,0,0,0)) #------Plot-the-figure------
    vi     <- nepacLL[nepacLL$PID==33,]
    xlim   <- range(vi$X) + c(-0.25, 0.25); ylim <- range(vi$Y) + c(-0.25, 0.25)
@@ -108,8 +98,7 @@
    box() }
 
 .PBSfig05 <- function() {  # joinPolys on Crescents
-   .initPBS()
-   clr <- PBSval$PBSclr; dash <- PBSval$PBSdash
+   clr <- .PBSclr(); dash <- .PBSdash
    radius <- c(5, 4)                 # two radii of the circles
    size   <- abs(diff(radius)) + 0.1 # size of crescent
    shiftB <- 3.5                     # distance to shift second crescent
@@ -171,9 +160,8 @@
       text(xlim[1]+off, ylim[2]-off, panel[i], cex=1.6);  box();  } }
 
 .PBSfig06 <- function() {  # contourLines in Queen Charlotte Sound
-   .initPBS()
-   clr <- PBSval$PBSclr; 
-   data(nepacLL); data(bcBathymetry);
+   clr <- .PBSclr(); 
+   data(nepacLL,bcBathymetry,envir=sys.frame(sys.nframe()));
    isob   <- contourLines(bcBathymetry, levels=c(250, 1000))
    p      <- convCP(isob)
    attr(p$PolySet,"projection") <- "LL"
@@ -189,9 +177,8 @@
    box()  }
 
 .PBSfig07 <- function() {  # towTracks from Longspine Thornyhead Survey
-   .initPBS()
-   clr <- PBSval$PBSclr;
-   data(nepacLL);  data(towTracks);  data(towData);
+   clr <- .PBSclr();
+   data(nepacLL,towTracks,towData,envir=sys.frame(sys.nframe()));
    # add a colour column 'col' to 'towData'
    pdata  <- towData;  pdata$Z <- pdata$dep
    pdata  <- makeProps(pdata, breaks=c(500,800,1200,1600), "col",
@@ -210,9 +197,8 @@
    box()  }
 
 .PBSfig08 <- function() {  # calcArea of the Southern Gulf Islands
-   .initPBS()
-   clr <- PBSval$PBSclr; 
-   data (nepacLLhigh)
+   clr <- .PBSclr(); 
+   data (nepacLLhigh,envir=sys.frame(sys.nframe()))
    xlim   <- c(-123.6, -122.95); ylim <- c(48.4, 49); zone <- 9
    # assign 'nepacLLhigh' to 'nepacUTMhigh' (S62) and change to UTM coordinates
    nepacUTMhigh <- nepacLLhigh;  attr(nepacUTMhigh,"zone" ) <- zone
@@ -246,9 +232,8 @@
    text(925,5435,"Strait of Georgia",adj=0, cex=1.25)  }
 
 .PBSfig09 <- function() {  # combineEvents in Queen Charlotte Sound
-   .initPBS()
-   clr <- PBSval$PBSclr; 
-   data(nepacLL);  data(surveyData);
+   clr <- .PBSclr(); 
+   data(nepacLL,surveyData,envir=sys.frame(sys.nframe()));
    events <- surveyData
    xl     <- c(-131.8, -127.2);  yl <- c(50.5, 52.7)
    # prepare EventData; clip it, omit NA entries, and calculate CPUE
@@ -285,9 +270,8 @@
    text(temp$rect$left+temp$rect$w/2,temp$rect$top,pos=3,"CPUE (kg/h)",cex=1);  }
 
 .PBSfig10 <- function() {  # Pythagoras' Theorem Visualized
-   .initPBS()
-   clr <- PBSval$PBSclr; 
-   data(pythagoras)
+   clr <- .PBSclr(); 
+   data(pythagoras,envir=sys.frame(sys.nframe()))
    # create properties for colouring the polygons
    pythProps <- data.frame(PID=c(1, 6:13, 4, 15, 3, 5, 2, 14),
                    Z=c(rep(1, 9), rep(2, 2), rep(3, 2), rep(4, 2)))

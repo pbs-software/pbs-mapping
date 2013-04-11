@@ -54,6 +54,7 @@ appendPolys (polys, mat, PID = NULL, SID = NULL, isHole = FALSE)
   \code{\link{plotPolys}}.
 }
 \examples{
+local(envir=.PBSmapEnv,expr={
   #--- create two simple matrices
   a <- matrix(data=c(0,0,1,0,1,1,0,1),ncol=2,byrow=TRUE);
   b <- matrix(data=c(2,2,3,2,3,3,2,3), ncol=2,byrow=TRUE);
@@ -62,5 +63,6 @@ appendPolys (polys, mat, PID = NULL, SID = NULL, isHole = FALSE)
   polys <- appendPolys(polys, b);
   #--- print the result
   print (polys);
+})
 }
 \keyword{manip}
