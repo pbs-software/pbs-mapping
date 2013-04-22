@@ -6,7 +6,8 @@ Authors:  JTS = Jon T. Schnute
           ACB = Alex Couture-Beil
 -----------------------------------
 
-2.65  2013-04-11
+2.65  2013-04-22
+  - Added temporary function `.addAxis2` to address Issue 20 until NB updates code. (RH 4/22)
   - Updated the User's Guide. (RH 4/11)
   - Modified example code in Rd files to use the new environment `.PBSmapEnv`. (RH 4/10)
   - Modified the `print` method to look for `.PBSmapEnv$PBSprint` in addition to a global `PBSprint`. (RH 4/10)
