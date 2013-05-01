@@ -6,6 +6,10 @@ Authors:  JTS = Jon T. Schnute
           ACB = Alex Couture-Beil
 -----------------------------------
 
+2.66  2013-05-01
+  - Modified User's Guide. (RH 5/1)
+  - Moved `PBSmapping-Intro.Rnw` to `vignettes` directory. (RH 5/1)
+
 2.65  2013-04-22
   - Added temporary function `.addAxis2` to address Issue 20 until NB updates code. (RH 4/22)
   - Updated the User's Guide. (RH 4/11)
