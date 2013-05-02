@@ -31,8 +31,8 @@
 /* the clipper headers must come first; if the R headers
    (R.h/Rdefines.h) appear before the clipper headers, the library
    will fail to build for R */
-#include "clipper.hpp"
-#include "clipperWrapper.hpp"
+#include "clipper.h"
+#include "clipperWrapper.h"
 
 #ifdef STANDALONE
 

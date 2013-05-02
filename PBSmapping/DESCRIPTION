@@ -3,8 +3,9 @@ Version: 2.66
 Date: 2013-05-01
 Title: Mapping Fisheries Data and Spatial Analysis Tools
 Author: Jon T. Schnute <schnutej-dfo@shaw.ca>,
-        Nicholas Boers <boersn@macewan.ca>, and
-        Rowan Haigh <rowan.haigh@dfo-mpo.gc.ca>
+        Nicholas Boers <boersn@macewan.ca>,
+        Rowan Haigh <rowan.haigh@dfo-mpo.gc.ca>, and
+        Angus Johnson
 Maintainer: Jon T. Schnute <schnutej-dfo@shaw.ca>
 Depends: R (>= 2.15.0)
 Suggests: foreign, maptools, deldir
