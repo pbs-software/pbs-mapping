@@ -1,5 +1,5 @@
 /*=============================================================================
-  Copyright (C) 2003-2012  Fisheries and Oceans Canada
+  Copyright (C) 2003-2013  Fisheries and Oceans Canada
 
   This file is part of PBS Mapping.
 
@@ -151,8 +151,7 @@ inside(double x, double y, double *limits, edge e)
     Clip a single polygon against one edge.
     Used in clipPolygon().
    
-  Author:
-    Nicholas Boers (June 18, 2003)
+  Author:  Nicholas Boers (June 18, 2003)
 
   Algorithm source:
     Computer Graphics: Principles and Practice
@@ -679,8 +678,7 @@ isPolyConvex(double *inX, double *inY, PBSINT inVerts)
     Adapted from `insectc.c'.
     (http://http://www.acm.org/pubs/tog/GraphicsGems/category.html
 
-  Author:
-    Franklin Antonio
+  Author:  Franklin Antonio
 
   Modifications:
     29 Jun 2004 [Nicholas Boers]
@@ -817,8 +815,7 @@ linesIntersect(double x1, double y1, double x2, double y2,
 
     Ptx, Pty: coorindates of Pt
 
-  Author:
-    Nicholas Boers (June 29, 2004)
+  Author:  Nicholas Boers (June 29, 2004)
 
   Return values:
     TRUE if Pt retraces over P0 --> P1.  Otherwise, FALSE.

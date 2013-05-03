@@ -22,7 +22,7 @@
 
   Interface between R and the Clipper library.
 
-  Author: Nicholas Boers
+  Author:  Nicholas Boers
   ---------------------------------------------------------------------------*/
 #define DEBUG	0	/* when 1, enable some debug messages */
 
@@ -73,7 +73,7 @@ struct PolySetState {
 /*-----------------------------------------------------------------------------
   join (Polygons result):
 
-  Author: Nicholas Boers (Mar. 2013)
+  Author:  Nicholas Boers (Mar. 2013)
 
   Notes:
   Given subject (subj) and clip (clip) polygons, uses the Clipper
@@ -96,7 +96,7 @@ join (const Polygons &subj, enum ClipType op, const Polygons &clip,
 /*-----------------------------------------------------------------------------
   join (PolyTree result):
 
-  Author: Nicholas Boers (Mar. 2013)
+  Author:  Nicholas Boers (Mar. 2013)
 
   Notes:
   Given subject (subj) and clip (clip) polygons, uses the Clipper
@@ -119,7 +119,7 @@ join (const Polygons &subj, enum ClipType op, const Polygons &clip,
 /*-----------------------------------------------------------------------------
   getNextPolygon:
 
-  Author: Nicholas Boers (Mar. 2013)
+  Author:  Nicholas Boers (Mar. 2013)
 
   Notes:
   Given a structure that records the states of processing a PolySet, attempts
@@ -187,7 +187,7 @@ getNextPolygon (struct PolySetState &pset, long double scaleFactor, Sint &pid)
 /*-----------------------------------------------------------------------------
   thereAreMorePolygons:
 
-  Author: Nicholas Boers (Mar. 2013)
+  Author:  Nicholas Boers (Mar. 2013)
 
   Notes:
   Returns true if there are more polygons according to our state structure.
@@ -201,7 +201,7 @@ thereAreMorePolygons (const struct PolySetState &st)
 /*-----------------------------------------------------------------------------
   appendToResult:
 
-  Author: Nicholas Boers (Mar. 2013)
+  Author:  Nicholas Boers (Mar. 2013)
 
   Notes:
   Appends a new PolyTree result to an existing PolySet.  In the process,
@@ -256,7 +256,7 @@ appendToResult (PolySet &pset, PolyTree &p, long double scaleFactor, Sint pid)
 /*-----------------------------------------------------------------------------
   PolySetToR:
 
-  Author: Nicholas Boers (Mar. 2013)
+  Author:  Nicholas Boers (Mar. 2013)
 
   Notes:
   Given a PolySet structure, produce a data frame for R.  The protectCount
@@ -343,7 +343,7 @@ PolySetToR (PolySet &pset, int &protectCount)
 /*-----------------------------------------------------------------------------
   countPolygons:
 
-  Author: Nicholas Boers (Mar. 2013)
+  Author:  Nicholas Boers (Mar. 2013)
 
   Notes:
   Count the polygons in a PolySet based on PID/SID values; this procedure
@@ -378,7 +378,7 @@ countPolygons (Sint *pid, Sint *sid, Sint n, int onlyPID)
 /*-----------------------------------------------------------------------------
   determineScale:
 
-  Author: Nicholas Boers (Mar. 2013)
+  Author:  Nicholas Boers (Mar. 2013)
 
   Notes:
   Determine the number of bits we can (left) shift by when converting
@@ -415,7 +415,7 @@ determineScale (const Sfloat *f, Sint n)
 /*-----------------------------------------------------------------------------
   getScaleFactor:
 
-  Author: Nicholas Boers (Mar. 2013)
+  Author:  Nicholas Boers (Mar. 2013)
 
   Notes:
   Given all of the X/Y coordinates of both subject and clip polygons,
@@ -454,7 +454,7 @@ getScaleFactor (Sfloat *sXptr, int sXlen, Sfloat *sYptr, int sYlen,
 /*-----------------------------------------------------------------------------
   joinPolys:
 
-  Author: Nicholas Boers (Mar. 2013)
+  Author:  Nicholas Boers (Mar. 2013)
 
   Notes:
   This code is the entry point for R.

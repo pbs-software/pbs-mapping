@@ -6,7 +6,9 @@ Authors:  JTS = Jon T. Schnute
           ACB = Alex Couture-Beil
 -----------------------------------
 
-2.66  2013-05-01
+2.66  2013-05-03
+  - Update `PBSmapping-UG.pdf` to reflect the new website for GSHHS, now called GSHHG. (RH 5/3)
+  - Added Authors to DESCRIPTION file (based on C source code annotations); updated copyright dates. (RH 5/3)
   - Modified User's Guide. (RH 5/1)
   - Moved `PBSmapping-Intro.Rnw` to `vignettes` directory. (RH 5/1)
 

@@ -1,5 +1,5 @@
 /*=============================================================================
-  Copyright (C) 2003-2012  Fisheries and Oceans Canada
+  Copyright (C) 2003-2013  Fisheries and Oceans Canada
 
   This file is part of PBS Mapping.
 
@@ -106,8 +106,7 @@ short calcPolyOrientation(double *inX, double *inY, PBSINT inVerts);
 /*-----------------------------------------------------------------------------
   clipPolygon:
   
-  Author:
-    - Nicholas Boers (June 18, 2003)
+  Author:  Nicholas Boers (June 18, 2003)
 
   Algorithm source:
     - Computer Graphics: Principles and Practice 
@@ -134,8 +133,7 @@ void clipPolygon(double *inX, double *inY, PBSINT *inPOS, PBSINT inVerts,
   isPolyConvex:
     Determines whether a polygon is convex.
 
-  Author:
-    Nicholas Boers (June 30, 2004)
+  Author:  Nicholas Boers (June 30, 2004)
   
   Notes:
     - checks for self-intersections
@@ -147,8 +145,7 @@ short isPolyConvex(double *inX, double *inY, PBSINT inVerts);
   nPolyIntersects:
     Counts the number of times a polygon self-intersects itself.
 
-  Author:
-    Nicholas Boers (June 30, 2004)
+  Author:  Nicholas Boers (June 30, 2004)
   
   Notes:
     - counts certain types of intersections (i.e., those involving vertices
@@ -164,8 +161,7 @@ PBSINT nPolyIntersects(double *inX, double *inY, PBSINT inVerts,
 /*-----------------------------------------------------------------------------
   pointInPolygon:
 
-  Author:
-    - Nicholas Boers (June 13, 2003)
+  Author:  Nicholas Boers (June 13, 2003)
 
   Algorithm source: 
     - http://www.ecse.rpi.edu/Homepages/wrf/misc_notes/pnpoly.html

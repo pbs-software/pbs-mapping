@@ -1,5 +1,5 @@
 /*=============================================================================
-  Copyright (C) 2003-2012  Fisheries and Oceans Canada
+  Copyright (C) 2003-2013  Fisheries and Oceans Canada
 
   This file is part of PBS Mapping.
 
@@ -49,8 +49,7 @@ struct pair
     Memory should be allocated for the structure before the function
     is called. 
 
-  Author:
-    Chris Grandin
+  Author:  Chris Grandin
 
   Algorithm Source:
     National Mapping Agency of Great Britain Ordnance Survey 
@@ -64,8 +63,7 @@ void lonlat_to_utm(double lambda, double phi, int utmZone, struct pair *result);
     Memory should be allocated for the structure before the function
     is called.
 
-  Author:
-    Chris Grandin
+  Author:  Chris Grandin
 
   Algorithm Source:
     National Mapping Agency of Great Britain Ordnance Survey 
