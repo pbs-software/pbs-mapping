@@ -12,7 +12,7 @@
  * -----------------------------------------------------------------------------
  *	$Id: gshhs.c 9656 2012-01-13 18:29:02Z pwessel $
  *
- *	Copyright (c) 1996-2012 by P. Wessel and W. H. F. Smith
+ *	Copyright (c) 1996-2013 by P. Wessel and W. H. F. Smith
  *	See LICENSE.TXT file for copying and redistribution conditions.
  *
  * PROGRAM:	gshhs.c

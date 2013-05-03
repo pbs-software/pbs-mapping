@@ -1,5 +1,5 @@
 /*=============================================================================
-  Copyright (C) 2003-2012 Fisheries and Oceans Canada
+  Copyright (C) 2003-2013 Fisheries and Oceans Canada
 
   This file is part of PBS Mapping.
 
@@ -262,8 +262,7 @@ jmp_buf returnLocation;
   
     The polygon can optionally be closed: (x_0, y_0) == (x_n, y_n).
   
-  Author:
-    Nicholas Boers (June 13, 2003)
+  Author:  Nicholas Boers (June 13, 2003)
   ---------------------------------------------------------------------------*/
 void
 pnpoly(PBSINT *polyPts, double *polyX, double *polyY,
@@ -307,8 +306,7 @@ pnpoly(PBSINT *polyPts, double *polyX, double *polyY,
     This function determines the indices (0 .. n-1) where polygons
     start and end.
   
-  Author:
-    Nicholas Boers (June 11, 2003)
+  Author:  Nicholas Boers (June 11, 2003)
   
   Returns: 
     the number of polygons (start/end pairs).
@@ -356,8 +354,7 @@ polyStartsEnds(PBSINT *polyStarts, PBSINT *polyEnds,
   clip:
     This function clips polygons to a rectangular viewing window.
   
-  Author:
-    Nicholas Boers (June 11, 2003)
+  Author:  Nicholas Boers (June 11, 2003)
   
   Implementation Notes:
     For each pair of points that are tested, the _first_ point of the
@@ -499,8 +496,7 @@ clip(PBSINT *inID, double *inXY, PBSINT *inVerts, PBSINT *polygons,
        0 = don't add
        1 = add
 
-  Author:
-    Nicholas Boers (June 17, 2004)
+  Author:  Nicholas Boers (June 17, 2004)
   
   Status values:
     PBS_SUCCESS: everything OK
@@ -706,8 +702,7 @@ void rollupPolys(PBSINT *inID, double *inPOS, double *inXY, PBSINT *inVerts,
     Given two points (stored in X and Y), returns the corner that is
     closest to one of those points.
   
-  Author:
-    Nicholas Boers
+  Author:  Nicholas Boers
   ---------------------------------------------------------------------------*/
 static corner
 findClosestCorner(double x[2], double y[2], double *limits)
@@ -736,8 +731,7 @@ findClosestCorner(double x[2], double y[2], double *limits)
   closePolys: 
     "Fix" the closure of open polygons.
  
-  Author:
-    Nicholas Boers
+  Author:  Nicholas Boers
   
   Notes:
     - recommended allocated space for out*: 
@@ -961,8 +955,7 @@ closePolys(PBSINT *inID, double *inXY, PBSINT *inVerts, double *limits,
   findCells:
     Identify integers within a vector of break points.
 
-  Author:
-    Nicholas Boers (Mar. 29, 2006)
+  Author:  Nicholas Boers (Mar. 29, 2006)
 
   Notes:
     Some ideas from "findInterval()" in R source code.
@@ -1026,8 +1019,7 @@ findCells(double *inPt, PBSINT *inPts,
   findPolys:
     Locate events within a polyset.
   
-  Author:
-    Nicholas Boers
+  Author:  Nicholas Boers
   
   Notes:
     - recommended allocated space for out*: 
@@ -1153,8 +1145,7 @@ findPolys(PBSINT *inEventsID, double *inEventsXY, PBSINT *inEvents,
   convUL:
     Convert Lon/Lat <--> UTME/UTMN.
   
-  Author:
-    Nicholas Boers
+  Author:  Nicholas Boers
   
   Notes:
     Maximum space required for out*:
@@ -1215,8 +1206,7 @@ convUL(double *inXY, PBSINT *inVerts, PBSINT *toUTM, PBSINT *zone,
     This function calculates the areas of a set of polygons.
     It handles holes, but has no concept of projection.
   
-  Author:
-    Nicholas Boers (July 11, 2003)
+  Author:  Nicholas Boers (July 11, 2003)
 
   Capabilities:
     [Y] Holes
@@ -1314,8 +1304,7 @@ calcArea(PBSINT *inID, double *inXY, PBSINT *inVerts,
     "integrated" (holes have the same PID/SID as their parent). It has no
     concept of projection.
   
-  Author:
-    Nicholas Boers (June 10, 2004)
+  Author:  Nicholas Boers (June 10, 2004)
 
   Capabilities:
     [>] Holes
@@ -1410,8 +1399,7 @@ calcCentroid(PBSINT *inID, double *inXY, PBSINT *inVerts,
     counter-clockwise).  Holes are irrelevant and it needs no concept of
     projection.
   
-  Author:
-    Nicholas Boers (June 9, 2004)
+  Author:  Nicholas Boers (June 9, 2004)
 
   Capabilities:
     [-] Holes
@@ -1497,8 +1485,7 @@ calcOrientation(PBSINT *inID, double *inXY, PBSINT *inVerts,
   isConvex:
     Determines whether a PolySet contains convex polygons.
 
-  Author:
-    Nicholas Boers (June 30, 2004)
+  Author:  Nicholas Boers (June 30, 2004)
   
   Status values:
     PBS_SUCCESS:    everything OK
@@ -1580,8 +1567,7 @@ isConvex(PBSINT *inID, double *inXY, PBSINT *inVerts,
     numericResult: if TRUE, returns a numeric result (a count); otherwise,
       returns a Boolean for whether or not the polygon self-intersects
 
-  Author:
-    Nicholas Boers (June 28, 2004)
+  Author:  Nicholas Boers (June 28, 2004)
   
   Status values:
     PBS_SUCCESS:    everything OK
@@ -1664,8 +1650,7 @@ isIntersecting(PBSINT *inID, double *inXY, PBSINT *inVerts,
   thickenPolys:
     This function thickens polygons.
   
-  Author:
-    Nicholas Boers (June 8, 2004)
+  Author:  Nicholas Boers (June 8, 2004)
   
   Notes:
     - if units == 0, "LL": tolerance in kilometers and inXY in decimal-degrees
@@ -1762,8 +1747,7 @@ thickenPolys(PBSINT *inID, double *inXY, PBSINT *inVerts,
   thinPolys:
     This function thins polygons.
   
-  Author:
-    Nicholas Boers (May 4, 2004)
+  Author:  Nicholas Boers (May 4, 2004)
   
   Notes:
     - X and Y are `PBSINT,' rather than the usual double
