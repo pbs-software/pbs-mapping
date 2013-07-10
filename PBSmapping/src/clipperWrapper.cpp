@@ -26,8 +26,6 @@
   ---------------------------------------------------------------------------*/
 #define DEBUG	0	/* when 1, enable some debug messages */
 
-#include <cmath>	/* for powl() */
-
 /* the clipper headers must come first; if the R headers
    (R.h/Rdefines.h) appear before the clipper headers, the library
    will fail to build for R */
@@ -130,7 +128,7 @@ join (const Polygons &subj, enum ClipType op, const Polygons &clip,
   Returns a polygon with > 0 contours on success (and 0 contours on failure).
   ---------------------------------------------------------------------------*/
 static Polygons
-getNextPolygon (struct PolySetState &pset, long double scaleFactor, Sint &pid)
+getNextPolygon (struct PolySetState &pset, ulong64 scaleFactor, Sint &pid)
 {
     Polygons p;
     int sidCount, polyNum;
@@ -209,7 +207,7 @@ thereAreMorePolygons (const struct PolySetState &st)
   according to the argument pid.
   ---------------------------------------------------------------------------*/
 static void
-appendToResult (PolySet &pset, PolyTree &p, long double scaleFactor, Sint pid)
+appendToResult (PolySet &pset, PolyTree &p, ulong64 scaleFactor, Sint pid)
 {
     PolyNode *pn;
     Sint sidCount, posCount;
@@ -421,7 +419,7 @@ determineScale (const Sfloat *f, Sint n)
   Given all of the X/Y coordinates of both subject and clip polygons,
   determine the single scale factor that covers all of them.
   ---------------------------------------------------------------------------*/
-static long double
+static ulong64
 getScaleFactor (Sfloat *sXptr, int sXlen, Sfloat *sYptr, int sYlen,
 		Sfloat *cXptr, int cXlen, Sfloat *cYptr, int cYlen)
 {
@@ -447,7 +445,9 @@ getScaleFactor (Sfloat *sXptr, int sXlen, Sfloat *sYptr, int sYlen,
        which is 100 000 <= shifted one bit too far */
     scaleBits -= 1;
 
-    return powl(2.0, scaleBits);
+    /* given the code here and in determineScale, the maximum shift is
+       62, which does not cause problems for a 64-bit integer */
+    return (ulong64)1 << scaleBits;
 }
 
 #ifndef STANDALONE
@@ -487,7 +487,7 @@ joinPolys(SEXP operation,
     PolyTree result;		/* output from Clipper */
 
     /* scale factor to use when interacting with the Clipper library */
-    long double scaleFactor;
+    ulong64 scaleFactor;
 
     /* for building our result; it's easier to build it in this vector
        and convert it to an R data type than build in an R type from
