@@ -280,15 +280,17 @@
    par(mfrow=c(1,1),omi=c(0,0,0,0)) #------Plot-the-figure------
    plotMap(pythagoras, plt=c(.01,.99,.01,.95), lwd=2,
       xlim=c(.09,1.91), ylim=c(0.19,2.86), polyProps=pythProps,
-      axes=FALSE, xlab="", ylab="", main="Pythagoras' Theorem: a\262 + b\262 = c\262")
+      axes=FALSE, xlab="", ylab="",
+      main=bquote(paste("Pythagoras' Theorem: ", a^2 +  b^2 == c^2)))
    text(x = 0.1, y = 1.19, adj=0, "Proof:")
    text(x = 0.1, y = 1.10, adj=0,
-      "(a + b)\262 = 4 triangles + a\262 + b\262 = 4 triangles + c\262")
+      bquote(paste((a + b)^2 == 4, " triangles ", + a^2 + b^2 == 4,
+                   " triangles ", + c^2)))
    labels <- data.frame(X=c(1.02,1.66,0.65),Y=c(1.50,2.20,2.76),label=c("a","b","c"))
    text(labels$X, labels$Y, as.character(labels$label), cex=1.2)
-   text(1.03, 1.81, "a\262", cex=1.2, col=clr$black)
-   text(1.43, 2.21, "b\262", cex=1.2, col=clr$black)
-   text(0.87, 2.46, "c\262", cex=1.2, col=clr$black)  }
+   text(1.03, 1.81, bquote(a^2), cex=1.2, col=clr$black)
+   text(1.43, 2.21, bquote(b^2), cex=1.2, col=clr$black)
+   text(0.87, 2.46, bquote(c^2), cex=1.2, col=clr$black)  }
 
 .PBSfigs <- function(nfigs=1:10) { # Draw all figures with numbers in nfigs
    #while (!is.null(dev.list())) dev.off(dev.cur())
