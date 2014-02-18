@@ -52,8 +52,8 @@
 
 #ifndef _GSHHS
 #define _GSHHS
-#define _POSIX_SOURCE 1		/* GSHHS code is POSIX compliant */
-
+// #define _POSIX_SOURCE 1		/* GSHHS code is POSIX compliant */
+// See issue 30
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
