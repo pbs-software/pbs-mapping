@@ -4842,7 +4842,10 @@ isIntersecting <- function(polys, numericResult = FALSE)
   }
 }
 
-#==============================================================================
+
+#joinPolys------------------------------2014-03-10
+# Join one or two PolySets using a logic operation.
+#-----------------------------------------------NB
 joinPolys <- function(polysA, polysB = NULL, operation = "INT")
 {
   polysA <- .validatePolySet(polysA)
@@ -4886,9 +4889,10 @@ joinPolys <- function(polysA, polysB = NULL, operation = "INT")
                    cY   = as.numeric(polysB$Y),
                    PACKAGE = "PBSmapping")
 
-  if (nrow(results) > 0) {
-    # the C routine might add an SID column when one previously didn't
-    # exist...
+  if (is.null(results)){
+    return(NULL)
+  } else if (nrow(results) > 0) {
+    # the C routine might add an SID column when one previously didn't exist...
     if (!inputHasSID && all(results$SID == 1)) {
       results$SID <- NULL
     }
@@ -4905,8 +4909,8 @@ joinPolys <- function(polysA, polysB = NULL, operation = "INT")
     return(NULL)
   }
 }
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~joinPolys
 
-#==============================================================================
 locateEvents <- function(EID, n = 512, type = "p", ...)
 {
   if (!missing(EID)) {
