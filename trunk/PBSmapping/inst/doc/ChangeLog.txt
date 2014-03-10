@@ -6,9 +6,12 @@ Authors:  JTS = Jon T. Schnute
           ACB = Alex Couture-Beil
 -----------------------------------
 
-2.66  2013-12-19
-  - Modified the function `importShapefile` to treat shape types (5,15,25) like 5, (3,13,23) like 3, and (1,11,21) like 1.
+2.66  2014-03-10
+  - Fixed bug in `joinPolys` identified by Andrea Romualdi (see Issue 31). (RH 3/10)
+  - Modified gshhs.h to address Issue 30. (JTS 2/18)
+  - Modified the function `importShapefile` to treat shape types (5,15,25) like 5, (3,13,23) like 3, and (1,11,21) like 1. (RH 12/20)
 	See `ESRI Shapefile Technical Description: An ESRI White Paper—July 1998` for more details.
+----2014-(above)---2013-(below)-----------------------------
   - Updated `PBSmapping-UG.pdf` to reflect the new website for GSHHS, now called GSHHG. (RH 5/3)
   - Added Authors to DESCRIPTION file (based on C source code annotations); updated copyright dates. (RH 5/3)
   - Modified User's Guide. (RH 5/1)
