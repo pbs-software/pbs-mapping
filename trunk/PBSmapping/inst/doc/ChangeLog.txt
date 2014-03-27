@@ -6,6 +6,9 @@ Authors:  JTS = Jon T. Schnute
           ACB = Alex Couture-Beil
 -----------------------------------
 
+2.67  2014-03-20
+  - Bumped up version for next posting to CRAN using builds under R-3.0.3
+
 2.66  2014-03-10
   - Fixed bug in `joinPolys` identified by Andrea Romualdi (see Issue 31). (RH 3/10)
   - Modified gshhs.h to address Issue 30. (JTS 2/18)
