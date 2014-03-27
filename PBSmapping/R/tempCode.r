@@ -1,5 +1,7 @@
 #.addAxis2------------------------------2013-03-13
-# Modified from the function `.addAxis` for temporary to add axes to any side of the plot.
+# Modified from the function `.addAxis` to 
+# add axes to any side of the plot. 
+# Note: temporary until incorporation and testing.
 #--------------------------------------------NB/RH
 .addAxis2 <-
 function (side=1:2, xlim, ylim, tckLab, tck, tckMinor, ...) 
