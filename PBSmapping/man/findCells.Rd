@@ -1,6 +1,6 @@
 \name{findCells}
 \alias{findCells}
-\title{Find the Grid Cells that Contain Events}
+\title{Find Grid Cells that Contain Events}
 \description{
   Find the grid cells in a \link{PolySet} that contain events specified in
   \link{EventData}.  Similar to \code{\link{findPolys}}, except this
@@ -9,34 +9,45 @@
   calculate the result with greater efficiency.
 }
 \usage{
-findCells (events, polys)
+findCells (events, polys, includeBdry=NULL)
 }
 \arguments{
   \item{events}{\link{EventData} to use.}
   \item{polys}{\link{PolySet} to use.}
+  \item{includeBdry}{numeric: determines how points on boundaries are handled: \cr
+    if \code{NULL} then report all points on polygon boundaries (default behaviour); \cr
+    if \code{0} then exclude all points on polygon boundaries; \cr
+    if \code{1} then report only the first (lowest PID/SID) polygon boundary; \cr
+    if \code{2,...,n} then report the last (highest PID/SID) polygon boundary.}
 }
 \details{
   The resulting data frame, a \link{LocationSet}, contains the columns
   \code{EID}, \code{PID}, \code{SID} (\emph{if in} \code{polys}), and
   \code{Bdry}, where an event (\code{EID}) occurs in a polygon
-  (\code{PID}, \code{SID}). The Boolean variable \code{Bdry} indicates
+  (\code{PID}, \code{SID}). The Boolean (0,1) variable \code{Bdry} indicates
   whether an event lies on a polygon's edge.  Note that if an event lies
   properly outside of all the polygons, then a record with (\code{EID},
   \code{PID}, \code{SID}) does not occur in the output.  It may happen,
   however, that an event occurs in multiple polygons (i.e., on two or
   more boundaries).  Thus, the same \code{EID} can occur more than once
   in the output.
+  
+  If an event happens to lie at the boundary intersection of four (or two) grid cells 
+  then one \code{EID} will be associated with four (or two) grid cells. A user
+  can choose to manipulate this result by setting the argument \code{includeBdry}
+  to a numeric value that constrains the association of a boundary event to 
+  0 or 1 grid cell (see argument description above).
 }
 \value{
   \link{LocationSet} that links events with polygons.
 }
 \seealso{
-  \code{\link{combineEvents}},
   \code{\link{findPolys}},
+  \code{\link{makeGrid}},
+  \code{\link{combineEvents}},
   \code{\link{locateEvents}},
   \code{\link{locatePolys}},
-  \link{LocationSet},
-  \code{\link{makeGrid}}.
+  \link{LocationSet}.
 }
 \examples{
 local(envir=.PBSmapEnv,expr={

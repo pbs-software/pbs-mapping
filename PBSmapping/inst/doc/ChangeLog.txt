@@ -4,9 +4,16 @@ Authors:  JTS = Jon T. Schnute
           NB  = Nicholas Boers
           RH  = Rowan Haigh
           ACB = Alex Couture-Beil
+          DC  = Denis Chabot
 -----------------------------------
 
-2.67  2014-03-27
+2.67  2014-12-15
+  - Changed line in `clipperWrapper.cpp' from `ulong64 val = llabs(*f++);' to `ulong64 val = (ulong64)fabs(*f++);' (NB 12/17)
+	The C compiler 'clang' with -Wall reports that PBSmapping is misusing the C function abs in their code: see
+	http://cran.r-project.org/doc/manuals/r-release/R-exts.html#Portable-C-and-C_002b_002b-code
+  - Added Nicholas J. Lewin-Koh and Roger Bivand as authors because we use their C code `Rshapeget' for the function `importShapefile'. (RH 12/17)
+  - Added new argument `includeBdry' to functions `findCells' and `findPolys' -- see Issue 33. (RH 12/15)
+  - Incorporated temporary fix for borders in function `importGSHHS' until more robust solution is found. (RH 6/23)
   - Jon requested that Rowan becomes the package Maintainer. (RH 3/27)
   - Bumped up version for next posting to CRAN using builds under R-3.0.3 (RH 3/20)
 
