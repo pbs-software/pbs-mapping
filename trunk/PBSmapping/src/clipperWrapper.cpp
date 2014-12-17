@@ -387,27 +387,28 @@ countPolygons (Sint *pid, Sint *sid, Sint n, int onlyPID)
 static int
 determineScale (const Sfloat *f, Sint n)
 {
-    ulong64 mask = ~(0LL);
-    int count = 0;
+  ulong64 mask = ~(0LL);
+  int count = 0;
 
-    /* if n == 0; won't clear any bits in mask and it will return 63 */
+  /* if n == 0; won't clear any bits in mask and it will return 63 */
 
-    /* go through each floating-point value, convert it to an unsigned
-       64-bit integer, and clear the value's set bits from 'mask'; in the
-       end, the set bits in mask were never needed by a value */
-    for (int i = 0; i < n; i++) {
-	ulong64 val = llabs(*f++);
-	mask &= ~val;
-    }
+  /* go through each floating-point value, convert it to an unsigned
+     64-bit integer, and clear the value's set bits from 'mask'; in the
+     end, the set bits in mask were never needed by a value */
+  for (int i = 0; i < n; i++) {
+    ulong64 val = (ulong64)fabs(*f++);
+    /*ulong64 val = llabs(*f++);*/
+    mask &= ~val;
+  }
 
-    /* count the most-significant set bits */
-    while (mask & ((ulong64)1 << 63)) {
-	count++;
-	mask <<= 1;
-    }
+  /* count the most-significant set bits */
+  while (mask & ((ulong64)1 << 63)) {
+    count++;
+    mask <<= 1;
+  }
 
-    /* -1 because we'll store scaled floats within *signed* integers */
-    return count > 0 ? count - 1 : 0;
+  /* -1 because we'll store scaled floats within *signed* integers */
+  return count > 0 ? count - 1 : 0;
 }
 
 /*-----------------------------------------------------------------------------

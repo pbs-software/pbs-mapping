@@ -4325,175 +4325,209 @@ extractPolyData <- function(polys)
   return (pdata);
 }
 
-#=============================================================================
-findCells <- function (events, polys)
+#findCells------------------------------2014-12-15
+# Find events in grid cells
+#--------------------------------------------NB/RH
+findCells <- function (events, polys, includeBdry=NULL)
 {
-  events <- .validateEventData(events);
-  if (is.character(events))
-    stop(paste("Invalid EventData 'events'.\n", events, sep=""));
-  polys <- .validatePolySet(polys);
-  if (is.character(polys))
-    stop(paste("Invalid PolySet 'polys'.\n", polys, sep=""));
+	events <- .validateEventData(events);
+	if (is.character(events))
+		stop(paste("Invalid EventData 'events'.\n", events, sep=""));
+	polys <- .validatePolySet(polys);
+	if (is.character(polys))
+		stop(paste("Invalid PolySet 'polys'.\n", polys, sep=""));
 
-  # get parameters to makeGrid: we'll use them to adjust the PID/SID
-  # values in the output
-  gridPars <- .getGridPars(polys, fullValidation = TRUE);
-  if (is.null(gridPars))
-    stop("Invalid 'polys'; appears altered since call to 'makeGrid'.\n");
+	# get parameters to makeGrid: we'll use them to adjust the PID/SID
+	# values in the output
+	gridPars <- .getGridPars(polys, fullValidation = TRUE);
+	if (is.null(gridPars))
+		stop("Invalid 'polys'; appears altered since call to 'makeGrid'.\n");
 
-  # prepare data for the C function
-  nEvents <- nrow(events);
-  brksX <- sort(unique(polys$X));
-  brksY <- sort(unique(polys$Y));
+	# prepare data for the C function
+	nEvents <- nrow(events);
+	brksX <- sort(unique(polys$X));
+	brksY <- sort(unique(polys$Y));
 
-  # call the C function for the X's
-  resultsX <- .C("findCells",
-                 inPt = as.double(events$X),
-                 inPts = as.integer(nEvents),
-                 inBrk = as.double(brksX),
-                 inBrks = as.integer(length(brksX)),
-                 outCell = integer(nEvents),
-                 outBdry = integer(nEvents),
-                 outStatus = integer(1),
-                 PACKAGE = "PBSmapping");
-  # call the C function for the Y's
-  resultsY <- .C("findCells",
-                 inPt = as.double(events$Y),
-                 inPts = as.integer(nEvents),
-                 inBrk = as.double(brksY),
-                 inBrks = as.integer(length(brksY)),
-                 outCell = integer(nEvents),
-                 outBdry = integer(nEvents),
-                 outStatus = integer(1),
-                 PACKAGE = "PBSmapping");
+	# call the C function for the X's
+	resultsX <- .C("findCells",
+		inPt = as.double(events$X),
+		inPts = as.integer(nEvents),
+		inBrk = as.double(brksX),
+		inBrks = as.integer(length(brksX)),
+		outCell = integer(nEvents),
+		outBdry = integer(nEvents),
+		outStatus = integer(1),
+		PACKAGE = "PBSmapping");
+	# call the C function for the Y's
+	resultsY <- .C("findCells",
+		inPt = as.double(events$Y),
+		inPts = as.integer(nEvents),
+		inBrk = as.double(brksY),
+		inBrks = as.integer(length(brksY)),
+		outCell = integer(nEvents),
+		outBdry = integer(nEvents),
+		outStatus = integer(1),
+		PACKAGE = "PBSmapping");
 
-  # build the output data structures
-  d <- data.frame(EID = events$EID,
-                  PID = resultsX$outCell,
-                  PIDbdry = resultsX$outBdry,
-                  SID = resultsY$outCell,
-                  SIDbdry = resultsY$outBdry);
+	# build the output data structures
+	d <- data.frame(EID = events$EID,
+		PID = resultsX$outCell,
+		PIDbdry = resultsX$outBdry,
+		SID = resultsY$outCell,
+		SIDbdry = resultsY$outBdry);
 
-  bdryX <- d[d$PIDbdry == 1 & d$PID > 1 & d$PID < length(brksX), ];
-  bdryX$PID <- bdryX$PID - 1;
-  d <- rbind(d, bdryX);
-  bdryY <- d[d$SIDbdry == 1 & d$SID > 1 & d$SID < length(brksY), ];
-  bdryY$SID <- bdryY$SID - 1;
-  d <- rbind(d, bdryY);
+	bdryX <- d[d$PIDbdry == 1 & d$PID > 1 & d$PID < length(brksX), ];
+	bdryX$PID <- bdryX$PID - 1;
+	d <- rbind(d, bdryX);
+	bdryY <- d[d$SIDbdry == 1 & d$SID > 1 & d$SID < length(brksY), ];
+	bdryY$SID <- bdryY$SID - 1;
+	d <- rbind(d, bdryY);
 
-  d$Bdry <- as.integer(d$PIDbdry | d$SIDbdry);
+	d$Bdry <- as.integer(d$PIDbdry | d$SIDbdry);
 
-  # filter out the bad stuff
-  d <- d[d$PID != -1 & d$SID != -1, c("EID", "PID", "SID", "Bdry")];
-  d[d$PID == length(brksX), "PID"] <- length(brksX) - 1;
-  d[d$SID == length(brksY), "SID"] <- length(brksY) - 1;
+	# filter out the bad stuff
+	d <- d[d$PID != -1 & d$SID != -1, c("EID", "PID", "SID", "Bdry")];
+	if (nrow(d)==0) return(NULL)
+	d[d$PID == length(brksX), "PID"] <- length(brksX) - 1;
+	d[d$SID == length(brksY), "SID"] <- length(brksY) - 1;
 
-  # at this point:
-  # - d uses PID/SID as if called with byrow = T, addSID = T
-  # - transform to correct settings...
-  if (gridPars$addSID && !gridPars$byrow) {
-    # swap
-    tmp <- d$PID;
-    d$PID <- d$SID;
-    d$SID <- tmp;
-  } else if (!gridPars$addSID && gridPars$byrow) {
-    d$PID <- (d$SID - 1) * (length(brksX) - 1) + d$PID;
-    d$SID <- NULL;
-  } else if (!gridPars$addSID && !gridPars$byrow) {
-    d$PID <- (d$PID - 1) * (length(brksY) - 1) + d$SID;
-    d$SID <- NULL;
-  }
+	# at this point:
+	# - d uses PID/SID as if called with byrow = T, addSID = T
+	# - transform to correct settings...
+	if (gridPars$addSID && !gridPars$byrow) {
+		# swap
+		tmp <- d$PID;
+		d$PID <- d$SID;
+		d$SID <- tmp;
+	} else if (!gridPars$addSID && gridPars$byrow) {
+		d$PID <- (d$SID - 1) * (length(brksX) - 1) + d$PID;
+		d$SID <- NULL;
+	} else if (!gridPars$addSID && !gridPars$byrow) {
+		d$PID <- (d$PID - 1) * (length(brksY) - 1) + d$SID;
+		d$SID <- NULL;
+	}
 
-  if (!is.LocationSet(d, fullValidation = FALSE))
-    class(d) <- c("LocationSet", class(d));
+	# Check new argument `includeBdry' (2014-12-15)
+	if (!is.null(includeBdry) && any(d$Bdry==1)) {
+		if (includeBdry==0)
+			d = d[!is.element(d$Bdry,1),]
+		else {
+			if (includeBdry==1)
+				dd = d[order(d$PID,d$SID),]
+			else
+				dd = d[rev(order(d$PID,d$SID)),]
+			dd = dd[!duplicated(dd$EID),]
+			d  = dd[order(dd$EID),]
+		}
+		if (nrow(d)==0) return(NULL)
+	}
 
-  return (d);
+	if (!is.LocationSet(d, fullValidation = FALSE))
+		class(d) <- c("LocationSet", class(d));
+	return (d);
 }
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~findCells
 
-#==============================================================================
-findPolys <- function(events, polys, maxRows=1e+05)
+
+#findPolys------------------------------2014-12-15
+# Find events in polygons
+#--------------------------------------------NB/RH
+findPolys <- function(events, polys, maxRows=1e+05, includeBdry=NULL)
 {
-  events <- .validateEventData(events);
-  if (is.character(events))
-    stop(paste("Invalid EventData 'events'.\n", events, sep=""));
-  polys <- .validatePolySet(polys);
-  if (is.character(polys))
-    stop(paste("Invalid PolySet 'polys'.\n", polys, sep=""));
+	events <- .validateEventData(events);
+	if (is.character(events))
+		stop(paste("Invalid EventData 'events'.\n", events, sep=""));
+	polys <- .validatePolySet(polys);
+	if (is.character(polys))
+		stop(paste("Invalid PolySet 'polys'.\n", polys, sep=""));
 
-  # create the data structure that the C function expects
-  inEvents <- nrow(events);
-  inEventsID <- events$EID;
-  inEventsXY <- c(events$X, events$Y);
+	# create the data structure that the C function expects
+	inEvents <- nrow(events);
+	inEventsID <- events$EID;
+	inEventsXY <- c(events$X, events$Y);
 
-  inPolys <- nrow(polys);
-  if (!is.element("SID", names(polys))) {
-    inPolysID <- c(polys$PID, integer(length = inPolys), polys$POS);
-  } else {
-    inPolysID <- c(polys$PID, polys$SID, polys$POS);
-  }
-  inPolysXY <- c(polys$X, polys$Y);
+	inPolys <- nrow(polys);
+	if (!is.element("SID", names(polys))) {
+		inPolysID <- c(polys$PID, integer(length = inPolys), polys$POS);
+	} else {
+		inPolysID <- c(polys$PID, polys$SID, polys$POS);
+	}
+	inPolysXY <- c(polys$X, polys$Y);
 
-  # the maximum number of rows in the results occurs when each event
-  # lies in all of the polygons; we can easily calculate this case
-  # but it often results in too much allocated memory
+	# the maximum number of rows in the results occurs when each event
+	# lies in all of the polygons; we can easily calculate this case
+	# but it often results in too much allocated memory
 
-  # instead, simply use an argument that the user can tune (this makes
-  # the behavior more consistent with joinPolys, too)
-  outCapacity <- maxRows;
+	# instead, simply use an argument that the user can tune (this makes
+	# the behavior more consistent with joinPolys, too)
+	outCapacity <- maxRows;
 
-  # call the C function
-  results <- .C("findPolys",
-                inEventsID = as.integer(inEventsID),
-                inEventsXY = as.double(inEventsXY),
-                inEvents = as.integer(inEvents),
-                inPolysID = as.integer(inPolysID),
-                inPolysXY = as.double(inPolysXY),
-                inPolys = as.integer(inPolys),
-                outID = integer(4 * outCapacity),
-                outRows = as.integer(outCapacity),
-                outStatus = integer(1),
-                PACKAGE = "PBSmapping");
-  # note: outRows is set to how much space is allocated -- the C function
-  #       should consider this
+	# call the C function
+	results <- .C("findPolys",
+		inEventsID = as.integer(inEventsID),
+		inEventsXY = as.double(inEventsXY),
+		inEvents = as.integer(inEvents),
+		inPolysID = as.integer(inPolysID),
+		inPolysXY = as.double(inPolysXY),
+		inPolys = as.integer(inPolys),
+		outID = integer(4 * outCapacity),
+		outRows = as.integer(outCapacity),
+		outStatus = integer(1),
+		PACKAGE = "PBSmapping");
+	# note: outRows is set to how much space is allocated -- the C function should consider this
 
-  if (results$outStatus == 1) {
-    stop(paste(
+	if (results$outStatus == 1) {
+		stop(paste(
 "Insufficient physical memory for processing.",
 "Try reducing this function's 'maxRows' argument to reduce its memory",
-"requirements.\n",
-               sep = "\n"));
-  }
-  if (results$outStatus == 2) {
-    stop(paste(
+"requirements.\n", sep = "\n"));
+	}
+	if (results$outStatus == 2) {
+		stop(paste(
 "Insufficient memory allocated for output.",
 "Try increasing this function's 'maxRows' argument to increase the memory",
-"that it allocates for the output.\n",
-               sep = "\n"));
-  }
+"that it allocates for the output.\n", sep = "\n"));
+	}
 
-  # determine the number of rows in the result
-  outRows <- as.vector(results$outRows);
+	# determine the number of rows in the result
+	outRows <- as.vector(results$outRows);
+	if (outRows == 0) return(NULL)
 
-  # extract the data from the C function results
-  if (outRows > 0) {
-    d <- data.frame(EID = results$outID[1:outRows],
-                    PID = results$outID[(outCapacity+1):(outCapacity+outRows)],
-                    SID = results$outID[(2*outCapacity+1):(2*outCapacity+outRows)],
-                    Bdry = results$outID[(3*outCapacity+1):(3*outCapacity+outRows)]);
+	# extract the data from the C function results
+	d <- data.frame(EID = results$outID[1:outRows],
+		PID = results$outID[(outCapacity+1):(outCapacity+outRows)],
+		SID = results$outID[(2*outCapacity+1):(2*outCapacity+outRows)],
+		Bdry = results$outID[(3*outCapacity+1):(3*outCapacity+outRows)]);
 
-    if (!is.element("SID", names(polys)))
-      d$SID <- NULL;
+	# Check new argument `includeBdry' (2014-12-15)
+	if (!is.null(includeBdry) && any(d$Bdry==1)) {
+		if (includeBdry==0)
+			d = d[!is.element(d$Bdry,1),]
+		else {
+			d0 = d[is.element(d$Bdry,0),]
+			d1 = d[is.element(d$Bdry,1),]
+			if (includeBdry==1)
+				dd = d1[order(d1$PID,d1$SID),]
+			else
+				dd = d1[rev(order(d1$PID,d1$SID)),]
+			dd = dd[!duplicated(dd$EID),]
+			dd = rbind(d0,dd)
+			d  = dd[order(dd$EID,dd$PID,dd$SID),]
+		}
+		if (nrow(d)==0) return(NULL)
+	}
 
-    if (!is.LocationSet(d, fullValidation = FALSE))
-      class(d) <- c("LocationSet", class(d));
+	if (!is.element("SID", names(polys)))
+		d$SID <- NULL;
 
-    return(d);
-  } else {
-    return(NULL);
-  }
+	if (!is.LocationSet(d, fullValidation = FALSE))
+		class(d) <- c("LocationSet", class(d));
+
+	return(d);
 }
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~findPolys
 
-#==============================================================================
+
 fixBound <- function(polys, tol)
 {
   polys <- .validatePolySet(polys);
@@ -4588,71 +4622,78 @@ importLocs <- function(LocationSet)
 {
   return(as.LocationSet(read.table(LocationSet, header=TRUE)))
 }
-
 #=============================================================================
+
+#importGSHHS----------------------------2013-08-23
+# Import a GSHHG binary file provided by Paul Wessel
+#--------------------------------------------NB/RH
 importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0)
 {
-  # get gshhsDB filename
-  if (missing(gshhsDB))
-    gshhsDB <- paste(system.file(package="PBSmapping"), "gshhs_f.b", sep="/")
-  else
-    gshhsDB <- path.expand(gshhsDB)
-  if (!file.exists(gshhsDB))
-    stop("unable to find gshhsDB \"", gshhsDB, "\"")
+	# get gshhsDB filename
+	if (missing(gshhsDB))
+		gshhsDB <- paste(system.file(package="PBSmapping"), "gshhs_f.b", sep="/")
+	else
+		gshhsDB <- path.expand(gshhsDB)
+	if (!file.exists(gshhsDB))
+		stop("unable to find gshhsDB \"", gshhsDB, "\"")
 
-  # setup limits: for lon, (-20, 360)
-  limits <- c(xlim[1], xlim[2], ylim[1], ylim[2])
-  .checkClipLimits(limits)
+	# setup limits: for lon, (-20, 360)
+	limits <- c(xlim[1], xlim[2], ylim[1], ylim[2])
+	.checkClipLimits(limits)
 
-  # return an R object
-  x <- .Call("importGSHHS",
-             as.character(gshhsDB),
-             as.numeric(limits),
-             as.integer(maxLevel),
-             as.integer(n),
-             PACKAGE = "PBSmapping")
-  if (is.null(x) || !length(x$PID))
-    return(NULL)
+	# return an R object
+	x <- .Call("importGSHHS", as.character(gshhsDB), as.numeric(limits),
+		as.integer(maxLevel), as.integer(n), PACKAGE = "PBSmapping")
+	if (is.null(x) || !length(x$PID))
+		return(NULL)
 
-  # pull out PolyData and clipAsPolys attributes
-  PolyData <- as.data.frame(attr(x, "PolyData"))
-  attr(x, "PolyData") <- NULL
-  clipAsPolys <- attr(x, "clipAsPolys")
-  attr(x, "clipAsPolys") <- NULL
-  
-  # headers in the GSHHS database range from 0 to 360 while the underlying data
-  # ranges from -180 to 180; if our xlim > 180, shift it
-  xlim.orig <- NULL;
-  if (abs(diff(xlim)) >= 360) {
-    # the user apparently wants to extract the whole range, so let's
-    # provide some help... (to avoid clipping problems)
-    xlim.orig <- xlim
-    xlim <- c(-200, 200)
-  } else if (max(xlim) > 180) {
-    xlim.orig <- xlim
-    xlim <- xlim - 360
-  }
-  
-  # convert list to a data frame and clip
-  x <- as.PolySet(as.data.frame(x), projection = "LL")
-  if (clipAsPolys)
-    x <- clipPolys(x, xlim=xlim, ylim=ylim)
-  else
-    x <- clipLines(x, xlim=xlim, ylim=ylim)
-  x$oldPOS <- NULL
+	# pull out PolyData and clipAsPolys attributes
+	PolyData <- as.data.frame(attr(x, "PolyData"))
+	attr(x, "PolyData") <- NULL
+	clipAsPolys <- attr(x, "clipAsPolys")
+	attr(x, "clipAsPolys") <- NULL
+	
+	# headers in the GSHHS database range from 0 to 360 while the underlying data
+	# ranges from -180 to 180; if our xlim > 180, shift it
+	xlim.orig <- NULL;
+	if (abs(diff(xlim)) >= 360) {
+		# the user apparently wants to extract the whole range, so let's
+		# provide some help... (to avoid clipping problems)
+		xlim.orig <- xlim
+		xlim <- c(-200, 200)
+	}
+	else if (max(xlim) > 180) {
+		xlim.orig <- xlim
+		xlim <- xlim - 360
+	}
+	XLIM = range(x$X) # imported data from C-function
 
-  # sort so that holes immediately follow their parents
-  x <- x[order(x$PID, x$SID), ]
+	#-----TEMPORARY-FIX----------------------------
+	if (grepl("borders",substitute(gshhsDB)))
+		x$X = x$X-360 # temporary adjustment for borders
+	#----------------------------------------------
 
-  # display a message if the output longitudes differ from xlim
-  if (!is.null(xlim.orig))
-    message("importGSHHS: input xlim was (", paste(xlim.orig, collapse=", "),
-            ") and the longitude range of the extracted data is (",
-            paste(range(x$X), collapse=", "), ").")
-  attr(x, "PolyData") <- PolyData
-  
-  return (x)
+	# convert list to a data frame and clip
+	x <- as.PolySet(as.data.frame(x), projection = "LL")
+	if (clipAsPolys)
+		x <- clipPolys(x, xlim=xlim, ylim=ylim)
+	else
+		x <- clipLines(x, xlim=xlim, ylim=ylim)
+	x$oldPOS <- NULL
+
+	# sort so that holes immediately follow their parents
+	x <- x[order(x$PID, x$SID), ]
+
+	# display a message if the output longitudes differ from xlim
+	if (!is.null(xlim.orig))
+		message("importGSHHS: input xlim was (", paste(xlim.orig, collapse=", "),
+						") and the longitude range of the extracted data is (",
+						paste(range(x$X), collapse=", "), ").")
+	attr(x, "PolyData") <- PolyData
+	
+	return (x)
 }
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~importGSHHS
 
 #==============================================================================
 is.EventData <- function(x, fullValidation = TRUE)

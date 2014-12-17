@@ -16,12 +16,12 @@
 		pkg_date <- strsplit( pkg_info$Packaged, " " )[[1]][1]
 	else
 		pkg_date  <- date()
-	
 	userguide_path <- system.file( "doc/PBSmapping-UG.pdf", package = "PBSmapping")
+	year <- substring(date(),nchar(date())-3,nchar(date()))
 	
 	packageStartupMessage("
 -----------------------------------------------------------
-PBS Mapping ", pkg_info$Version, " -- Copyright (C) 2003-2013 Fisheries and Oceans Canada
+PBS Mapping ", pkg_info$Version, " -- Copyright (C) 2003-",year," Fisheries and Oceans Canada
 
 PBS Mapping comes with ABSOLUTELY NO WARRANTY;
 for details see the file COPYING.
@@ -50,8 +50,10 @@ To see demos, type '.PBSfigs()'.
 # ===================
 if(getRversion() >= "2.15.1") utils::globalVariables(names=c(
 	"bcBathymetry",
+	"deldir",
 	"nepacLL","nepacLLhigh",
 	"PBSval","pythagoras",
+	"read.dbf",
 	"surveyData",
 	"towData","towTracks",
 	"worldLL"),

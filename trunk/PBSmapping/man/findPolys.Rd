@@ -1,18 +1,22 @@
 \name{findPolys}
 \alias{findPolys}
-\title{Find the Polygons that Contain Events}
+\title{Find Polygons that Contain Events}
 \description{
   Find the polygons in a \link{PolySet} that contain events specified in
   \link{EventData}.
 }
 \usage{
-findPolys (events, polys, maxRows = 1e+05)
+findPolys (events, polys, maxRows = 1e+05, includeBdry=NULL)
 }
 \arguments{
   \item{events}{\link{EventData} to use.}
   \item{polys}{\link{PolySet} to use.}
-  \item{maxRows}{estimated maximum number of rows in the output
-    \link{LocationSet}.}
+  \item{maxRows}{estimated maximum number of rows in the output \link{LocationSet}.}
+  \item{includeBdry}{numeric: determines how points on boundaries are handled: \cr
+    if \code{NULL} then report all points on polygon boundaries (default behaviour); \cr
+    if \code{0} then exclude all points on polygon boundaries; \cr
+    if \code{1} then report only the first (lowest PID/SID) polygon boundary; \cr
+    if \code{2,...,n} then report the last (highest PID/SID) polygon boundary.}
 }
 \details{
   The resulting data frame, a \link{LocationSet}, contains the columns
@@ -25,6 +29,12 @@ findPolys (events, polys, maxRows = 1e+05)
   \code{PID}, \code{SID}) does not occur in the output.  It may happen,
   however, that an event occurs in multiple polygons.  Thus, the same
   \code{EID} can occur more than once in the output.
+  
+  If an event happens to lie at the boundary intersection of two or more polygons
+  then one \code{EID} will be associated with two or more polygons. A user
+  can choose to manipulate this result by setting the argument \code{includeBdry}
+  to a numeric value that constrains the association of a boundary event to
+  0 or 1 polygon (see argument description above).
 }
 \value{
   \link{LocationSet} that links events with polygons.
