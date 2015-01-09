@@ -3503,7 +3503,7 @@ calcVoronoi <- function(xydata, xlim = NULL, ylim = NULL, eps = 1e-09,
 "a one-to-one projection. Consider converting it to UTM before running",
 "this function.", sep="\n"));
 
-  dd <- deldir(xydata$X, xydata$Y, rw=c(xlim, ylim), eps=eps, frac=frac,
+  dd <- deldir::deldir(xydata$X, xydata$Y, rw=c(xlim, ylim), eps=eps, frac=frac,
                digits=7)
   if (is.null(dd))
     stop(paste(
@@ -5949,7 +5949,7 @@ importShapefile <- function (fn, readDBF=TRUE, projection=NULL, zone=NULL,
 		"The argument 'readDBF' is true but the attribute database\n",
 		"(\"", dbfFile, "\") does not exist.\n", sep=""))
 	} else if (readDBF) {
-		dbf <- read.dbf (dbfFile)
+		dbf <- foreign::read.dbf (dbfFile)
 		if (shpType == 1) {  # EventData
 			if (nrow(df) != nrow(dbf)) {
 				warning(paste(
