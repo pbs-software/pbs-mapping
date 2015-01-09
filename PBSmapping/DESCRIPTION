@@ -12,6 +12,7 @@ Author:     Jon T. Schnute <schnutej-dfo@shaw.ca>,
 Maintainer: Rowan Haigh <rowan.haigh@dfo-mpo.gc.ca>
 Depends:    R (>= 2.15.0)
 Suggests:   foreign, maptools, deldir
+SystemRequirements: C++11
 NeedsCompilation: yes
 Description: This software has evolved from fisheries research conducted at the
    Pacific Biological Station (PBS) in Nanaimo, British Columbia, Canada. It
