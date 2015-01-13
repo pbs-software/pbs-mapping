@@ -39,7 +39,7 @@
 \section{What is PBS?}
 
 The initials \bold{PBS} refer to the Pacific Biological Station, a major fisheries laboratory operated by by Fisheries and Oceans Canada on the Pacific coast in Nanaimo, British Columbia, Canada. For more information, see:\\
-\url{http://www.pac.dfo-mpo.gc.ca/sci/pbs/}.
+\url{http://www.pac.dfo-mpo.gc.ca/science/facilities-installations/pbs-sbp/index-eng.html}.
 
 \section{Where is the User's Guide?}
 
@@ -51,6 +51,6 @@ The R directory \code{.../library/PBSmapping/doc} includes a complete User's Gui
 
 \vspace*{4ex} \noindent {\bf \Large Reference}
 
-\vspace*{2ex} \noindent Schnute, J.T., Boers, N.M., Haigh, R., and Couture-Beil, A. 2008. PBS Mapping 2.57: User's Guide -- revised from \ital{Canadian Technical Report of Fisheries and Aquatic Sciences} \bold{2549}: vi + 118 p.
+\vspace*{2ex} \noindent Schnute, J.T., Boers, N.M., Haigh, R., and Couture-Beil, A. 2013. PBSmapping 2.66: User's Guide. Revised from \emph{Canadian Technical Report of Fisheries and Aquatic Sciences} \bold{2549}: vi + 115 p. Last updated May 3, 2013.
 
 \end{document}

@@ -7,6 +7,17 @@ Authors:  JTS = Jon T. Schnute
           DC  = Denis Chabot
 -----------------------------------
 
+2.68  2015-01-13
+  - Eliminate warning when compiling `clipper.cpp'. (NB 1/12)
+	An unused variable is declared within `clipper.cpp'. This commit turns that declaration into a comment to eliminate the warning.
+  - Added namespace when calling `deldir' and `read.dbf'. (NB 1/9)
+	PBSmapping calls `deldir' (package deldir) and `read.dbf' (package foreign),and for each, the code now specifies the namespace.
+  - Updated clipper library from 5.1.4 to 5.1.6. (NB 1/9)
+  - Added `SystemRequirements: C++11' to the DESCRIPTION file to alert user that compilation and linking should be done with a C++11 compiler. (NB 1/9)
+	The clipper library used by PBSmapping operates on coordinates stored as integers, and for those integers, it uses the "long long" type that 
+	was introduced in the C++11 standard. When an R package requires C++11 features, the DESCRIPTION file must state this requirement.
+  - Bumped up version for next posting to CRAN in 2015.
+
 2.67  2014-12-15
   - Changed line in `clipperWrapper.cpp' from `ulong64 val = llabs(*f++);' to `ulong64 val = (ulong64)fabs(*f++);' (NB 12/17)
 	The C compiler 'clang' with -Wall reports that PBSmapping is misusing the C function abs in their code: see
