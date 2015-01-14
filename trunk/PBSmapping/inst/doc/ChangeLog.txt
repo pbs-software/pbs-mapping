@@ -7,7 +7,10 @@ Authors:  JTS = Jon T. Schnute
           DC  = Denis Chabot
 -----------------------------------
 
-2.68  2015-01-13
+2.68  2015-01-14
+  - R CMD check: ``... used in a situation where it does not exist'' -- identified as a temporary bug in R-devel by Duncan Murdoch:
+	http://r.789695.n4.nabble.com/R-CMD-check-quot-quot-used-in-a-situation-where-it-does-not-exist-td4701779.html
+  - Resolved missing line feed in `Makefile'; converted format from DOS to UNIX for `Makefile' and `*.cpp' files in `/inst/Utils'. (NB 1/14)
   - Eliminate warning when compiling `clipper.cpp'. (NB 1/12)
 	An unused variable is declared within `clipper.cpp'. This commit turns that declaration into a comment to eliminate the warning.
   - Added namespace when calling `deldir' and `read.dbf'. (NB 1/9)

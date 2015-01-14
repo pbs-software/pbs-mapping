@@ -37,11 +37,11 @@ Command Line Utilities
 
 clipPolys
 	Clips a PolySet, where each (PID, SID) set describes a unique polygon.
+
 convUL
 	Converts coordinates between UTM (km) and Lon/Lat.
 
 findPolys
 	Finds the polygons in a PolySet that contain events specified by EventData.
-
 
 See PBSmapping-UG.pdf (p.21-23) located in root directory of PBSmapping library.
