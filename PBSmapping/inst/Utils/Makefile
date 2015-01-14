@@ -1,5 +1,4 @@
 all: clipPolys.exe findPolys.exe convUL.exe
-	
 
 clipPolys.exe: clipPolys.cpp
 	g++ clipPolys.cpp -o clipPolys.exe
