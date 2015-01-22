@@ -7,12 +7,13 @@ Authors:  JTS = Jon T. Schnute
           DC  = Denis Chabot
 -----------------------------------
 
-2.68  2015-01-14
-  - R CMD check: ``... used in a situation where it does not exist'' -- identified as a temporary bug in R-devel by Duncan Murdoch:
+2.68  2015-01-22
+  - Fixed some broken hyperlinks and merged `nepacLL.Rd', `nepacLLhigh.Rd', `worldLL.Rd', and `worldLLhigh.Rd' into `nepacLL.Rd' using aliases. (RH 1/22)
+  - Ignored R CMD check: ``... used in a situation where it does not exist'' -- identified as a temporary bug in R-devel by Duncan Murdoch:
 	http://r.789695.n4.nabble.com/R-CMD-check-quot-quot-used-in-a-situation-where-it-does-not-exist-td4701779.html
   - Resolved missing line feed in `Makefile'; converted format from DOS to UNIX for `Makefile' and `*.cpp' files in `/inst/Utils'. (NB 1/14)
-  - Eliminate warning when compiling `clipper.cpp'. (NB 1/12)
-	An unused variable is declared within `clipper.cpp'. This commit turns that declaration into a comment to eliminate the warning.
+  - Eliminated warning when compiling `clipper.cpp'. (NB 1/12)
+	Commented out an unused variable declared within `clipper.cpp'. This commit turns that declaration into a comment to eliminate the warning.
   - Added namespace when calling `deldir' and `read.dbf'. (NB 1/9)
 	PBSmapping calls `deldir' (package deldir) and `read.dbf' (package foreign),and for each, the code now specifies the namespace.
   - Updated clipper library from 5.1.4 to 5.1.6. (NB 1/9)
