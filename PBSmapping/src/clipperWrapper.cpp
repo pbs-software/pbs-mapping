@@ -36,6 +36,7 @@
 
 /* compiling for standalone execution (NO R) */
 #include <stdio.h>
+#include <math.h>
 #define Rprintf printf
 typedef int Sint;
 typedef double Sfloat;
@@ -68,8 +69,22 @@ struct PolySetState {
     int nextStart;
 };
 
+#if DEBUG
+int dbgIndent = 0;
+#define DBG_INDENT(incr)	do {		\
+	dbgIndent += incr;			\
+    } while (0)    
+#define DBG_PRINTF(fmt, ...)	do {		\
+	Rprintf("%*s", dbgIndent, "");		\
+	Rprintf(fmt, ##__VA_ARGS__);		\
+    } while (0)
+#else /* DEBUG */
+#define DBG_INDENT(incr)
+#define DBG_PRINTF(fmt, ...)
+#endif /* DEBUG */
+
 /*-----------------------------------------------------------------------------
-  join (Polygons result):
+  join (Paths result):
 
   Author:  Nicholas Boers (Mar. 2013)
 
@@ -77,17 +92,17 @@ struct PolySetState {
   Given subject (subj) and clip (clip) polygons, uses the Clipper
   library to join those polygons using the specified operation.
 
-  This function's result type (Polygons) is suitable for further calls
+  This function's result type (Paths) is suitable for further calls
   to Clipper.
   ---------------------------------------------------------------------------*/
 static void
-join (const Polygons &subj, enum ClipType op, const Polygons &clip,
-      Polygons &result)
+join (const Paths &subj, enum ClipType op, const Paths &clip,
+      Paths &result)
 {
     Clipper c;
 
-    c.AddPolygons(subj, ptSubject);
-    c.AddPolygons(clip, ptClip);
+    c.AddPaths(subj, ptSubject, true);
+    c.AddPaths(clip, ptClip, true);
     c.Execute(op, result);
 }
 
@@ -104,18 +119,26 @@ join (const Polygons &subj, enum ClipType op, const Polygons &clip,
   a PolySet.
   ---------------------------------------------------------------------------*/
 static void
-join (const Polygons &subj, enum ClipType op, const Polygons &clip,
+join (const Paths &subj, enum ClipType op, const Paths &clip,
       PolyTree &result)
 {
     Clipper c;
 
-    c.AddPolygons(subj, ptSubject);
-    c.AddPolygons(clip, ptClip);
+    DBG_PRINTF("join (...):\n");
+    DBG_INDENT(2);
+    DBG_PRINTF("adding subject: %lu path(s)\n", (unsigned long)subj.size());
+    DBG_PRINTF("adding clip:    %lu path(s)\n", (unsigned long)clip.size());
+    
+    c.AddPaths(subj, ptSubject, true);
+    c.AddPaths(clip, ptClip, true);
     c.Execute(op, result);
+
+    DBG_PRINTF("result:         %ld path(s)\n", (long)result.Total());
+    DBG_INDENT(-2);
 }
 
 /*-----------------------------------------------------------------------------
-  getNextPolygon:
+  getNextPath:
 
   Author:  Nicholas Boers (Mar. 2013)
 
@@ -127,16 +150,16 @@ join (const Polygons &subj, enum ClipType op, const Polygons &clip,
 
   Returns a polygon with > 0 contours on success (and 0 contours on failure).
   ---------------------------------------------------------------------------*/
-static Polygons
-getNextPolygon (struct PolySetState &pset, ulong64 scaleFactor, Sint &pid)
+static Paths
+getNextPath (struct PolySetState &pset, ulong64 scaleFactor, Sint &pid)
 {
-    Polygons p;
+    Paths p;
     int sidCount, polyNum;
     Sint lastPID, lastSID;
 
     /* if we're done... */
     if (pset.nextStart > pset.n) 
-	return (Polygons(0));
+	return (Paths(0));
     
     /* count components */
     sidCount = 1;
@@ -152,38 +175,70 @@ getNextPolygon (struct PolySetState &pset, ulong64 scaleFactor, Sint &pid)
     }
 
     /* allocate memory */
-    p = Polygons(sidCount);
+    p = Paths(sidCount);
 
-    /* load */
+    /* load */    
     polyNum = 0;
     lastPID = pset.PID[pset.nextStart];
     lastSID = pset.SID[pset.nextStart];
     pid = lastPID;
+
+    DBG_PRINTF("getNextPath (...):\n");
+    DBG_INDENT(2);
+    DBG_PRINTF("adding vertex(es) for PolySet\n");
+
+    DBG_INDENT(2);
     do {
 	/* advance to next contour */
 	if (pset.SID[pset.nextStart] != lastSID) {
 	    lastSID = pset.SID[pset.nextStart];
 	    polyNum++;
 	}
-
+	
 	/* push integer points onto the vector */
 	p[polyNum].push_back(
 		     IntPoint((long64)(pset.X[pset.nextStart] * scaleFactor),
 			      (long64)(pset.Y[pset.nextStart] * scaleFactor)));
 
+	DBG_PRINTF("added vertex: (%lld, %lld) for (%f, %f)\n",
+		   p[polyNum].back().X,
+		   p[polyNum].back().Y,
+		   (float)(p[polyNum].back().X) / scaleFactor,
+		   (float)(p[polyNum].back().Y) / scaleFactor);
+	
 	pset.nextStart++;
     } while (pset.nextStart < pset.n && pset.PID[pset.nextStart] == lastPID);
+    DBG_INDENT(-2);
 
+#if DEBUG
+    DBG_PRINTF("simplifying path(s): n=%lu\n", (unsigned long)p.size());
+    DBG_INDENT(2);
+    for (int i = 0; i < p.size(); i++) {
+	DBG_PRINTF("path %d: %lu vertex(es)\n", i, (unsigned long)p[i].size());
+    }
+    DBG_INDENT(-2);
+#endif /* DEBUG */
+    
     /* removes self-intersections from p that are created by our approach to
        clipping, which maintains the original PID and does not introduce new
        SIDs */
-    SimplifyPolygons(p, p);
+    SimplifyPolygons(p);
 
+#if DEBUG
+    DBG_PRINTF("resulting path(s): n=%lu\n", (unsigned long)p.size());
+    DBG_INDENT(2);
+    for (int i = 0; i < p.size(); i++) {
+	DBG_PRINTF("path %d: %lu vertex(es)\n", i, (unsigned long)p[i].size());
+    }
+    DBG_INDENT(-2);
+#endif /* DEBUG */ 
+
+    DBG_INDENT(-2);
     return (p);
 }
 
 /*-----------------------------------------------------------------------------
-  thereAreMorePolygons:
+  thereAreMorePaths:
 
   Author:  Nicholas Boers (Mar. 2013)
 
@@ -191,7 +246,7 @@ getNextPolygon (struct PolySetState &pset, ulong64 scaleFactor, Sint &pid)
   Returns true if there are more polygons according to our state structure.
   ---------------------------------------------------------------------------*/
 static int
-thereAreMorePolygons (const struct PolySetState &st)
+thereAreMorePaths (const struct PolySetState &st)
 {
     return (st.nextStart < st.n);
 }
@@ -212,9 +267,15 @@ appendToResult (PolySet &pset, PolyTree &p, ulong64 scaleFactor, Sint pid)
     PolyNode *pn;
     Sint sidCount, posCount;
 
+    DBG_PRINTF("appendToResult(...):\n");
+    DBG_INDENT(2);
+    
     /* return if nothing to add */
-    if (p.Total() == 0)
+    if (p.Total() == 0) {
+	DBG_PRINTF("nothing to add\n");
+	DBG_INDENT(-2);
 	return;
+    }
 
     /* add the vertices */
     sidCount = 0;
@@ -222,7 +283,7 @@ appendToResult (PolySet &pset, PolyTree &p, ulong64 scaleFactor, Sint pid)
     pn = p.GetFirst();
     while (pn) {
 	/* start a new contour */
-	Polygon::iterator it = pn->Contour.begin();
+	Path::iterator it = pn->Contour.begin();
 	int isHole = pn->IsHole();
 
 	/* set polygon's initial SID/POS values */
@@ -248,6 +309,8 @@ appendToResult (PolySet &pset, PolyTree &p, ulong64 scaleFactor, Sint pid)
 	/* advance to the next contour */
 	pn = pn->GetNext();
     }
+
+    DBG_INDENT(-2);
 } 
 
 #ifndef STANDALONE
@@ -339,7 +402,7 @@ PolySetToR (PolySet &pset, int &protectCount)
 #endif /* not defined STANDALONE */
 
 /*-----------------------------------------------------------------------------
-  countPolygons:
+  countPaths:
 
   Author:  Nicholas Boers (Mar. 2013)
 
@@ -349,7 +412,7 @@ PolySetToR (PolySet &pset, int &protectCount)
   when counting.
   ---------------------------------------------------------------------------*/
 static long
-countPolygons (Sint *pid, Sint *sid, Sint n, int onlyPID)
+countPaths (Sint *pid, Sint *sid, Sint n, int onlyPID)
 {
     Sint lastPID, lastSID, count;
 
@@ -446,6 +509,11 @@ getScaleFactor (Sfloat *sXptr, int sXlen, Sfloat *sYptr, int sYlen,
        which is 100 000 <= shifted one bit too far */
     scaleBits -= 1;
 
+    DBG_PRINTF("getScaleFactor (...):\n");
+    DBG_INDENT(2);
+    DBG_PRINTF("scaleBits: %d\n", scaleBits);
+    DBG_INDENT(-2);
+    
     /* given the code here and in determineScale, the maximum shift is
        62, which does not cause problems for a 64-bit integer */
     return (ulong64)1 << scaleBits;
@@ -484,7 +552,7 @@ joinPolys(SEXP operation,
     Sfloat *sXptr, *sYptr, *cXptr, *cYptr;
 
     /* polygons for Clipper library */
-    Polygons subj, clip, temp;	/* input for Clipper */
+    Paths subj, clip, temp;	/* input for Clipper */
     PolyTree result;		/* output from Clipper */
 
     /* scale factor to use when interacting with the Clipper library */
@@ -495,8 +563,14 @@ joinPolys(SEXP operation,
        the start */
     PolySet resultset;
 
-    if (DEBUG) Rprintf("Clipper: dbg: built %s at %s\n", __DATE__, __TIME__);
+#if DEBUG
+    dbgIndent = 0;
+#endif /* DEBUG */
 
+    DBG_PRINTF("Clipper: dbg: built %s at %s\n", __DATE__, __TIME__);
+    DBG_PRINTF("joinPolys (...):\n");
+    DBG_INDENT(2);
+    
     /* convert the incoming vectors to the correct types */
     PROTECT(sPID = AS_INTEGER(sPID));
     PROTECT(sSID = AS_INTEGER(sSID));
@@ -507,9 +581,9 @@ joinPolys(SEXP operation,
     PROTECT(cSID = AS_INTEGER(cSID));
     PROTECT(cX = AS_NUMERIC(cX));
     PROTECT(cY = AS_NUMERIC(cY));
-
+    
     protectCount += 8;
-
+    
     /* set the pointers for quickly accessing the arguments */
     sPIDptr = INTEGER_POINTER(sPID);
     sSIDptr = INTEGER_POINTER(sSID);
@@ -526,20 +600,22 @@ joinPolys(SEXP operation,
     scaleFactor = getScaleFactor (sXptr, LENGTH(sX), sYptr, LENGTH(sY),
 				  cXptr, LENGTH(cX), cYptr, LENGTH(cY));
 
+    DBG_PRINTF("scaleFactor: %llu\n", scaleFactor);
+
     /* we'll use the (a) number of subject polys, (b) number of clip
        polys, and (c) the operation to determine PID/SID numbering */
-    nSubject = countPolygons(sPIDptr, sSIDptr, LENGTH(sPID), TRUE);
-    nClip    = countPolygons(cPIDptr, cSIDptr, LENGTH(cPID), TRUE);
+    nSubject = countPaths(sPIDptr, sSIDptr, LENGTH(sPID), TRUE);
+    nClip    = countPaths(cPIDptr, cSIDptr, LENGTH(cPID), TRUE);
     switch (INTEGER_VALUE(operation)) {
     case 0: op = ctIntersection; break;
     case 1: op = ctUnion; break;
     case 2: op = ctDifference; break;
     case 3: op = ctXor; break;
-    default: error("Unrecognized operation.\n"); return res;
+    default:
+	error("Unrecognized operation.\n");
+	DBG_INDENT(-2);
+	return res;
     }
-
-    if (DEBUG) Rprintf("Clipper: dbg: nSubject: %d\n", nSubject);
-    if (DEBUG) Rprintf("Clipper: dbg: nClip: %d\n", nClip);
 
     /* create our subject and clip PolySetState structures that will later
        use to iterate through all of the polygons */
@@ -555,11 +631,14 @@ joinPolys(SEXP operation,
 	/* (1) multiple subject and NO clip polygons:
            sequentially apply to subject polys (((A op B) op C) ...);
 	   assigns single PID to the output */
-	temp = getNextPolygon(sStat, scaleFactor, currentPID);
-	clip = getNextPolygon(sStat, scaleFactor, currentPID);
-	while (thereAreMorePolygons(sStat)) {
+
+	DBG_PRINTF("operation: multiple subject and no clip\n");
+
+	temp = getNextPath(sStat, scaleFactor, currentPID);
+	clip = getNextPath(sStat, scaleFactor, currentPID);
+	while (thereAreMorePaths(sStat)) {
 	    join (temp, op, clip, temp);
-	    clip = getNextPolygon(sStat, scaleFactor, currentPID);
+	    clip = getNextPath(sStat, scaleFactor, currentPID);
 	}
 	/* for last clip, result goes into a PolyTree */
 	join (temp, op, clip, result);
@@ -568,24 +647,30 @@ joinPolys(SEXP operation,
 	/* (2) multiple subject and one clip:
            perform operation between each subject and single clip;
 	   maintains PIDs of subject polys */
-	clip = getNextPolygon (cStat, scaleFactor, currentPID);
+
+	DBG_PRINTF("operation: multiple subject and one clip\n");
+
+	clip = getNextPath (cStat, scaleFactor, currentPID);
 	do {
-	    subj = getNextPolygon (sStat, scaleFactor, currentPID);
+	    subj = getNextPath (sStat, scaleFactor, currentPID);
 	    join (subj, op, clip, result);
 	    appendToResult(resultset, result, scaleFactor, currentPID);
-	} while (thereAreMorePolygons(sStat));
+	} while (thereAreMorePaths(sStat));
     } else if (nSubject > 1 && nClip > 1) {
 	/* (3) multiple subject and multiple clip polygons:
            for subject polys A and B and clip polys C and D,
 	   concatenates A op C, B op C, A op D, B op D;
 	   assign PIDs 1 to n where n is |subject| * |clip| */
+
+	DBG_PRINTF("operation: multiple subject and multiple clip\n");
+
 	currentPID = 1;
-	while (thereAreMorePolygons(cStat)) {
-	    clip = getNextPolygon (cStat, scaleFactor, noSint);
+	while (thereAreMorePaths(cStat)) {
+	    clip = getNextPath (cStat, scaleFactor, noSint);
 	    /* reset the subject state */
 	    sStat.nextStart = 0;
-	    while (thereAreMorePolygons(sStat)) {
-		subj = getNextPolygon (sStat, scaleFactor, noSint);
+	    while (thereAreMorePaths(sStat)) {
+		subj = getNextPath (sStat, scaleFactor, noSint);
 		join (subj, op, clip, result);
 		appendToResult(resultset, result, scaleFactor, currentPID);
 		currentPID++;
@@ -595,11 +680,14 @@ joinPolys(SEXP operation,
 	/* (4) one subject and multiple clip *and* DIFF operation:
            perform (((subject DIFF clip[0]) DIFF clip[1]) ...);
 	   maintains single PID of subject */
-	temp = getNextPolygon (sStat, scaleFactor, currentPID);
-	clip = getNextPolygon (cStat, scaleFactor, noSint);
-	while (thereAreMorePolygons(cStat)) {
+
+	DBG_PRINTF("operation: one subject, multiple clip, diff\n");
+    
+	temp = getNextPath (sStat, scaleFactor, currentPID);
+	clip = getNextPath (cStat, scaleFactor, noSint);
+	while (thereAreMorePaths(cStat)) {
 	    join (temp, op, clip, temp);
-	    clip = getNextPolygon (cStat, scaleFactor, noSint);
+	    clip = getNextPath (cStat, scaleFactor, noSint);
 	}
 	/* for last clip, result goes into a PolyTree */
 	join (temp, op, clip, result);
@@ -609,9 +697,12 @@ joinPolys(SEXP operation,
            _NOT_ DIFF operation:
            concatenates A op B, A op C;
 	   maintains PIDs of clip */
-	subj = getNextPolygon (sStat, scaleFactor, noSint);
-	while (thereAreMorePolygons(cStat)) {
-	    clip = getNextPolygon (cStat, scaleFactor, currentPID);
+
+	DBG_PRINTF("operation: one subject, multiple clip, not diff\n");
+
+	subj = getNextPath (sStat, scaleFactor, noSint);
+	while (thereAreMorePaths(cStat)) {
+	    clip = getNextPath (cStat, scaleFactor, currentPID);
 	    join (subj, op, clip, result);
 	    appendToResult(resultset, result, scaleFactor, currentPID);
 	}
@@ -626,6 +717,7 @@ joinPolys(SEXP operation,
     }
 
     UNPROTECT(protectCount);
+    DBG_INDENT(-2);
     return (res);
 }
 #endif /* not defined STANDALONE */
