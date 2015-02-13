@@ -7,84 +7,91 @@ Authors:  JTS = Jon T. Schnute
           DC  = Denis Chabot
 -----------------------------------
 
+2.69  2015-02-12
+  - Modified extensively `importGSHHS' to deal with various problems encountered by users (wrapping, border problems, etc.). (RH 150212)
+  - Modified `refocusWorld' to return the `xlim' used in the refocus as an attribute called `rf.xlim' (for use in `importGSHHS'). (RH 150211)
+  - Updated Clipper to 6.2.1 and added (disabled) dbg output to clipperWrapper.cpp. (NB 150207)
+	We received a bug report regarding joinPolys.  After significant testing/tracing, the bug appears to exist within Clipper 5.1.6.
+	Rather than revert to 5.1.4, this commit upgrades Clipper to 6.2.1.
+  - Bumped up version for next posting to CRAN in 2015.
+
 2.68  2015-01-22
-  - Fixed some broken hyperlinks and merged `nepacLL.Rd', `nepacLLhigh.Rd', `worldLL.Rd', and `worldLLhigh.Rd' into `nepacLL.Rd' using aliases. (RH 1/22)
+  - Fixed some broken hyperlinks and merged `nepacLL.Rd', `nepacLLhigh.Rd', `worldLL.Rd', and `worldLLhigh.Rd' into `nepacLL.Rd' using aliases. (RH 150122)
   - Ignored R CMD check: ``... used in a situation where it does not exist'' -- identified as a temporary bug in R-devel by Duncan Murdoch:
 	http://r.789695.n4.nabble.com/R-CMD-check-quot-quot-used-in-a-situation-where-it-does-not-exist-td4701779.html
-  - Resolved missing line feed in `Makefile'; converted format from DOS to UNIX for `Makefile' and `*.cpp' files in `/inst/Utils'. (NB 1/14)
-  - Eliminated warning when compiling `clipper.cpp'. (NB 1/12)
+  - Resolved missing line feed in `Makefile'; converted format from DOS to UNIX for `Makefile' and `*.cpp' files in `/inst/Utils'. (NB 150114)
+  - Eliminated warning when compiling `clipper.cpp'. (NB 150112)
 	Commented out an unused variable declared within `clipper.cpp'. This commit turns that declaration into a comment to eliminate the warning.
-  - Added namespace when calling `deldir' and `read.dbf'. (NB 1/9)
+  - Added namespace when calling `deldir' and `read.dbf'. (NB 150109)
 	PBSmapping calls `deldir' (package deldir) and `read.dbf' (package foreign),and for each, the code now specifies the namespace.
-  - Updated clipper library from 5.1.4 to 5.1.6. (NB 1/9)
-  - Added `SystemRequirements: C++11' to the DESCRIPTION file to alert user that compilation and linking should be done with a C++11 compiler. (NB 1/9)
+  - Updated clipper library from 5.1.4 to 5.1.6. (NB 150109)
+  - Added `SystemRequirements: C++11' to the DESCRIPTION file to alert user that compilation and linking should be done with a C++11 compiler. (NB 150109)
 	The clipper library used by PBSmapping operates on coordinates stored as integers, and for those integers, it uses the "long long" type that 
 	was introduced in the C++11 standard. When an R package requires C++11 features, the DESCRIPTION file must state this requirement.
   - Bumped up version for next posting to CRAN in 2015.
 
 2.67  2014-12-15
-  - Changed line in `clipperWrapper.cpp' from `ulong64 val = llabs(*f++);' to `ulong64 val = (ulong64)fabs(*f++);' (NB 12/17)
+  - Changed line in `clipperWrapper.cpp' from `ulong64 val = llabs(*f++);' to `ulong64 val = (ulong64)fabs(*f++);' (NB 141217)
 	The C compiler 'clang' with -Wall reports that PBSmapping is misusing the C function abs in their code: see
 	http://cran.r-project.org/doc/manuals/r-release/R-exts.html#Portable-C-and-C_002b_002b-code
-  - Added Nicholas J. Lewin-Koh and Roger Bivand as authors because we use their C code `Rshapeget' for the function `importShapefile'. (RH 12/17)
-  - Added new argument `includeBdry' to functions `findCells' and `findPolys' -- see Issue 33. (RH 12/15)
-  - Incorporated temporary fix for borders in function `importGSHHS' until more robust solution is found. (RH 6/23)
-  - Jon requested that Rowan becomes the package Maintainer. (RH 3/27)
-  - Bumped up version for next posting to CRAN using builds under R-3.0.3 (RH 3/20)
+  - Added Nicholas J. Lewin-Koh and Roger Bivand as authors because we use their C code `Rshapeget' for the function `importShapefile'. (RH 141217)
+  - Added new argument `includeBdry' to functions `findCells' and `findPolys' -- see Issue 33. (RH 141215)
+  - Incorporated temporary fix for borders in function `importGSHHS' until more robust solution is found. (RH 140623)
+  - Jon requested that Rowan becomes the package Maintainer. (RH 140327)
+  - Bumped up version for next posting to CRAN using builds under R-3.0.3 (RH 140320)
 
 2.66  2014-03-10
-  - Fixed bug in `joinPolys` identified by Andrea Romualdi (see Issue 31). (RH 3/10)
-  - Modified gshhs.h to address Issue 30. (JTS 2/18)
-  - Modified the function `importShapefile` to treat shape types (5,15,25) like 5, (3,13,23) like 3, and (1,11,21) like 1. (RH 12/20)
+  - Fixed bug in `joinPolys` identified by Andrea Romualdi (see Issue 31). (RH 140310)
+  - Modified gshhs.h to address Issue 30. (JTS 140218)
+  - Modified the function `importShapefile` to treat shape types (5,15,25) like 5, (3,13,23) like 3, and (1,11,21) like 1. (RH 131220)
 	See `ESRI Shapefile Technical Description: An ESRI White Paper—July 1998` for more details.
-----2014-(above)---2013-(below)-----------------------------
-  - Updated `PBSmapping-UG.pdf` to reflect the new website for GSHHS, now called GSHHG. (RH 5/3)
-  - Added Authors to DESCRIPTION file (based on C source code annotations); updated copyright dates. (RH 5/3)
-  - Modified User's Guide. (RH 5/1)
-  - Moved `PBSmapping-Intro.Rnw` to `vignettes` directory. (RH 5/1)
+  - Updated `PBSmapping-UG.pdf` to reflect the new website for GSHHS, now called GSHHG. (RH 130503)
+  - Added Authors to DESCRIPTION file (based on C source code annotations); updated copyright dates. (RH 130503)
+  - Modified User's Guide. (RH 130501)
+  - Moved `PBSmapping-Intro.Rnw` to `vignettes` directory. (RH 130501)
 
 2.65  2013-04-22
-  - Added temporary function `.addAxis2` to address Issue 20 until NB updates code. (RH 4/22)
-  - Updated the User's Guide. (RH 4/11)
-  - Modified example code in Rd files to use the new environment `.PBSmapEnv`. (RH 4/10)
-  - Modified the `print` method to look for `.PBSmapEnv$PBSprint` in addition to a global `PBSprint`. (RH 4/10)
-  - Added new temporary working environment called `.PBSmapEnv`. (RH 4/10)
-  - Address odd joinPoly output observed in Puget Sound. (NB 3/28)
-  - Updated Clipper from 5.1.3 to 5.1.4. (NB 3/28)
-  - Change Clipper line endings from DOS (\r\n) to UNIX (\n). (NB 3/23)
-  - Replaced the General Polygon Clipper (GPC) library with Clipper. (NB 3/23)
-  - Fix compilation problem on Windows. (NB 3/23)
-  - Support arrows with addLines. (NB 2/16)
-  - Support multiple bg colours, min.size arg, ... in addBubbles. (NB 2/16)
-  - Support additional fields in polyProps for addLines. (NB 2/10)
-  - Move start-up message to .onAttach (NB 2/10)
-  - In the process, updated copyright dates. (NB 2/10)
-  - Updated LICENSE file, based on suggestion from Kurt Hornik. Version advanced slightly. (JTS 11/28)
+  - Added temporary function `.addAxis2` to address Issue 20 until NB updates code. (RH 130422)
+  - Updated the User's Guide. (RH 130411)
+  - Modified example code in Rd files to use the new environment `.PBSmapEnv`. (RH 130410)
+  - Modified the `print` method to look for `.PBSmapEnv$PBSprint` in addition to a global `PBSprint`. (RH 130410)
+  - Added new temporary working environment called `.PBSmapEnv`. (RH 130410)
+  - Address odd joinPolys output observed in Puget Sound. (NB 130328)
+  - Updated Clipper from 5.1.3 to 5.1.4. (NB 130328)
+  - Change Clipper line endings from DOS (\r\n) to UNIX (\n). (NB 130323)
+  - Replaced the General Polygon Clipper (GPC) library with Clipper. (NB 130323)
+  - Fix compilation problem on Windows. (NB 130323)
+  - Support arrows with addLines. (NB 130216)
+  - Support multiple bg colours, min.size arg, ... in addBubbles. (NB 130216)
+  - Support additional fields in polyProps for addLines. (NB 130210)
+  - Move start-up message to .onAttach (NB 130210)
+  - In the process, updated copyright dates. (NB 130210)
+  - Updated LICENSE file, based on suggestion from Kurt Hornik. Version advanced slightly. (JTS 121128)
 
 2.64  2012-11-27
-  - Finalised some tweaks to the files DESCRIPTION and LICENSE. (RH 11/27)
-  - Updated 'PBSmapping-UG.pdf' slightly and set the resolution to 150 dpi. (RH 11/26)
+  - Finalised some tweaks to the files DESCRIPTION and LICENSE. (RH 121127)
+  - Updated 'PBSmapping-UG.pdf' slightly and set the resolution to 150 dpi. (RH 121126)
   - Bumped up version for yet another submission to CRAN.
 
 2.63  2012-11-19
-  - Submitted to CRAN and rejected by Brian Ripley who wants to see Alan Murta as a co-author. (JTS 11/19)
-  - Provided licensing information that protects the General Polygon Clipper (GPC) library. (RH 11/16)
-  - Wrapped calls to foreign C code in 'eval(parse(text=""))' to bypass the latest R check nonsense. (RH 11/02)
-  - Changed Jon's email address to schnutej-dfo@shaw.ca (RH 11/01)
-  - Modified function 'placeHoles' to .Call("R_point_in_polygon_sp", ..., PACKAGE="sp"); still need to load package 'sp'. (RH 4/5)
-  - Modified function 'importShapefile' to optionally use 'placeHoles' for fixing mismatched holes and solids. (RH 4/4)
-  - Added new function 'placeHoles' to fix problem of mismatched holes and solids from ArcView. (RH 4/4)
-  - Bumped up the version number to distinguish the revisions under way from the version currently on CRAN. (RH 4/4)
+  - Submitted to CRAN and rejected by Brian Ripley who wants to see Alan Murta as a co-author. (JTS 121119)
+  - Provided licensing information that protects the General Polygon Clipper (GPC) library. (RH 121116)
+  - Wrapped calls to foreign C code in 'eval(parse(text=""))' to bypass the latest R check nonsense. (RH 121102)
+  - Changed Jon's email address to schnutej-dfo@shaw.ca (RH 121101)
+  - Modified function 'placeHoles' to .Call("R_point_in_polygon_sp", ..., PACKAGE="sp"); still need to load package 'sp'. (RH 120405)
+  - Modified function 'importShapefile' to optionally use 'placeHoles' for fixing mismatched holes and solids. (RH 120404)
+  - Added new function 'placeHoles' to fix problem of mismatched holes and solids from ArcView. (RH 120404)
+  - Bumped up the version number to distinguish the revisions under way from the version currently on CRAN. (RH 120404)
 
 2.62  2012-03-01
-  - Fixed source code problems identified by Brian Ripley. (NB 3/1)
+  - Fixed source code problems identified by Brian Ripley. (NB 120301)
 	Compiled code should not call functions which might terminate R nor write to stdout/stderr instead of to the console.
 	The detected symbols are linked into the code but might come from libraries and not actually be called.
 	Please fix (especially the call to exit).
-  - Resolved partial argument matching in functions identified by Brian Ripley. (RH 3/1)
-  - Cleaned up various files in preparation for submission to CRAN. (RH 2/29)
-  - Added further conditional compilation to gshhs.[ch] to address warnings in Windows OS. (NB 2/28)
-  - Rewrote GSHHS import functionality and revised some related functions. (NB 2/25)
+  - Resolved partial argument matching in functions identified by Brian Ripley. (RH 120301)
+  - Cleaned up various files in preparation for submission to CRAN. (RH 120229)
+  - Added further conditional compilation to gshhs.[ch] to address warnings in Windows OS. (NB 120228)
+  - Rewrote GSHHS import functionality and revised some related functions. (NB 120225)
 	This rather large commit completely rewrites GSHHS functionality and provides a number of immediate advantages:
 	  (a) support for the latest (2.20) GSHHS binary files, 
 	  (b) support for multiple levels, e.g., lakes, islands, and ponds, within a single import with suitable ordering of polygons and their holes, 
@@ -108,15 +115,15 @@ Authors:  JTS = Jon T. Schnute
 	    -> added slight revisions to support calls to routines in convGSHHS.c.
 	(6) importGSHHS.Rd
 	    -> revised to match the changes to the code.
-  - Reduced whitespace and break long lines in 'convGSHHS.c'. (NB 2/24)
-  - Corrected spelling mistakes in Rd documentation. (NB 2/24)
-  - Added support for S hemisphere to LL <=> UTM conversion (convUL). (NB 2/24)
+  - Reduced whitespace and break long lines in 'convGSHHS.c'. (NB 120224)
+  - Corrected spelling mistakes in Rd documentation. (NB 120224)
+  - Added support for S hemisphere to LL <=> UTM conversion (convUL). (NB 120224)
 	Added support for the southern hemisphere to convUL (and supporting functions) by adding a new 
 	"southern" argument.  By default, the argument is NULL because detection is automatic when the 
 	source is LL. For UTM source data, the default is FALSE because we typically work within the northern hemisphere.
 	Added the ability to compile conversions.c (the supporting C code) as a stand-alone application.  
 	When executed, the stand-alone executable performs a number of conversions that help validate the algorithm.
-  - Improved long/lat <=> UTM conversions; updated documentation ( Issue #9 ). (NB 2/23)
+  - Improved long/lat <=> UTM conversions; updated documentation ( Issue #9 ). (NB 120223)
 	Issue #9  noted erroneous results given data that spanned more than one zone to the right/left 
 	of the intended central zone.  This update improves our implementation by correcting a number of 
 	(implementation) errors (described below), but the problem still persists.
@@ -127,51 +134,51 @@ Authors:  JTS = Jon T. Schnute
 	(3) the calculation of 'm' was not iterative as suggested in the algorithm.
 	This new version more closely matches the published algorithm and is consequently easy to verify.
 	The performance is similar to the old algorithm (faster in some cases, slower in others).
-  - Recompressed rda files; changed namespace to explicitly export; changed dependency to R (>= 2.10). (RH 12/21)
-  - Fixed missing longitude/latitude X/Y labels on Mac OS X. (NB 12/20)
+  - Re-compressed rda files; changed namespace to explicitly export; changed dependency to R (>= 2.10). (RH 111221)
+  - Fixed missing longitude/latitude X/Y labels on Mac OS X. (NB 111220)
 	When plotting a longitude/latitude PolySet on Mac OS X, the X/Y labels wouldn't plot.
 	Our earlier use of \260 for the degree sign depends on the underlying character set, so it isn't sufficiently portable.
 	Let's hope the current approach works a little better...
-  - Updated .addAxis(...) to address layout(...) incompatibility. (NB 12/20)
+  - Updated .addAxis(...) to address layout(...) incompatibility. (NB 111220)
 	.addAxis(...) would backup/restore "omi" and "mfg", which would impact how layout(...) handles multiple plots.
 	This behaviour is unnecessary in the current version of R, so it has been removed.
-  - Added refocusWorld() to help plot maps centred on the mid-Atlantic ( issue #4 ). (NB 12/19)
+  - Added refocusWorld() to help plot maps centred on the mid-Atlantic ( issue #4 ). (NB 111219)
 	This new function accepts a PolySet containing one or more polygons with X-coordinates that collectively span 
 	approximately 360 degrees. 
 	The function effectively joins the PolySet into a cylinder and then splits it at an arbitrary longitude according
 	to the user-specified limits.  
 	Modifications in the resulting PolySet are restricted to shifting X-coordinates by +/- multiples of 360 degrees,
 	and instead of clipping polygons, the return value simply omits out-of-range polygons.
-  - Fixed indenting. (NB 12/19)
-  - Clarified use of "latter" on page 13 of UG (issue #10). (NB 12/14)
-	Note: someone will need to regenerate the PDF.  I tried to do	so using an open-source PDF creator, 
+  - Fixed indenting. (NB 111219)
+  - Clarified use of "latter" on page 13 of UG (issue #10). (NB 111214)
+	Note: someone will need to regenerate the PDF.  I tried to do so using an open-source PDF creator, 
 	but the resulting file was larger than the one produced by Distiller.
-  - Amended r18, which didn't delete addBubbles.r (NB 12/14)
-  - Incorporated addBubbles() into PBSmapping.R (NB 12/14)
+  - Amended r18, which didn't delete addBubbles.r (NB 111214)
+  - Incorporated addBubbles() into PBSmapping.R (NB 111214)
 	Added addBubbles() to PBSmapping.R and made many changes including completely reformatting all of the code,
 	improving the comments, changing some of the logic, and addressing bugs.
 	The bugs included (a) testing floating-point equality using ==, which would result in inconsistent behaviour and 
 	(b) sizing bubbles in a way that that was inconsistent with the documentation.
-  - Changed EOL character from \r\n to \n for polygons.c (NB 12/14)
+  - Changed EOL character from \r\n to \n for polygons.c (NB 111214)
 	When running R CMD CHECK, the script complained about the end-of-line character for this particular file.
 	I've changed the character to eliminate the warning.
-  - namespace requires the use of '.onLoad' instead of '.First.lib'. (RH 11/9)
-  - R-2.14.0 now requires all packages to have a namespace.  (RH 11/9)
-  - Added the UG document (PBSmapping-UG.doc) to a 'documentation' folder under 'trunk' in the SVN repository. (RH 10/3)
-  - Changed status of Issue 11 ro 'Started'  - incorporate PBSmapping protocols into function 'addBubbles'. (NB 10/2)
-  - Changed status of Issue 9  to 'Accepted' - user is possibly talking about 'MGRJ' latitude bands. (NB 10/2)
-  - Changed status of Issue 10 to 'Accepted' - word change needed in UG. (NB 10/2)
-  - Changed status of Issue 8  to 'Invalid'  - UG appears to be unlocked now. (NB 10/2)
-  - Changed status of Issue 1  to 'Invalid'  - segmentation fault not reproducible and user never supplied code. (NB 10/2)
-  - Improved path expansion in 'importShapefile' using R's 'path.expand' and ' normalizePath'. (NB 10/2)
-  - Bumped up the version number to distinguish the revisions under way from the version currently on CRAN. (RH 9/8)
-  - Fixed a bug in appendPolys() and update the function's documentation. (NB 9/5)
+  - namespace requires the use of '.onLoad' instead of '.First.lib'. (RH 111109)
+  - R-2.14.0 now requires all packages to have a namespace.  (RH 111109)
+  - Added the UG document (PBSmapping-UG.doc) to a 'documentation' folder under 'trunk' in the SVN repository. (RH 111003)
+  - Changed status of Issue 11 to 'Started'  - incorporate PBSmapping protocols into function 'addBubbles'. (NB 111002)
+  - Changed status of Issue 9  to 'Accepted' - user is possibly talking about 'MGRJ' latitude bands. (NB 111002)
+  - Changed status of Issue 10 to 'Accepted' - word change needed in UG. (NB 111002)
+  - Changed status of Issue 8  to 'Invalid'  - UG appears to be unlocked now. (NB 111002)
+  - Changed status of Issue 1  to 'Invalid'  - segmentation fault not reproducible and user never supplied code. (NB 111002)
+  - Improved path expansion in 'importShapefile' using R's 'path.expand' and ' normalizePath'. (NB 111002)
+  - Bumped up the version number to distinguish the revisions under way from the version currently on CRAN. (RH 110908)
+  - Fixed a bug in appendPolys() and update the function's documentation. (NB 110905)
 	Within appendPolys(), a reference to polys used parentheses rather than brackets causing R 
 	to look for a non-existent polys function rather than the argument.
 	The documentation for the function was also updated to clarify the determination of the polygon's PID.
 
 2.61  2010-06-23  Rowan
-  - Revised 'importShapefile' to fix a small bug associated with reading a shapefile's projection. (RH 6/1)
+  - Revised 'importShapefile' to fix a small bug associated with reading a shapefile's projection. (RH 100601)
 
 2.60.8  2010-06-22  Jon
   - Fixed bug related to clipping, found by Denis Chabot
@@ -210,12 +217,12 @@ Authors:  JTS = Jon T. Schnute
   - Revised 'importShapefile()' and fixed bug when 0-vertex polygons occur.
   - Added '00ReadMe' vignette.
   - Moved User's Guide and 'ChangeLog.txt' to '../inst/doc'.
-  - Removed 'gamma' fom 'legalNames' in '.plotMaps'.
+  - Removed 'gamma' from 'legalNames' in '.plotMaps'.
 
 2.55  2008-01-22  Rowan
   - Revised 'calcConvexHull()' in PBSmapping.r to use 'chull()' in package grDevices
   - Removed 'calcConvexHull' from PBSmapping.c
-  - Removed 'conveHull', 'sortPointList', and 'rightTurn' from polygons.c (and polygons.h).
+  - Removed 'convUL', 'sortPointList', and 'rightTurn' from polygons.c (and polygons.h).
   - Substituted 'findCells()' for 'findPolys()' in '.PBSfig09()'.
   - Built with R-2.6.1.
   - POSTED ON CRAN.
@@ -229,7 +236,7 @@ Authors:  JTS = Jon T. Schnute
   - src/convGSHHS.c: Modified 'importGSHHS (...)' to remove the local variable 's' 
 	involved in the call to 'extracGSHHS (...)' in hopes of eliminating a compiler warning.
   - Modified the 'inFileName' argument of  'extracGSHHS (...)' so that the argument is 
-	now 'const char *' to elimiate a warning message from the C compiler.
+	now 'const char *' to eliminate a warning message from the C compiler.
   - R/PBSmapping.R: Modified 'combineEvents (...)' to remove code that supported S-PLUS.
 	The code caused a warning message in the R build because R doesn't support the 'unpaste' function.
   - Modified 'importPolys (...)', 'importEvents (...)', and 'importLocs (...)' 
@@ -304,7 +311,7 @@ Authors:  JTS = Jon T. Schnute
 	Utils
 	 - C-code by Boers and Couture-Beil for 'clipPolys()', 'convUL()', and 'findPolys()'.
   - Changed 'convUL.Rd' to specify that UTM coordinates are in kilometres.
-  - Resaved the data files using 'save("data",file="data.rda")'.Compresses binary files more than earlier saves.
+  - Re-saved the data files using 'save("data",file="data.rda")'.Compresses binary files more than earlier saves.
 
 2.10b  2007-01-03  Jon
    - Built for R only, with first attempts to remove traces of S-PLUS.
