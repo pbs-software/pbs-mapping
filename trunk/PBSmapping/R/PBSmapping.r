@@ -4624,74 +4624,221 @@ importLocs <- function(LocationSet)
 }
 #=============================================================================
 
-#importGSHHS----------------------------2013-08-23
-# Import a GSHHG binary file provided by Paul Wessel
+#importGSHHS----------------------------2015-02-12
+# Import a GSHHG binary file provided by Paul Wessel.
+# The C call on gshhs using x-limits (0,360) is the only
+# limit that ties the polygons near the Greenwhich meridian together.
+# The meshing at the International date line is not yet ideal.
 #--------------------------------------------NB/RH
-importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0)
+importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=TRUE)
 {
-	# get gshhsDB filename
+	# Transform all X-coordinates to lie between 0 and 360
+	normAngle = function(x){(x + 360.)%%360.}
+
+	# Determine if the specified limits lie in the western hemisphere
+	isitWest  = function(lim){
+		world = 1:360
+		if (diff(lim)>0) span = lim[1]:lim[2]
+		else span = setdiff(world,lim[2]:lim[1])
+		sum(span>180) > sum(span<=180) }
+
+	# Get gshhsDB filename (with and without path information)
 	if (missing(gshhsDB))
 		gshhsDB <- paste(system.file(package="PBSmapping"), "gshhs_f.b", sep="/")
 	else
 		gshhsDB <- path.expand(gshhsDB)
 	if (!file.exists(gshhsDB))
-		stop("unable to find gshhsDB \"", gshhsDB, "\"")
+		stop("Unable to find gshhsDB \"", gshhsDB, "\"")
+	gshhsDB.name = basename(substitute(gshhsDB))
+	isBorder = grepl("borders",gshhsDB.name)
 
-	# setup limits: for lon, (-20, 360)
-	limits <- c(xlim[1], xlim[2], ylim[1], ylim[2])
-	.checkClipLimits(limits)
-
-	# return an R object
-	x <- .Call("importGSHHS", as.character(gshhsDB), as.numeric(limits),
-		as.integer(maxLevel), as.integer(n), PACKAGE = "PBSmapping")
-	if (is.null(x) || !length(x$PID))
-		return(NULL)
-
-	# pull out PolyData and clipAsPolys attributes
-	PolyData <- as.data.frame(attr(x, "PolyData"))
-	attr(x, "PolyData") <- NULL
-	clipAsPolys <- attr(x, "clipAsPolys")
-	attr(x, "clipAsPolys") <- NULL
-	
-	# headers in the GSHHS database range from 0 to 360 while the underlying data
-	# ranges from -180 to 180; if our xlim > 180, shift it
-	xlim.orig <- NULL;
-	if (abs(diff(xlim)) >= 360) {
-		# the user apparently wants to extract the whole range, so let's
-		# provide some help... (to avoid clipping problems)
-		xlim.orig <- xlim
-		xlim <- c(-200, 200)
-	}
-	else if (max(xlim) > 180) {
-		xlim.orig <- xlim
-		xlim <- xlim - 360
-	}
-	XLIM = range(x$X) # imported data from C-function
-
-	#-----TEMPORARY-FIX----------------------------
-	if (grepl("borders",substitute(gshhsDB)))
-		x$X = x$X-360 # temporary adjustment for borders
+	#-----FORMAT-BORDERS-CHANGES-------------------
+	# Sometimes border longitudes lie between (-180,180) or (0,360).
+	# Easiest solution is to import all and use refocusWorld.
 	#----------------------------------------------
+	if (isBorder) {
+		.checkClipLimits(c(xlim, ylim))
+		#DBdir  = dirname(substitute(gshhsDB))
+		#DBinfo = readLines(paste0(DBdir,"/README.TXT"))
+		#DBver  = strsplit(sub("^[[:space:]]+","",DBinfo[grep("Version",DBinfo)[1]]),split=" ")[[1]][2]
+		xres <- .Call("importGSHHS", as.character(gshhsDB), as.numeric(c(0,360,-90,90)), 
+			as.integer(maxLevel), as.integer(n), PACKAGE = "PBSmapping")
+		xPS  = refocusWorld(as.PolySet(as.data.frame(xres),projection="LL"),xlim=xlim,ylim=ylim)
+		if (is.null(xPS) || !length(xPS$PID)) return(NULL)
+#browser()
+		attr(xPS, "PolyData") <- attr(xres, "PolyData")
+		if (useWest) xlim <- xlim - 360.
+		if (!all(xlim==attributes(xPS)$rf.xlim)) {  # refocusWorld adjusts xlims
+			xadj = (xlim-attributes(xPS)$rf.xlim)[1]
+			xPS$X = xPS$X + xadj
+		}
+		return(xPS)
+	}
+	#----------------------------------------------
+	# Headers in GSHHS database range from 0 to 360 while the underlying data
+	# range from -180 to 180; if xlim spans the globe use c(0,360) and 
+	# refocusWorld the world
+	#----------------------------------------------
+	xlim.orig <- NULL
+	if (abs(diff(xlim)) >= 360) {
+		xlim.orig <- xlim
+		xres <- .Call("importGSHHS", as.character(gshhsDB), as.numeric(c(0,360,ylim)), 
+			as.integer(maxLevel), as.integer(n), PACKAGE = "PBSmapping")
+		xPS  = refocusWorld(as.PolySet(as.data.frame(xres),projection="LL"),xlim=xlim,ylim=ylim)
+		if (is.null(xPS) || !length(xPS$PID)) return(NULL)
+#browser();return()
+		PolyData    <- attr(xres, "PolyData")
+		clipAsPolys <- attr(xres, "clipAsPolys")
+		if (useWest) xlim <- xlim - 360.
+		if (!all(xlim==attributes(xPS)$rf.xlim)) {  # refocusWorld adjusts xlims
+			xadj = (xlim-attributes(xPS)$rf.xlim)[1]
+			xPS$X = xPS$X + xadj
+		}
+	}
+	else {
+		#----------------------------------------------
+		# Try to subset the workd using the C code (tricky)
+		# Set up limits: for lon, (-20, 360)
+		#----------------------------------------------
+		limits <- list(c(xlim, ylim))
+		.checkClipLimits(limits[[1]])
+		overlap = ifelse(grepl("gshhs",gshhsDB.name),-20.,0.)
+		nxlim   = normAngle(xlim)
 
-	# convert list to a data frame and clip
-	x <- as.PolySet(as.data.frame(x), projection = "LL")
-	if (clipAsPolys)
-		x <- clipPolys(x, xlim=xlim, ylim=ylim)
+		# Check if xlim spans the Greenwich meridian
+		#----------------------------------------------
+		green0 = (nxlim[1] >= nxlim[2]) | nxlim[2] > 340.
+		green1 = nxlim[1]==0  && grepl("gshhs",gshhsDB.name)
+		green2 = nxlim[2]==0  && grepl("gshhs",gshhsDB.name)
+		green  = green0 | green1 | green2
+		if (green) {
+			if (green1) {
+				limits[[1]] = c(0.,normAngle(xlim[2]),ylim)
+				#limits[[2]] = c(340.,360.,ylim) # maybe not necessary
+				bighalf = "R"
+			} else if (green2) {
+				limits[[1]] = c(normAngle(xlim[1]),360.,ylim)
+				limits[[2]] = c(-20.,0.,ylim)
+				bighalf = "L"
+			} else {
+				if ( (360-nxlim[1]) >= nxlim[2] ) {
+					limits[[1]] = c(nxlim[1],360.,ylim)
+					limits[[2]] = c(overlap,nxlim[2],ylim)
+					bighalf = "L"
+				}
+				else {
+					limits[[1]] = c(overlap,xlim[2],ylim)
+					limits[[2]] = c(nxlim[1],360.,ylim)
+					bighalf = "R"
+				}
+			}
+		}
+		isWest = isitWest(limits[[1]][1:2]) # defined solely by user's xlim
+#browser();return()
+
+		# Initilialize
+		x = xbit = list()
+		pidlen = 0
+		clipAsPolys = logical()
+		PolyData = data.frame()
+
+		#Go through 1 or 2 limits, depending on whether `xlim' includes 0 degrees
+		#----------------------------------------------
+		for (i in 1:length(limits)) {
+			.checkClipLimits(limits[[i]])
+			# return an R object -- C call unfortunately converts western hemisphere to negative
+			#xres <- .Call("importGSHHS", as.character(gshhsDB), as.numeric(c(0,360,0,90)), as.integer(maxLevel), as.integer(n), PACKAGE = "PBSmapping") # debug only
+			#browser();return()
+			xres <- .Call("importGSHHS", as.character(gshhsDB), as.numeric(limits[[i]]),
+				as.integer(maxLevel), as.integer(n), PACKAGE = "PBSmapping")
+			if (is.null(xres) || !length(xres$PID)) next
+#if(i==2){browser();return()}
+
+			# Attempt to reverse the mess created by the C-code.
+			# If xlim spans the Internation Date Line but not Greenwich
+			#----------------------------------------------
+			dateline = (normAngle(xlim[1]) >= 45. & normAngle(xlim[2]) <= 315.) & !green
+			#if ( any(is.element(c(180,-180),floor(limits[[i]][1]):ceiling(limits[[i]][2]))) & !green ) {
+			if (dateline) {
+				xneg  = sapply(split(xres[["X"]],xres[["PID"]]),function(x){all(x<0)})
+				pneg  = names(xneg[xneg])  # PIDs with all-negative coordinates
+				xmove = is.element(xres[["PID"]],pneg)
+				xres[["X"]][xmove] = normAngle(xres[["X"]][xmove])
+			}
+#browser();return()
+			#isWestMess = median(xres[["X"]]) < 0  # `isWestMess' can be different than `isWest'
+
+			#collect attributes also from each C call
+			pdata <- as.data.frame(attr(xres, "PolyData"))
+			clipAsPolys <- c(clipAsPolys, attr(xres, "clipAsPolys"))
+
+			# Renumber the PIDs to accommodate a possible second set
+			pidnam = unique(xres$PID)
+			pid    = (pidlen+1):(pidlen+length(pidnam))
+			names(pid) = pidnam
+			xres[["oldPID"]] = xres[["PID"]]
+			xres[["PID"]] = as.vector(pid[as.character(xres[["PID"]])])
+			pdata$oldPID = pdata$PID
+			pdata$PID = as.vector(pid[as.character(pdata$PID)])
+			pidlen = rev(pid)[1]
+			for (j in names(xres)){
+				if (length(x)==0) x[[j]] = xres[[j]]
+				else              x[[j]] = c(x[[j]],xres[[j]]) # add on results from second limit
+			}
+			PolyData = rbind(PolyData,pdata)
+			xbit[[i]] = xres  # collect the separate results for debugging only
+		}
+#browser();return()
+		if ( "PBSmodelling" %in% rownames(installed.packages()) ) { # primarily for debugging
+			if ( exists("XBIT",envir=.PBSmapEnv) )
+				PBSmodelling::tget(XBIT, tenv=.PBSmapEnv) else XBIT = list()
+			XBIT[[gshhsDB.name]] = xbit
+			PBSmodelling::tput(XBIT, tenv=.PBSmapEnv)
+			PBSmodelling::tput(isWest, tenv=.PBSmapEnv)
+		}
+		if (length(x)==0 || !length(x$PID))
+			return(NULL)
+
+		# headers in the GSHHS database range from 0 to 360 while the underlying data
+		# ranges from -180 to 180; if our xlim > 180, shift it
+		xoff = 0.
+		#else if (max(xlim) > 180) { # too harsh for places like NZ
+		if (median(xlim) > 180) {
+			xlim.orig <- xlim
+			if (useWest) {
+				xlim <- xlim - 360.
+				xoff = 360.
+				if (median(x[["X"]])>0) x[["X"]] = x[["X"]] - 360.
+			} else {
+				if (median(x[["X"]])<0) x[["X"]] = x[["X"]] + 360.  # adjust for .Call("importGSHHS")
+			}
+		}
+		XLIM = range(x[["X"]]) # imported data from C-function
+
+		# Convert the list to a PolySet
+		xPS <- as.PolySet(as.data.frame(x), projection = "LL")
+	} #----- end else 
+#browser();return()
+
+	# Clip the PolySet
+	#----------------------------------------------
+	if (any(clipAsPolys))
+		xPS <- clipPolys(xPS, xlim=xlim, ylim=ylim)
 	else
-		x <- clipLines(x, xlim=xlim, ylim=ylim)
-	x$oldPOS <- NULL
+		xPS <- clipLines(xPS, xlim=xlim, ylim=ylim)
+	if (is.null(xPS)) return(NULL)
+	xPS$oldPOS <- NULL
 
-	# sort so that holes immediately follow their parents
-	x <- x[order(x$PID, x$SID), ]
+	# Sort so that holes immediately follow their parents
+	xPS <- xPS[order(xPS$PID, xPS$SID), ]
 
-	# display a message if the output longitudes differ from xlim
+	# Display a message if the output longitudes differ from xlim
 	if (!is.null(xlim.orig))
 		message("importGSHHS: input xlim was (", paste(xlim.orig, collapse=", "),
-						") and the longitude range of the extracted data is (",
-						paste(range(x$X), collapse=", "), ").")
-	attr(x, "PolyData") <- PolyData
-	
-	return (x)
+					") and the longitude range of the extracted data is (",
+					paste(range(xPS$X), collapse=", "), ").")
+	attr(xPS, "PolyData") <- PolyData
+	return (xPS)
 }
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~importGSHHS
 
@@ -5338,9 +5485,9 @@ print.summary.PBS <- function(x, ...)
   invisible(x);
 }
 
-#refocusWorld=====================================2012-03-01
+#refocusWorld---------------------------2015-02-11
 #  Refocus the 'worldLL'/'worldLLhigh' data sets.
-#---------------------------------------------------------NB
+#--------------------------------------------NB/RH
 refocusWorld <- function(polys, xlim = NULL, ylim = NULL) {
   # define a local function to assist with shifting
   .shiftRegion <- function(polys, shift = 0) {
@@ -5367,14 +5514,14 @@ refocusWorld <- function(polys, xlim = NULL, ylim = NULL) {
   # validate/adjust xlim
   if (abs(diff(xlim)) > 360)
     stop("Invalid 'xlim' range: cannot exceed 360 degrees.\n");
-  warn <- F;
+  warn <- FALSE;
   while (min(xlim) < -360) {
     xlim <- xlim + 360;
-    warn <- T;
+    warn <- TRUE;
   }
   while (max(xlim) > 360) {
     xlim <- xlim - 360;
-    warn <- T;
+    warn <- TRUE;
   }
   if (warn)
     warning(paste("Shifted 'xlim' to ", paste(xlim, collapse=","),
@@ -5394,10 +5541,10 @@ refocusWorld <- function(polys, xlim = NULL, ylim = NULL) {
   ppid <- lapply(split(polys[, c("PID")], polys$IDs), unique)
   rng <- data.frame(IDs=names(xrng),
                     PID=unlist(ppid),
-                    xmin=unlist(xrng)[c(T,F)],
-                    xmax=unlist(xrng)[c(F,T)],
-                    ymin=unlist(yrng)[c(T,F)],
-                    ymax=unlist(yrng)[c(F,T)],
+                    xmin=unlist(xrng)[c(TRUE,FALSE)],
+                    xmax=unlist(xrng)[c(FALSE,TRUE)],
+                    ymin=unlist(yrng)[c(TRUE,FALSE)],
+                    ymax=unlist(yrng)[c(FALSE,TRUE)],
                     shift=0);
   
   # 'rng' currently contains one row per polygon; to wrap the region,
@@ -5435,7 +5582,7 @@ refocusWorld <- function(polys, xlim = NULL, ylim = NULL) {
   # polygon; some code that might help...
   #   nrng <- nrng[order(nrng$IDs), ]
   #   dups <- duplicated(nrng$IDs)
-  #   dups <- dups | c(dups[-1], F)
+  #   dups <- dups | c(dups[-1], FALSE)
   #   drng <<- nrng[dups, ]
   #   nrng <- nrng[!dups, ]
   # but for now, let's simply...
@@ -5465,9 +5612,11 @@ refocusWorld <- function(polys, xlim = NULL, ylim = NULL) {
   
   # restore the attributes
   attributes(npolys) <- c(attributes(npolys), attrValues);
+  attr(npolys,"rf.xlim") = xlim # RH added for use in importGSHHS
   
   invisible(npolys);
 }
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~refocusWorld
 
 #==============================================================================
 summary.EventData <- function(object, ...)
