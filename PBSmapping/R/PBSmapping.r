@@ -1965,7 +1965,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
 #
 #  Modified (and for the legend, strongly inspired) from:
 #    S. Tanimura, C. Kuroiwa, and T. Mizota. Proportional symbol
-#    mapping in R. Journal of Statistical Software, 15(5):1–7,
+#    mapping in R. Journal of Statistical Software, 15(5):1-7,
 #    Jan. 2006. [http://www.jstatsoft.org]
 #
 #  Modifications by Denis Chabot allow it to work with PBSmapping,
@@ -4630,7 +4630,7 @@ importLocs <- function(LocationSet)
 # limit that ties the polygons near the Greenwhich meridian together.
 # The meshing at the International date line is not yet ideal.
 #--------------------------------------------NB/RH
-importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=TRUE)
+importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 {
 	# Transform all X-coordinates to lie between 0 and 360
 	normAngle = function(x){(x + 360.)%%360.}
@@ -4789,13 +4789,13 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=TRUE)
 			xbit[[i]] = xres  # collect the separate results for debugging only
 		}
 #browser();return()
-		if ( "PBSmodelling" %in% rownames(installed.packages()) ) { # primarily for debugging
-			if ( exists("XBIT",envir=.PBSmapEnv) )
-				PBSmodelling::tget(XBIT, tenv=.PBSmapEnv) else XBIT = list()
-			XBIT[[gshhsDB.name]] = xbit
-			PBSmodelling::tput(XBIT, tenv=.PBSmapEnv)
-			PBSmodelling::tput(isWest, tenv=.PBSmapEnv)
-		}
+		#if ( "PBSmodelling" %in% rownames(installed.packages()) ) { # primarily for debugging
+		#	if ( exists("XBIT",envir=.PBSmapEnv) )
+		#		PBSmodelling::tget(XBIT, tenv=.PBSmapEnv) else XBIT = list()
+		#	XBIT[[gshhsDB.name]] = xbit
+		#	PBSmodelling::tput(XBIT, tenv=.PBSmapEnv)
+		#	PBSmodelling::tput(isWest, tenv=.PBSmapEnv)
+		#}
 		if (length(x)==0 || !length(x$PID))
 			return(NULL)
 

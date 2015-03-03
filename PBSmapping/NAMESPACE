@@ -26,4 +26,13 @@ exportPattern("^\\.validate")
 
 export(.mat2df)
 
+S3method(print, EventData)
+S3method(print, LocationSet)
+S3method(print, PolyData)
+S3method(print, PolySet)
+S3method(print, summary.PBS)
+S3method(summary, EventData)
+S3method(summary, LocationSet)
+S3method(summary, PolyData)
+S3method(summary, PolySet)
 

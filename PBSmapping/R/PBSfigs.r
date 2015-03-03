@@ -1,4 +1,4 @@
-# Figures for PBSmapping examples (last modified: 2013-04-10)
+# Figures for PBSmapping examples (last modified: 2015-02-17)
 #------------------------------------------------------------
 # Historical values for compatibilityy with S-Plus (defunct)
 .PBSdot <- 3; .PBSdash <- 2
@@ -149,7 +149,7 @@
    text(xlim[1]+off, ylim[2]-off, "B", cex=1.6);  box()
    # panels C to F
    ops    <- c(NA, NA, "INT", "UNION", "DIFF", "XOR")
-   cols   <- c(NA, NA, clr$red, clr$purple, clr$purple, clr$purple)
+   cols   <- c(NA, NA, clr$red, clr$purple, clr$red, clr$magenta)
    panel  <- c(NA, NA, "C", "D", "E", "F")
    for (i in 3:6) {
       plotMap(NULL,xlim=xlim,ylim=ylim,projection=1,xlab="",ylab="",axes=FALSE,plt=NULL)
