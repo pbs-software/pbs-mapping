@@ -7,7 +7,10 @@ Authors:  JTS = Jon T. Schnute
           DC  = Denis Chabot
 -----------------------------------
 
-2.69  2015-02-12
+2.69  2015-03-03
+  - Updated `PBSmapping-UG.pdf' (and no longer includes Rd appendix because easily available on CRAN). (RH 150224)
+  - Declared S3methods for `print' and `summary' in the NAMESPACE file, as required by CRAN. (RH 150217)
+  - Updated `importGSHHS.Rd' to reflect changes made to function and to give 20 examples for various aprts of world. (RH 150216)
   - Modified extensively `importGSHHS' to deal with various problems encountered by users (wrapping, border problems, etc.). (RH 150212)
   - Modified `refocusWorld' to return the `xlim' used in the refocus as an attribute called `rf.xlim' (for use in `importGSHHS'). (RH 150211)
   - Updated Clipper to 6.2.1 and added (disabled) dbg output to clipperWrapper.cpp. (NB 150207)
