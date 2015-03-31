@@ -1,15 +1,25 @@
 Package:    PBSmapping
 Version:    2.69
-Date:       2015-03-03
+Date:       2015-03-31
 Title:      Mapping Fisheries Data and Spatial Analysis Tools
-Author:     Jon T. Schnute <schnutej-dfo@shaw.ca>,
-            Nicholas Boers <boersn@macewan.ca>,
-            Rowan Haigh <rowan.haigh@dfo-mpo.gc.ca>,
-            Chris Grandin <chris.grandin@dfo-mpo.gc.ca>,
-            Denis Chabot <denis.chabot@dfo-mpo.gc.ca>,
-            Angus Johnson, Paul Wessel, Franklin Antonio,
-            Nicholas J. Lewin-Koh, Roger Bivand
+Authors@R: c(
+   person(c("Jon", "T."), "Schnute", role = "aut", email = "schnutej-dfo@shaw.ca"),
+   person("Nicholas", "Boers", role = "aut", email = "boersn@macewan.ca"),
+   person("Rowan", "Haigh", role = c("aut", "cre"), email = "rowan.haigh@dfo-mpo.gc.ca"),
+   person("Alex", "Couture-Beil", role = "ctb"),
+   person("Denis", "Chabot", role = "ctb", email = "denis.chabot@dfo-mpo.gc.ca"),
+   person("Chris", "Grandin", role = "ctb", email = "chris.grandin@dfo-mpo.gc.ca"),
+   person("Angus", "Johnson", role = "ctb"),
+   person("Paul", "Wessel", role = "ctb"),
+   person("Franklin", "Antonio", role = "ctb"),
+   person(c("Nicholas", "J."), "Lewin-Koh", role = "ctb"),
+   person("Roger", "Bivand", role = "ctb"))
+Author: Jon T. Schnute [aut], Nicholas Boers [aut], Rowan Haigh [aut, cre],
+   Alex Couture-Beil [ctb], Denis Chabot [ctb], Chris Grandin [ctb],
+   Angus Johnson [ctb], Paul Wessel [ctb], Franklin Antonio [ctb],
+   Nicholas J. Lewin-Koh [ctb], Roger Bivand [ctb]
 Maintainer: Rowan Haigh <rowan.haigh@dfo-mpo.gc.ca>
+Copyright:  2003-2015, Fisheries and Oceans Canada
 Depends:    R (>= 2.15.0)
 Suggests:   foreign, maptools, deldir
 SystemRequirements: C++11
