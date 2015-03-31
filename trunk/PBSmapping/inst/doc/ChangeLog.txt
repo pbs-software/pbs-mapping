@@ -7,7 +7,8 @@ Authors:  JTS = Jon T. Schnute
           DC  = Denis Chabot
 -----------------------------------
 
-2.69  2015-03-03
+2.69  2015-03-31
+  - Modified `joinPolys.Rd' to illustrate the `DIFF' operation between polyA (A,B) and polyB (C,D). (RH 150330)
   - Updated `PBSmapping-UG.pdf' (and no longer includes Rd appendix because easily available on CRAN). (RH 150224)
   - Declared S3methods for `print' and `summary' in the NAMESPACE file, as required by CRAN. (RH 150217)
   - Updated `importGSHHS.Rd' to reflect changes made to function and to give 20 examples for various aprts of world. (RH 150216)
