@@ -74,13 +74,13 @@ int dbgIndent = 0;
 #define DBG_INDENT(incr)	do {		\
 	dbgIndent += incr;			\
     } while (0)    
-#define DBG_PRINTF(fmt, ...)	do {		\
+#define DBG_PRINTF(...)		do {		\
 	Rprintf("%*s", dbgIndent, "");		\
-	Rprintf(fmt, ##__VA_ARGS__);		\
+	Rprintf(__VA_ARGS__);			\
     } while (0)
 #else /* DEBUG */
 #define DBG_INDENT(incr)
-#define DBG_PRINTF(fmt, ...)
+#define DBG_PRINTF(...)
 #endif /* DEBUG */
 
 /*-----------------------------------------------------------------------------
