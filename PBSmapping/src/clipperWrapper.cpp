@@ -213,7 +213,7 @@ getNextPath (struct PolySetState &pset, ulong64 scaleFactor, Sint &pid)
 #if DEBUG
     DBG_PRINTF("simplifying path(s): n=%lu\n", (unsigned long)p.size());
     DBG_INDENT(2);
-    for (int i = 0; i < p.size(); i++) {
+    for (Paths::size_type i = 0; i < p.size(); i++) {
 	DBG_PRINTF("path %d: %lu vertex(es)\n", i, (unsigned long)p[i].size());
     }
     DBG_INDENT(-2);
@@ -227,7 +227,7 @@ getNextPath (struct PolySetState &pset, ulong64 scaleFactor, Sint &pid)
 #if DEBUG
     DBG_PRINTF("resulting path(s): n=%lu\n", (unsigned long)p.size());
     DBG_INDENT(2);
-    for (int i = 0; i < p.size(); i++) {
+    for (Paths::size_type i = 0; i < p.size(); i++) {
 	DBG_PRINTF("path %d: %lu vertex(es)\n", i, (unsigned long)p[i].size());
     }
     DBG_INDENT(-2);
