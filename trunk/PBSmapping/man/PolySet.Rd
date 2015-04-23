@@ -3,6 +3,20 @@
 \alias{as.PolySet}
 \alias{is.PolySet}
 \title{PolySet Objects}
+\description{
+  A PolySet object comprises a data frame that defines a collection of
+  polygonal contours (i.e., line segments joined at vertices). These contours
+  can be open-ended (polylines) or closed (polygons).
+
+  \pkg{PBSmapping} functions that expect PolySet's will accept properly
+  formatted data frames in their place (see 'Details').
+  
+  \code{as.PolySet} attempts to coerce a data frame to an object with
+  class PolySet.
+
+  \code{is.PolySet} returns \code{TRUE} if its argument is of class
+  PolySet.
+}
 \usage{
 as.PolySet(x, projection = NULL, zone = NULL)
 is.PolySet(x, fullValidation = TRUE)
@@ -15,16 +29,6 @@ is.PolySet(x, fullValidation = TRUE)
     possibly overwriting an existing attribute.}
   \item{fullValidation}{Boolean value; if \code{TRUE}, fully test
     \code{x}.}
-}
-\description{
-  PBS Mapping functions that expect PolySet's will accept properly
-  formatted data frames in their place (see 'Details').
-  
-  \code{as.PolySet} attempts to coerce a data frame to an object with
-  class PolySet.
-
-  \code{is.PolySet} returns \code{TRUE} if its argument is of class
-  PolySet.
 }
 \details{
 In our software, a PolySet data frame defines a collection of polygonal
@@ -103,9 +107,10 @@ of the data frame.
   California. 340 pp.
 }
 \seealso{
-  \link{EventData},
-  \link{LocationSet},
-  \link{PolyData}.
+  \link[PBSmapping]{PolyData},
+  \link[PBSmapping]{EventData},
+  \link[PBSmapping]{LocationSet}
 }
 \keyword{classes}
 \keyword{documentation}
+

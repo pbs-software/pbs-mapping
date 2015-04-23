@@ -3,6 +3,23 @@
 \alias{as.LocationSet}
 \alias{is.LocationSet}
 \title{LocationSet Objects}
+\description{
+  A LocationSet comprises a data frame that summarises which EventData points
+  (\code{EID}) lie in which PolySet polygons (\code{PID}) or 
+  (\code{PID}, \code{SID}).
+  Events not located in target polygons are not reported. If an event lies on a
+  polygon boundary, an additional LocationSet field called \code{Bdry} is set
+  to \code{TRUE}. One event can also occur in multiple polygons.
+
+  \pkg{PBSmapping} functions that expect LocationSet's will accept properly
+  formatted data frames in their place (see 'Details').
+  
+  \code{as.LocationSet} attempts to coerce a data frame to an object with
+  class LocationSet.
+
+  \code{is.LocationSet} returns \code{TRUE} if its argument is of class
+  LocationSet.
+}
 \usage{
 as.LocationSet(x)
 is.LocationSet(x, fullValidation = TRUE)
@@ -11,16 +28,6 @@ is.LocationSet(x, fullValidation = TRUE)
   \item{x}{data frame to be coerced or tested.}
   \item{fullValidation}{Boolean value; if \code{TRUE}, fully test
     \code{x}.}
-}
-\description{
-  PBS Mapping functions that expect LocationSet's will accept properly
-  formatted data frames in their place (see 'Details').
-  
-  \code{as.LocationSet} attempts to coerce a data frame to an object with
-  class LocationSet.
-
-  \code{is.LocationSet} returns \code{TRUE} if its argument is of class
-  LocationSet.
 }
 \details{
 A \link{PolySet} can define regional boundaries for drawing a map, and
@@ -47,9 +54,10 @@ of some functions, including \code{\link{print}} (if
   \code{"LocationSet"} and \code{"data.frame"}, in that order.
 }
 \seealso{
-  \link{EventData},
-  \link{PolyData},
-  \link{PolySet}.
+  \link[PBSmapping]{PolySet},
+  \link[PBSmapping]{PolyData},
+  \link[PBSmapping]{EventData}
 }
 \keyword{classes}
 \keyword{documentation}
+
