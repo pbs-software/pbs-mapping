@@ -1,6 +1,6 @@
 Package:    PBSmapping
 Version:    2.69
-Date:       2015-03-31
+Date:       2015-04-23
 Title:      Mapping Fisheries Data and Spatial Analysis Tools
 Authors@R: c(
    person(c("Jon", "T."), "Schnute", role = "aut", email = "schnutej-dfo@shaw.ca"),
@@ -25,17 +25,17 @@ Suggests:   foreign, maptools, deldir
 SystemRequirements: C++11
 NeedsCompilation: yes
 Description: This software has evolved from fisheries research conducted at the
-   Pacific Biological Station (PBS) in Nanaimo, British Columbia, Canada. It
+   Pacific Biological Station (PBS) in `Nanaimo', British Columbia, Canada. It
    extends the R language to include two-dimensional plotting features similar
    to those commonly available in a Geographic Information System (GIS).
    Embedded C code speeds algorithms from computational geometry, such as
    finding polygons that contain specified point events or converting between
    longitude-latitude and Universal Transverse Mercator (UTM) coordinates.
-   Additionally, we include C++ code developed by Angus Johnson for the Clipper
-   library.  PBSmapping also includes data for a global shoreline and other
+   Additionally, we include `C++' code developed by Angus Johnson for the `Clipper'
+   library. Also included are data for a global shoreline and other
    data sets in the public domain. The R directory `.../library/PBSmapping/doc'
-   offers a complete user's guide PBSmapping-UG.pdf, which should be consulted
-   to use all functions in the package effectively.
+   offers a complete user's guide, which should be consulted to use package
+   functions effectively.
 License: GPL (>= 2)
 URL: http://code.google.com/p/pbs-mapping/,
      http://code.google.com/p/pbs-mapx/,

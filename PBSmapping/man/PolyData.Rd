@@ -3,6 +3,20 @@
 \alias{as.PolyData}
 \alias{is.PolyData}
 \title{PolyData Objects}
+\description{
+  A PolyData object comprises a data frame that summarises information
+  for each polyline/polygon in a PolySet; each PolyData record is defined by
+  a unique \code{PID} or (\code{PID}, \code{SID} combination).
+
+  \pkg{PBSmapping} functions that expect PolyData will accept properly
+  formatted data frames in their place (see 'Details').
+
+  \code{as.PolyData} attempts to coerce a data frame to an object with
+  class PolyData.
+
+  \code{is.PolyData} returns \code{TRUE} if its argument is of class
+  PolyData.
+}
 \usage{
 as.PolyData(x, projection = NULL, zone = NULL)
 is.PolyData(x, fullValidation = TRUE)
@@ -16,16 +30,6 @@ is.PolyData(x, fullValidation = TRUE)
   \item{fullValidation}{Boolean value; if \code{TRUE}, fully test
     \code{x}.}
 }
-\description{
-  PBS Mapping functions that expect PolyData will accept properly
-  formatted data frames in their place (see 'Details').
-  
-  \code{as.PolyData} attempts to coerce a data frame to an object with
-  class PolyData.
-
-  \code{is.PolyData} returns \code{TRUE} if its argument is of class
-  PolyData.
-}
 \details{
 We define PolyData as a data frame with a first column named \code{PID}
 and (optionally) a second column named \code{SID}. Unlike a
@@ -33,7 +37,7 @@ and (optionally) a second column named \code{SID}. Unlike a
 to the vertices, a PolyData object must have only one record for each
 \code{PID} or each (\code{PID}, \code{SID}) combination. Conceptually,
 this object associates data with contours, where the data correspond to
-additional fields in the data frame. The R/S language conveniently
+additional fields in the data frame. The R language conveniently
 allows data frames to contain fields of various atomic modes
 (\code{"logical"}, \code{"numeric"}, \code{"complex"},
 \code{"character"}, and \code{"null"}). For example, PolyData with the
@@ -65,9 +69,10 @@ and \code{col} have meaning.
   \code{"PolyData"} and \code{"data.frame"}, in that order.
 }
 \seealso{
-  \link{EventData},
-  \link{LocationSet},
-  \link{PolySet}.
+  \link[PBSmapping]{PolySet},
+  \link[PBSmapping]{EventData},
+  \link[PBSmapping]{LocationSet}
 }
 \keyword{classes}
 \keyword{documentation}
+
