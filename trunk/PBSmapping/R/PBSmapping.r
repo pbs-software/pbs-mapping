@@ -6161,8 +6161,8 @@ importShapefile <- function (fn, readDBF=TRUE, projection=NULL, zone=NULL,
     if (is.null(xlab)) xlab <- "UTM Easting (km)";
     if (is.null(ylab)) ylab <- "UTM Northing (km)";
   } else if (!is.null(projection) && !is.na(projection) && projection == "LL") {
-    if (is.null(xlab)) xlab <- expression("Longitude" ~ group("(", degree, ")"))
-    if (is.null(ylab)) ylab <- expression("Latitude" ~ group("(", degree, ")"))
+    if (is.null(xlab)) xlab <- "Longitude (\u00B0)"
+    if (is.null(ylab)) ylab <- "Latitude (\u00B0)"
   } else {
     if (is.null(xlab)) xlab <- "X";
     if (is.null(ylab)) ylab <- "Y";
