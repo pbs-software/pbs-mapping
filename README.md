@@ -1,0 +1,3 @@
+PBSmapping has evolved from fisheries research conducted at the Pacific Biological Station (PBS) in Nanaimo, British Columbia, Canada. It extends the R language to include two-dimensional plotting features similar to those commonly available in a Geographic Information System (GIS). Embedded C code speeds algorithms from computational geometry, such as finding polygons that contain specified point events or converting between longitude-latitude and Universal Transverse Mercator (UTM) coordinates.
+
+This site assists developers in tracking and resolving bugs and other issues. Users of PBSmapping should obtain the current release from standard R repositories, such as CRAN (http://cran.r-project.org/).
