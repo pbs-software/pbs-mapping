@@ -7,6 +7,10 @@ Authors:  JTS = Jon T. Schnute
           DC  = Denis Chabot
 -----------------------------------
 
+2.70.0 2015-08-12
+  - New version format x.y.z
+  - Changed 2.69 to 2.70.0
+
 2.69  2015-04-23
   - Last minute updates before another attempt to post on CRAN. (RH 150423)
   - Addressed warning when DEBUG == 1 regarding signed/unsigned comparison. (NB 150409)
