@@ -38,8 +38,7 @@
 
 \section{What is PBS?}
 
-The initials \bold{PBS} refer to the Pacific Biological Station, a major fisheries laboratory operated by by Fisheries and Oceans Canada on the Pacific coast in Nanaimo, British Columbia, Canada. For more information, see:\\
-\url{http://www.pac.dfo-mpo.gc.ca/science/facilities-installations/pbs-sbp/index-eng.html}.
+The initials \bold{PBS} refer to the \href{http://www.pac.dfo-mpo.gc.ca/science/facilities-installations/pbs-sbp/index-eng.html}{Pacific Biological Station}, a major fisheries laboratory operated by by Fisheries and Oceans Canada on the Pacific coast in Nanaimo, British Columbia, Canada.
 
 \section{Where is the User's Guide?}
 

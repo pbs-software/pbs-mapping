@@ -1,6 +1,6 @@
 Package:    PBSmapping
-Version:    2.70.0
-Date:       2015-08-12
+Version:    2.70.1
+Date:       2016-04-04
 Title:      Mapping Fisheries Data and Spatial Analysis Tools
 Authors@R: c(
    person(c("Jon", "T."), "Schnute", role = "aut", email = "schnutej-dfo@shaw.ca"),
@@ -19,7 +19,7 @@ Author: Jon T. Schnute [aut], Nicholas Boers [aut], Rowan Haigh [aut, cre],
    Angus Johnson [ctb], Paul Wessel [ctb], Franklin Antonio [ctb],
    Nicholas J. Lewin-Koh [ctb], Roger Bivand [ctb]
 Maintainer: Rowan Haigh <rowan.haigh@dfo-mpo.gc.ca>
-Copyright:  2003-2015, Fisheries and Oceans Canada
+Copyright:  2003-2016, Fisheries and Oceans Canada
 Depends:    R (>= 2.15.0)
 Suggests:   foreign, maptools, deldir
 SystemRequirements: C++11
@@ -37,7 +37,7 @@ Description: This software has evolved from fisheries research conducted at the
    offers a complete user's guide, which should be consulted to use package
    functions effectively.
 License: GPL (>= 2)
-URL: http://code.google.com/p/pbs-mapping/,
-     http://code.google.com/p/pbs-mapx/,
+URL: https://github.com/pbs-software/pbs-mapping,
+     https://github.com/pbs-software/pbs-mapx,
      http://www.angusj.com/delphi/clipper.php
 

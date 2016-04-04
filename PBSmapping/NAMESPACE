@@ -1,12 +1,8 @@
-# Import all packages listed as Imports or Depends
-# import( some package )
-# importFrom(sp, point.in.polygon)
-# importFrom(maptools, read.shape)
-
 # Export all names from PBSmapping
 # exportPattern(".") # temporary default
 
 exportPattern("^[^\\.]")
+exportPattern("^\\.PBS")
 exportPattern("^\\.add")
 exportPattern("^\\.calc")
 exportPattern("^\\.check")
@@ -18,7 +14,6 @@ exportPattern("^\\.fix")
 exportPattern("^\\.get")
 exportPattern("^\\.init")
 exportPattern("^\\.insert")
-exportPattern("^\\.PBS")
 exportPattern("^\\.plot")
 exportPattern("^\\.prepare")
 exportPattern("^\\.rollup")
@@ -35,4 +30,14 @@ S3method(summary, EventData)
 S3method(summary, LocationSet)
 S3method(summary, PolyData)
 S3method(summary, PolySet)
+
+# Import all packages listed as Imports or Depends
+# import( some package )
+
+importFrom("grDevices", "col2rgb", "colorRamp", "contourLines", "rgb")
+importFrom("graphics", "abline", "axis", "box", "frame", "legend",
+           "lines", "locator", "par", "points", "polygon", "strheight",
+           "strwidth", "symbols", "text", "title")
+importFrom("stats", "median", "na.omit", "runif")
+importFrom("utils", "data", "read.table")
 
