@@ -1,6 +1,6 @@
 Package:    PBSmapping
-Version:    2.70.1
-Date:       2016-04-04
+Version:    2.70.2
+Date:       2017-04-10
 Title:      Mapping Fisheries Data and Spatial Analysis Tools
 Authors@R: c(
    person(c("Jon", "T."), "Schnute", role = "aut", email = "schnutej-dfo@shaw.ca"),
@@ -19,23 +19,23 @@ Author: Jon T. Schnute [aut], Nicholas Boers [aut], Rowan Haigh [aut, cre],
    Angus Johnson [ctb], Paul Wessel [ctb], Franklin Antonio [ctb],
    Nicholas J. Lewin-Koh [ctb], Roger Bivand [ctb]
 Maintainer: Rowan Haigh <rowan.haigh@dfo-mpo.gc.ca>
-Copyright:  2003-2016, Fisheries and Oceans Canada
+Copyright:  2003-2017, Fisheries and Oceans Canada
 Depends:    R (>= 2.15.0)
 Suggests:   foreign, maptools, deldir
 SystemRequirements: C++11
 NeedsCompilation: yes
 Description: This software has evolved from fisheries research conducted at the
-   Pacific Biological Station (PBS) in `Nanaimo', British Columbia, Canada. It
+   Pacific Biological Station (PBS) in 'Nanaimo', British Columbia, Canada. It
    extends the R language to include two-dimensional plotting features similar
    to those commonly available in a Geographic Information System (GIS).
    Embedded C code speeds algorithms from computational geometry, such as
    finding polygons that contain specified point events or converting between
    longitude-latitude and Universal Transverse Mercator (UTM) coordinates.
-   Additionally, we include `C++' code developed by Angus Johnson for the `Clipper'
-   library. Also included are data for a global shoreline and other
-   data sets in the public domain. The R directory `.../library/PBSmapping/doc'
-   offers a complete user's guide, which should be consulted to use package
-   functions effectively.
+   Additionally, we include 'C++' code developed by Angus Johnson for the
+   'Clipper' library, data for a global shoreline, and other data sets in the
+   public domain. Under the user's R library directory '.libPaths()',
+   specifically in './PBSmapping/doc', a complete user's guide is offered and
+   should be consulted to use package functions effectively.
 License: GPL (>= 2)
 URL: https://github.com/pbs-software/pbs-mapping,
      https://github.com/pbs-software/pbs-mapx,

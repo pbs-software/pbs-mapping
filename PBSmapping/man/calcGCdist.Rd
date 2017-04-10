@@ -9,7 +9,7 @@
   great-circle arc (at its starting point).
 }
 \usage{
-calcGCdist(lon1, lat1, lon2, lat2, R=6371.2)
+calcGCdist(lon1, lat1, lon2, lat2, R=6371.2, ...)
 }
 
 \arguments{
@@ -70,7 +70,8 @@ calcGCdist(lon1, lat1, lon2, lat2, R=6371.2)
 \seealso{
   \code{\link[PBSmapping]{addCompass}},
   \code{\link[PBSmapping]{calcArea}},
-  \code{\link[PBSmapping]{calcCentroid}}
+  \code{\link[PBSmapping]{calcCentroid}},
+  \code{\link[PBSmapping]{calcLength}}
 }
 \examples{
 local(envir=.PBSmapEnv,expr={
