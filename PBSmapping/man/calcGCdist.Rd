@@ -9,7 +9,7 @@
   great-circle arc (at its starting point).
 }
 \usage{
-calcGCdist(lon1, lat1, lon2, lat2, R=6371.2, ...)
+calcGCdist(lon1, lat1, lon2, lat2, R=6371.2)
 }
 
 \arguments{
@@ -21,7 +21,7 @@ calcGCdist(lon1, lat1, lon2, lat2, R=6371.2, ...)
 }
 \details{
   The great-circle distance is calculated between two points along a
-  spherical surface using the shortest distance and diregarding
+  spherical surface using the shortest distance and disregarding
   topography.
 \cr\cr
   \bold{Method 1: Haversine Formula}

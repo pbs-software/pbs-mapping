@@ -7,6 +7,10 @@ Authors:  JTS = Jon T. Schnute
           DC  = Denis Chabot
 -----------------------------------
 
+2.70.3 (2017-06-26)
+  • Registered C routines (new CRAN request) using Roger Bivand's maptools `init.c' as a template. (NB/RH 170626)
+  • Updated the User's Guide to use Arial font to be more consistent with DFO CSAS and Canadian Technical Reports. (RH 170622)
+
 2.70.2 (2017-04-10)
   • Updated the User's Guide `PBSmapping-UG.pdf (RH 170410)
   • Updated the vignette `PBSmappingIntro.Rnw'. (RH 170406)
