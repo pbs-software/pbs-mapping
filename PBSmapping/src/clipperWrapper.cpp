@@ -520,17 +520,6 @@ getScaleFactor (Sfloat *sXptr, int sXlen, Sfloat *sYptr, int sYlen,
 }
 
 #ifndef STANDALONE
-/*-----------------------------------------------------------------------------
-  joinPolys:
-
-  Author:  Nicholas Boers (Mar. 2013)
-
-  Notes:
-  This code is the entry point for R.
-
-  Regarding arguments, the "s" represents subject and "c" clip for the two
-  PolySets.
-  ---------------------------------------------------------------------------*/
 extern "C" SEXP
 joinPolys(SEXP operation,
 	  SEXP sPID, SEXP sSID, SEXP sPOS, SEXP sX, SEXP sY,

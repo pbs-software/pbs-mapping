@@ -292,9 +292,20 @@
    text(1.43, 2.21, bquote(b^2), cex=1.2, col=clr$black)
    text(0.87, 2.46, bquote(c^2), cex=1.2, col=clr$black)  }
 
-.PBSfigs <- function(nfigs=1:10) { # Draw all figures with numbers in nfigs
-   #while (!is.null(dev.list())) dev.off(dev.cur())
+## Revised 2017-06-28 by RH
+.PBSfigs <- function(nfigs=1:10, wait=TRUE)
+{  # Draw all figures with numbers in nfigs
+	if (!any(nfigs%in%c(1:10))) stop ("Choose figure numbers between 1 & 10")
+	nfigs = nfigs[nfigs%in%c(1:10)]
+	if (is.null(dev.list())) { dev.new(record=TRUE); frame() }
+	oldpar = par(no.readonly=TRUE)
+	on.exit(par(oldpar))
+	icount = 0
    for (i in nfigs) {
+   	icount = icount + 1
       figStr <- paste(".PBSfig",ifelse(i<10,"0",""),i,sep="")
       get(figStr)();
-      cat(figStr); readline(); }  }
+      cat(figStr)
+      if (wait && icount<length(nfigs)) readline();
+   }
+}

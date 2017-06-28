@@ -1,5 +1,5 @@
 /*=============================================================================
-  Copyright (C) 2003-2013 Fisheries and Oceans Canada
+  Copyright (C) 2003-2017 Fisheries and Oceans Canada
 
   This file is part of PBS Mapping.
 
@@ -23,7 +23,7 @@
   Interface between R/S-PLUS and C code.
 
   Version:
-    2.53
+    2.70
 
   Authors:
     Specifications: Jon Schnute, Rowan Haigh, Nicholas Boers
@@ -194,6 +194,8 @@
 #include "thin.h"
 #include "floating.h"
 
+#include "PBSmapping.h"
+
 #ifdef _MCD_CHECK
 #include "mcd.h"
 #endif /* _MCD_CHECK */
@@ -350,20 +352,6 @@ polyStartsEnds(PBSINT *polyStarts, PBSINT *polyEnds,
   return count;
 }
 
-/*-----------------------------------------------------------------------------
-  clip:
-    This function clips polygons to a rectangular viewing window.
-  
-  Author:  Nicholas Boers (June 11, 2003)
-  
-  Implementation Notes:
-    For each pair of points that are tested, the _first_ point of the
-    pair is added to the final output.  If necessary, an intersection
-    with the border is added as well.
-  
-  Notes:
-    Recommended allocated space for out*: 2 x *inVerts
-  ---------------------------------------------------------------------------*/
 void
 clip(PBSINT *inID, double *inXY, PBSINT *inVerts, PBSINT *polygons,
      double *limits, PBSINT *outID, double *outXY, PBSINT *outVerts,
@@ -469,46 +457,6 @@ clip(PBSINT *inID, double *inXY, PBSINT *inVerts, PBSINT *polygons,
             (*outVerts)++;                                                    \
           }
  
-/*-----------------------------------------------------------------------------
-  rollupPolys:
-    Performs several operations on a PolySet.  See the arguments below for
-    further details.
-
-  Non-standard parameters:
-    rollupMode: method for rolling up the PolySet
-       1 = roll-up to the PID level (only PIDs in the result)
-       2 = roll-up to the outer contour level (only outer contours in the
-           result)
-       3 = do not roll-up
-
-    exteriorCCW: modify vertices orientation (CW/CCW)?
-      -1 = don't modify
-       0 = exterior should be CW
-      +1 = exterior should be CCW
-    
-    closedPolys: whether the last and first vertices should be the same
-      -1 = don't modify
-       0 = ensure polygons do not close
-      +1 = close the polygons
-
-    addRetrace: determines whether it adds retrace lines to the first vertex
-    of the parent after outputting a child
-       0 = don't add
-       1 = add
-
-  Author:  Nicholas Boers (June 17, 2004)
-  
-  Status values:
-    PBS_SUCCESS: everything OK
-    PBS_ERR_MEM: insufficient memory
-    PBS_ERR_OUT: output array full
-    PBS_ERR_OT1: encountered child where not allowed
-
-  Notes:
-    - maximum allocated space required for out*:
-      *inVerts + 1 (for each it needs to close) + 1 (for each retrace line)
-    - recalculates the "POS" column
-  ---------------------------------------------------------------------------*/
 void rollupPolys(PBSINT *inID, double *inPOS, double *inXY, PBSINT *inVerts,
                  PBSINT *outID, double *outXY, PBSINT *outVerts,
                  PBSINT *rollupMode, PBSINT *exteriorCCW, PBSINT *closedPolys, 
@@ -727,46 +675,6 @@ findClosestCorner(double x[2], double y[2], double *limits)
   return(closest);
 }
 
-/*-----------------------------------------------------------------------------
-  closePolys: 
-    "Fix" the closure of open polygons.
- 
-  Author:  Nicholas Boers
-  
-  Notes:
-    - recommended allocated space for out*: 
-
-    - cornerToAdd was developed as follows:
-                      EDGE_N (3)
-           C_NW (0)                 C_NE (1)
-                    ---------------
-                    |             |
-        EDGE_W (0)  |             |  EDGE_E (1)
-                    |             |     
-                    ---------------
-           C_SW (3)                 C_SE (2)
-                       EDGE_S (2)
-   
-     - from the above picture, create a table:
-       START EDGE | END EDGE   | CLOSEST CORNER || 1ST TO ADD | 2ND TO ADD
-       -----------|------------|----------------||------------|-----------
-       EDGE_W     | EDGE_W     | C_NW           || C_NONE     | C_NONE     
-       EDGE_W     | EDGE_W     | C_NE           || C_NONE     | C_NONE     
-       EDGE_W     | EDGE_W     | C_SE           || C_NONE     | C_NONE     
-       EDGE_W     | EDGE_W     | C_SW           || C_NONE     | C_NONE     
-       EDGE_W     | EDGE_E     | C_NW           || C_NE       | C_NW       
-       EDGE_W     | EDGE_E     | C_NE           || C_NE       | C_NW       
-       EDGE_W     | EDGE_E     | C_SE           || C_SE       | C_SW       
-       EDGE_W     | EDGE_E     | C_SW           || C_SE       | C_SW       
-       ...        | ...        | ...            || ...        | ...        
-  
-     - the table should be completed for all combinations of START EDGE,
-       END EDGE, and CLOSEST CORNER
-  
-     - the cornerToAdd array must follow the order in the table above, where
-       CLOSEST corner is cycled through first for each (START EDGE, END EDGE),
-       and then EDGE EDGE is cycled through for each START EDGE
-   ---------------------------------------------------------------------------*/
 void
 closePolys(PBSINT *inID, double *inXY, PBSINT *inVerts, double *limits, 
            PBSINT *outID, double *outXY, PBSINT *outVerts,
@@ -951,15 +859,6 @@ closePolys(PBSINT *inID, double *inXY, PBSINT *inVerts, double *limits,
 #endif /* _MCD_CHECK */
 }
 
-/*-----------------------------------------------------------------------------
-  findCells:
-    Identify integers within a vector of break points.
-
-  Author:  Nicholas Boers (Mar. 29, 2006)
-
-  Notes:
-    Some ideas from "findInterval()" in R source code.
-  ---------------------------------------------------------------------------*/
 void
 findCells(double *inPt, PBSINT *inPts,
           double *inBrk, PBSINT *inBrks,
@@ -1015,15 +914,6 @@ findCells(double *inPt, PBSINT *inPts,
   (*status) = PBS_SUCCESS;
 }
 
-/*-----------------------------------------------------------------------------
-  findPolys:
-    Locate events within a polyset.
-  
-  Author:  Nicholas Boers
-  
-  Notes:
-    - recommended allocated space for out*: 
-  ---------------------------------------------------------------------------*/
 void
 findPolys(PBSINT *inEventsID, double *inEventsXY, PBSINT *inEvents,
           PBSINT *inPolysID, double *inPolysXY, PBSINT *inPolys,
@@ -1141,15 +1031,6 @@ findPolys(PBSINT *inEventsID, double *inEventsXY, PBSINT *inEvents,
 #endif /* _MCD_CHECK */
 }
 
-/*-----------------------------------------------------------------------------
-  convUL:
-    Convert Lon/Lat <--> UTME/UTMN.
-  
-  Author:  Nicholas Boers
-  
-  Notes:
-    Maximum space required for out*:
-  ---------------------------------------------------------------------------*/
 void
 convUL(double *inXY, PBSINT *inVerts, PBSINT *toUTM, PBSINT *zone,
        PBSINT *southern, double *outXY, PBSINT *outVerts,
@@ -1201,28 +1082,6 @@ convUL(double *inXY, PBSINT *inVerts, PBSINT *toUTM, PBSINT *zone,
 #endif /* _MCD_CHECK */
 }
 
-/*-----------------------------------------------------------------------------
-  calcArea:
-    This function calculates the areas of a set of polygons.
-    It handles holes, but has no concept of projection.
-  
-  Author:  Nicholas Boers (July 11, 2003)
-
-  Capabilities:
-    [Y] Holes
-    [>] Projection
-        [N] LL
-        [Y] UTM
-        [Y] 1:1
-  Robustness:
-    [?] Floating-point
-  Legend:  
-    [Y] yes   [N] no   [-] N/A   [?] good question   [>] details
-
-  Notes:
-    - maximum space required for out*: length(unique(paste(polys$PID, 
-                                                           polys$SID)))
-  ---------------------------------------------------------------------------*/
 void
 calcArea(PBSINT *inID, double *inXY, PBSINT *inVerts,
          PBSINT *outID, double *outArea, PBSINT *outVerts,
@@ -1296,29 +1155,6 @@ calcArea(PBSINT *inID, double *inXY, PBSINT *inVerts,
 #endif /* _MCD_CHECK */
 }
 
-/*-----------------------------------------------------------------------------
-  calcCentroid:
-    This function calculates the centroids of a set of polygons.
-    Since it uses signed area calculations, it can handle holes if they are
-    properly described (in a CW/CCW GIS sense) in the PolySet, and they are
-    "integrated" (holes have the same PID/SID as their parent). It has no
-    concept of projection.
-  
-  Author:  Nicholas Boers (June 10, 2004)
-
-  Capabilities:
-    [>] Holes
-        Yes in certain circumstances (see note above).
-    [-] Projection
-  Robustness:
-    [?] Floating-point
-  Legend:  
-    [Y] yes   [N] no   [-] N/A   [?] good question   [>] details
-
-  Notes:
-    - maximum space required for out*: length(unique(paste(polys$PID, 
-                                                           polys$SID)))
-  ---------------------------------------------------------------------------*/
 void
 calcCentroid(PBSINT *inID, double *inXY, PBSINT *inVerts,
              PBSINT *outID, double *outXY, PBSINT *outVerts,
@@ -1393,30 +1229,6 @@ calcCentroid(PBSINT *inID, double *inXY, PBSINT *inVerts,
 #endif /* _MCD_CHECK */
 }
 
-/*-----------------------------------------------------------------------------
-  calcOrientation:
-    This function calculates the orientation of polygons (i.e., clockwise or
-    counter-clockwise).  Holes are irrelevant and it needs no concept of
-    projection.
-  
-  Author:  Nicholas Boers (June 9, 2004)
-
-  Capabilities:
-    [-] Holes
-    [-] Projection
-  Robustness:
-    [?] Floating-point
-  Legend:  
-    [Y] yes   [N] no   [-] N/A   [?] good question   [>] details
-
-  Notes:
-    - space required for out*: length(unique(paste(polys$PID, polys$SID)))
-
-  Returns:
-    -1 when counter-clockwise
-     0 when N/A
-    +1 when clockwise
-  ---------------------------------------------------------------------------*/
 void
 calcOrientation(PBSINT *inID, double *inXY, PBSINT *inVerts,
                 PBSINT *outID, double *outOrientation, PBSINT *outVerts,
@@ -1481,20 +1293,6 @@ calcOrientation(PBSINT *inID, double *inXY, PBSINT *inVerts,
 #endif /* _MCD_CHECK */
 }
 
-/*-----------------------------------------------------------------------------
-  isConvex:
-    Determines whether a PolySet contains convex polygons.
-
-  Author:  Nicholas Boers (June 30, 2004)
-  
-  Status values:
-    PBS_SUCCESS:    everything OK
-    PBS_ERR_MEM:    insufficient memory
-    PBS_ERR_OUT:    output array full
-
-  Notes:
-    - maximum allocated space required for out*: number of polygons
-  ---------------------------------------------------------------------------*/
 void
 isConvex(PBSINT *inID, double *inXY, PBSINT *inVerts,
          PBSINT *outID, PBSINT *outResult, PBSINT *outVerts,
@@ -1559,26 +1357,6 @@ isConvex(PBSINT *inID, double *inXY, PBSINT *inVerts,
 #endif /* _MCD_CHECK */
 }
 
-/*-----------------------------------------------------------------------------
-  isIntersecting:
-    Determines whether the polygons in a PolySet self-intersect.
-
-  Non-standard parameters:
-    numericResult: if TRUE, returns a numeric result (a count); otherwise,
-      returns a Boolean for whether or not the polygon self-intersects
-
-  Author:  Nicholas Boers (June 28, 2004)
-  
-  Status values:
-    PBS_SUCCESS:    everything OK
-    PBS_ERR_MEM:    insufficient memory
-    PBS_ERR_OUT:    output array full
-
-  Notes:
-    - maximum allocated space required for out*: number of polygons
-    - counts certain types of intersections (i.e., those involving vertices
-      and those where an edge retraces over an edge) more than once
-  ---------------------------------------------------------------------------*/
 void
 isIntersecting(PBSINT *inID, double *inXY, PBSINT *inVerts,
                PBSINT *numericResult,
@@ -1646,16 +1424,6 @@ isIntersecting(PBSINT *inID, double *inXY, PBSINT *inVerts,
 #endif /* _MCD_CHECK */
 }
 
-/*-----------------------------------------------------------------------------
-  thickenPolys:
-    This function thickens polygons.
-  
-  Author:  Nicholas Boers (June 8, 2004)
-  
-  Notes:
-    - if units == 0, "LL": tolerance in kilometers and inXY in decimal-degrees
-    - if units == 1, other: tolerance and inXY in same units
-  ---------------------------------------------------------------------------*/
 void
 thickenPolys(PBSINT *inID, double *inXY, PBSINT *inVerts,
              double *tolerance, PBSINT *filter, PBSINT *units, PBSINT *keepOrig,
@@ -1743,20 +1511,6 @@ thickenPolys(PBSINT *inID, double *inXY, PBSINT *inVerts,
 #endif /* _MCD_CHECK */
 }
 
-/*-----------------------------------------------------------------------------
-  thinPolys:
-    This function thins polygons.
-  
-  Author:  Nicholas Boers (May 4, 2004)
-  
-  Notes:
-    - X and Y are `PBSINT,' rather than the usual double
-    - recommended allocated space for out*:
-      *inVerts
-    - does not renumber POS
-    - if units == 0, "LL", and inXY should be in micro-degrees
-    - if units == 1, "UTM", and inXY should be in meters
-  ---------------------------------------------------------------------------*/
 void
 thinPolys(PBSINT *inID, PBSINT *inXY, PBSINT *inVerts, double *tolerance,
           PBSINT *filter, PBSINT *units,

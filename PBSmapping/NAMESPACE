@@ -34,7 +34,7 @@ S3method(summary, PolySet)
 # Import all packages listed as Imports or Depends
 # import( some package )
 
-importFrom("grDevices", "col2rgb", "colorRamp", "contourLines", "rgb")
+importFrom("grDevices", "col2rgb", "colorRamp", "contourLines", "dev.list", "dev.new", "rgb")
 importFrom("graphics", "abline", "axis", "box", "frame", "legend",
            "lines", "locator", "par", "points", "polygon", "strheight",
            "strwidth", "symbols", "text", "title")

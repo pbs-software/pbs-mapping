@@ -1,30 +1,53 @@
-/* Thank-you Roger S. Bivand */
-#include "registerPBSmapping.h"
+/*=============================================================================
+  Copyright (C) 2003-2017 Fisheries and Oceans Canada
+
+  This file is part of PBS Mapping.
+
+  PBS Mapping is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  PBS Mapping is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with PBS Mapping; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+=============================================================================*/
+
+/* Thank-you Roger S. Bivand (used maptools as an example) */
+
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 
+#include "PBSmapping.h"
+#include "convGSHHS.h"
+#include "clipperWrapper.h"
+
 static const R_CMethodDef CEntries[]  = {
     /* PBSmapping.c */
-    {"calcOrientation", (DL_FUNC) &calcOrientation, 7},  /* line 1421 */
-    {"clip",            (DL_FUNC) &clip, 9},             /* line  368 */
-    {"rollupPolys",     (DL_FUNC) &rollupPolys, 12},     /* line  512 */
-    {"calcArea",        (DL_FUNC) &calcArea, 7},         /* line 1227 */
-    {"calcCentroid",    (DL_FUNC) &calcCentroid, 7},     /* line 1323 */
-    {"closePolys",      (DL_FUNC) &closePolys, 8},       /* line  771 */
-    {"convUL",          (DL_FUNC) &convUL, 8},           /* line 1154 */
-    {"findCells",       (DL_FUNC) &findCells, 7},        /* line  964 */
-    {"findPolys",       (DL_FUNC) &findPolys, 9},        /* line 1028 */
-    {"isConvex",        (DL_FUNC) &isConvex, 7},         /* line 1499 */
-    {"isIntersecting",  (DL_FUNC) &isIntersecting, 8},   /* line 1583 */
-    {"thickenPolys",    (DL_FUNC) &thickenPolys, 12},    /* line 1660 */
-    {"thinPolys",       (DL_FUNC) &thinPolys, 10},       /* line 1761 */
+    {"calcArea",        (DL_FUNC) &calcArea, 7},         /* line 1086 */
+    {"calcCentroid",    (DL_FUNC) &calcCentroid, 7},     /* line 1159 */
+    {"calcOrientation", (DL_FUNC) &calcOrientation, 7},  /* line 1233 */
+    {"clip",            (DL_FUNC) &clip, 9},             /* line  356 */
+    {"closePolys",      (DL_FUNC) &closePolys, 8},       /* line  679 */
+    {"convUL",          (DL_FUNC) &convUL, 8},           /* line 1035 */
+    {"findCells",       (DL_FUNC) &findCells, 7},        /* line  863 */
+    {"findPolys",       (DL_FUNC) &findPolys, 9},        /* line  918 */
+    {"isConvex",        (DL_FUNC) &isConvex, 7},         /* line 1297 */
+    {"isIntersecting",  (DL_FUNC) &isIntersecting, 8},   /* line 1361 */
+    {"rollupPolys",     (DL_FUNC) &rollupPolys, 12},     /* line  460 */
+    {"thickenPolys",    (DL_FUNC) &thickenPolys, 12},    /* line 1428 */
+    {"thinPolys",       (DL_FUNC) &thinPolys, 10},       /* line 1515 */
     {NULL, NULL, 0}
 };
 
 static const R_CallMethodDef CallEntries[] = {
-    /* clipperWrapper.cpp */
-    {"joinPolys",   (DL_FUNC) &joinPolys, 11},    /* clipperWrapper.cpp: 535 */
-    {"importGSHHS", (DL_FUNC) &importGSHHS, 4},   /* convGSHHS.c:        208 */
+    {"joinPolys",   (DL_FUNC) &joinPolys, 11},    /* clipperWrapper.cpp: 524 */
+    {"importGSHHS", (DL_FUNC) &importGSHHS, 4},   /* convGSHHS.c:        204 */
     {NULL, NULL, 0}
 };
 

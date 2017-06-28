@@ -36,6 +36,7 @@
 #include "floating.h"
 #include "polygons.h"
 #include "gshhs.h"
+#include "convGSHHS.h"
 
 #ifndef FALSE
 #define FALSE	0
@@ -198,15 +199,9 @@ void extractPoint (double lon, double lat)
     }
 }
 
-/* importGSHHS(...): Routine called by R to extract a region.
-   Arguments:
-     gshhsFileName	file name (string)
-     clipLimits		longitude/latitude limits for extraction
-     levels		maximum level to extract
-     minVerts		minimum vertices in an extracted polygon
-*/
-SEXP importGSHHS(SEXP gshhsFileName, SEXP clipLimits, SEXP levels,
-		 SEXP minVerts)
+
+SEXP
+importGSHHS(SEXP gshhsFileName, SEXP clipLimits, SEXP levels, SEXP minVerts)
 {
     char *cmdList[] = {"", "-L", "" };	/* for calling gshhs to list polygons */
     char *cmdExtract[] = {"", "" };	/* for calling gshhs to extract 

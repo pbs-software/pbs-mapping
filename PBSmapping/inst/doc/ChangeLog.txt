@@ -7,6 +7,15 @@ Authors:  JTS = Jon T. Schnute
           DC  = Denis Chabot
 -----------------------------------
 
+2.70.4 (2017-06-28)
+  • Made changes to `init.c', 'PBSmapping.h|c', `clipperWrapper.h|cpp', `convGSHHS.c'; added new header file `convGSHHS.h'. (NB 170628)
+  • Made minor changes to function `.PBSfigs'. (RH 170628)
+  • Changed call in `calcVoronoi' from  `deldir::deldir' to `deldir' as it seemed to mess up the CRAN check for deldir's registered
+	Fortran calls when launched from the Rd example for `calcVoronoi'. (RH 170627)
+	The problem was not reproducible so I'm not sure what happened. 
+	Potential compatibility issue: a Windows binary for `deldir' was downloaded for R-3.2.2 Patched and used for R-devel
+	before deldir was downloaded directly through the R-devel update menu.
+
 2.70.3 (2017-06-26)
   • Registered C routines (new CRAN request) using Roger Bivand's maptools `init.c' as a template. (NB/RH 170626)
   • Updated the User's Guide to use Arial font to be more consistent with DFO CSAS and Canadian Technical Reports. (RH 170622)

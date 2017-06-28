@@ -3473,207 +3473,209 @@ calcSummary <- function(polys, rollup = 3, FUN, ...)
   return (result);
 }
 
-#==============================================================================
-calcVoronoi <- function(xydata, xlim = NULL, ylim = NULL, eps = 1e-09,
-                        frac = 0.0001) {
-  .checkRDeps ("calcVoronoi", c("deldir"))
+#calcVoronoi----------------------------2017-06-27
+# Calculate the Voronoi (Dirichlet) tesselation for a set of points.
+#-------------------------------------------JTS/RH
+calcVoronoi <- function(xydata, xlim = NULL, ylim = NULL, eps = 1e-09, frac = 0.0001)
+{
+	.checkRDeps ("calcVoronoi", c("deldir"))
 
-  xydata <- .validateXYData(xydata)
-  if (is.character(xydata))
-    stop(paste("Invalid X/Y data 'xydata'.\n", xydata, sep=""))
-  if (nrow(xydata) < 2)
-    stop("This function requires two or more input points.\n")
+	xydata <- .validateXYData(xydata)
+	if (is.character(xydata))
+		stop(paste("Invalid X/Y data 'xydata'.\n", xydata, sep=""))
+	if (nrow(xydata) < 2)
+		stop("This function requires two or more input points.\n")
 
-  if (!is.null(xlim) && (length(xlim) != 2 || diff(xlim) < 0))
-    stop("Invalid 'xlim' argument.\n")
-  if (!is.null(ylim) && (length(ylim) != 2 || diff(ylim) < 0))
-    stop("Invalid 'xlim' argument.\n")
+	if (!is.null(xlim) && (length(xlim) != 2 || diff(xlim) < 0))
+		stop("Invalid 'xlim' argument.\n")
+	if (!is.null(ylim) && (length(ylim) != 2 || diff(ylim) < 0))
+		stop("Invalid 'xlim' argument.\n")
 
-  # if limits null, calculate them by increasing each extent by 10% of its
-  # range
-  if (is.null(xlim))
-    xlim <- range(xydata$X) + (rep(diff(range(xydata$X)) * 0.10, 2) * c(-1, 1))
-  if (is.null(ylim))
-    ylim <- range(xydata$Y) + (rep(diff(range(xydata$Y)) * 0.10, 2) * c(-1, 1))
+	# if limits null, calculate them by increasing each extent by 10% of its
+	# range
+	if (is.null(xlim))
+		xlim <- range(xydata$X) + (rep(diff(range(xydata$X)) * 0.10, 2) * c(-1, 1))
+	if (is.null(ylim))
+		ylim <- range(xydata$Y) + (rep(diff(range(xydata$Y)) * 0.10, 2) * c(-1, 1))
 
-  if (!is.null(attr(xydata, "projection"))
-      && attr(xydata, "projection") == "LL")
-    warning(paste(
+	if (!is.null(attr(xydata, "projection"))
+		  && attr(xydata, "projection") == "LL")
+		warning(paste(
 "When the projection is \"LL\", this function naively treats the data as",
 "a one-to-one projection. Consider converting it to UTM before running",
 "this function.", sep="\n"));
 
-  dd <- deldir::deldir(xydata$X, xydata$Y, rw=c(xlim, ylim), eps=eps, frac=frac,
-               digits=7)
-  if (is.null(dd))
-    stop(paste(
+	dd <- deldir(xydata$X, xydata$Y, rw=c(xlim, ylim), eps=eps, frac=frac, digits=7) ## package deldir
+	if (is.null(dd))
+		stop(paste(
 "The call to \"deldir\", this function's dependency, failed.  The function",
 "does not support linear (horizontal/vertical) data and that could be the",
 "cause.", sep="\n"));
 
-  # dd$dirsgs:
-  #  (x1, y1) -> (x2, y2): a line segment in a Dirichlet tile
-  #  ind1 and ind2: indices of the two points separated by this line segment
-  dirsgs <- dd$dirsgs
+	# dd$dirsgs:
+	#  (x1, y1) -> (x2, y2): a line segment in a Dirichlet tile
+	#  ind1 and ind2: indices of the two points separated by this line segment
+	dirsgs <- dd$dirsgs
 
-  # dd$summary:
-  #  (x, y): points used in the tesselation; may be less than input if some
-  #          points judged to be the same (see "frac" argument)
-  #  n.tside: number of side of the Dirichlet tile surrounding the point
-  summary <- dd$summary
+	# dd$summary:
+	#  (x, y): points used in the tesselation; may be less than input if some
+	#          points judged to be the same (see "frac" argument)
+	#  n.tside: number of side of the Dirichlet tile surrounding the point
+	summary <- dd$summary
 
-  # we will use "summary" below AND in ".addCorners" to determine closest
-  # polygon for adding corners
+	# we will use "summary" below AND in ".addCorners" to determine closest
+	# polygon for adding corners
 
-  # each line segment belongs to two tiles (ind1 and ind2); create a data
-  # structure with two copies of each point (i.e., a copy for each tile)
-  pt1tile1 <- dirsgs[, c("x1", "y1", "ind1", "bp1")]
-  pt1tile2 <- dirsgs[, c("x1", "y1", "ind2", "bp1")]
-  pt2tile1 <- dirsgs[, c("x2", "y2", "ind1", "bp2")]
-  pt2tile2 <- dirsgs[, c("x2", "y2", "ind2", "bp2")]
-  names(pt1tile1) <- names(pt1tile2) <- names(pt2tile1) <-
-    names(pt2tile2) <- c("X", "Y", "tile", "bp")
-  res <- rbind(pt1tile1, pt1tile2, pt2tile1, pt2tile2)
-  res <- res[order(res$tile), ]
+	# each line segment belongs to two tiles (ind1 and ind2); create a data
+	# structure with two copies of each point (i.e., a copy for each tile)
+	pt1tile1 <- dirsgs[, c("x1", "y1", "ind1", "bp1")]
+	pt1tile2 <- dirsgs[, c("x1", "y1", "ind2", "bp1")]
+	pt2tile1 <- dirsgs[, c("x2", "y2", "ind1", "bp2")]
+	pt2tile2 <- dirsgs[, c("x2", "y2", "ind2", "bp2")]
+	names(pt1tile1) <- names(pt1tile2) <- names(pt2tile1) <-
+		names(pt2tile2) <- c("X", "Y", "tile", "bp")
+	res <- rbind(pt1tile1, pt1tile2, pt2tile1, pt2tile2)
+	res <- res[order(res$tile), ]
 
-  # the points in "res" are ordered by "tile" -- the same order of the
-  # points in "summary"
+	# the points in "res" are ordered by "tile" -- the same order of the
+	# points in "summary"
 
-  # add the "origin" point (twice) for each tile to the data structure
-  res$Xo <- rep(summary[, "x"], times=2*summary[, "n.tside"])
-  res$Yo <- rep(summary[, "y"], times=2*summary[, "n.tside"])
-  # compute offset from each "origin"
-  res$Xdiff <- res$X - res$Xo
-  res$Ydiff <- res$Y - res$Yo
-  # compute the arctan for each offset, so that we know the order
-  # when building polygons
-  res$atan2 <- atan2(res$Ydiff, res$Xdiff)
+	# add the "origin" point (twice) for each tile to the data structure
+	res$Xo <- rep(summary[, "x"], times=2*summary[, "n.tside"])
+	res$Yo <- rep(summary[, "y"], times=2*summary[, "n.tside"])
+	# compute offset from each "origin"
+	res$Xdiff <- res$X - res$Xo
+	res$Ydiff <- res$Y - res$Yo
+	# compute the arctan for each offset, so that we know the order
+	# when building polygons
+	res$atan2 <- atan2(res$Ydiff, res$Xdiff)
 
-  # NOTE: the order set below is paramount to the next section of code.
-  # DO NOT change the ordering unless you revise the next section as well.
+	# NOTE: the order set below is paramount to the next section of code.
+	# DO NOT change the ordering unless you revise the next section as well.
 
-  # order them and then eliminate duplicates
-  res <- res[order(res$tile, res$atan2), ]
-  res <- res[!duplicated(paste(res$tile, res$atan2)), ]
+	# order them and then eliminate duplicates
+	res <- res[order(res$tile, res$atan2), ]
+	res <- res[!duplicated(paste(res$tile, res$atan2)), ]
 
-  # number of vertices in each polygon
-  nVerts <- diff(c(which(!duplicated(res$tile)), length(res$tile)+1))
+	# number of vertices in each polygon
+	nVerts <- diff(c(which(!duplicated(res$tile)), length(res$tile)+1))
 
-  #----------------------------------------------------------------------------
-  # At this point, the order of points in each tile is sometimes inappropriate
-  # for plotting. To obtain the best results, tiles with boundary points should
-  # have one boundary point appear first in the tile and one last.
-  #
-  # Here is the idea:
-  # We have two types of tiles:
-  #   (1) "correct" tiles (completely interior OR boundary points in the first
-  #       and last position) and
-  #   (2) "incorrect" tiles (boundary points adjacent to each other in a given
-  #       tile).
-  # We only need to reorder vertices of the "incorrect" tiles. We can think of
-  # the reordering as "rotating" the vertices until the first and last are the
-  # boundary points.
-  #
-  # If F is a non-boundary point and T is a boundary point, a tile with seven
-  # vertices may initially look like FFFTTFF.  If we rotate these vertices right
-  # three times
-  #   FFFFTTF (1st rotation)
-  #   FFFFFTT (2nd rotation)
-  #   TFFFFFT (3rd rotation)
-  # we achieve the desired ordering.
-  #
-  # To calculate the rotation, we look at the index of the first boundary point
-  # in the tile.  If we subtract its index from the number of vertices and add
-  # one, we obtain the number of right rotations (e.g., 7 - 5 + 1 = 3 in the
-  # above example).
-  #
-  # Given the number of right rotations, we can build a new index vector that
-  # will "rotate" points within the desired tiles.
+	#----------------------------------------------------------------------------
+	# At this point, the order of points in each tile is sometimes inappropriate
+	# for plotting. To obtain the best results, tiles with boundary points should
+	# have one boundary point appear first in the tile and one last.
+	#
+	# Here is the idea:
+	# We have two types of tiles:
+	#   (1) "correct" tiles (completely interior OR boundary points in the first
+	#       and last position) and
+	#   (2) "incorrect" tiles (boundary points adjacent to each other in a given
+	#       tile).
+	# We only need to reorder vertices of the "incorrect" tiles. We can think of
+	# the reordering as "rotating" the vertices until the first and last are the
+	# boundary points.
+	#
+	# If F is a non-boundary point and T is a boundary point, a tile with seven
+	# vertices may initially look like FFFTTFF.  If we rotate these vertices right
+	# three times
+	#   FFFFTTF (1st rotation)
+	#   FFFFFTT (2nd rotation)
+	#   TFFFFFT (3rd rotation)
+	# we achieve the desired ordering.
+	#
+	# To calculate the rotation, we look at the index of the first boundary point
+	# in the tile.  If we subtract its index from the number of vertices and add
+	# one, we obtain the number of right rotations (e.g., 7 - 5 + 1 = 3 in the
+	# above example).
+	#
+	# Given the number of right rotations, we can build a new index vector that
+	# will "rotate" points within the desired tiles.
 
-  # divide 'res' into two data frames, one where tiles touch two or fewer
-  # boundary points and one where tiles touch more than two boundary points
-  bpByTile <- split(res$bp, res$tile)
-  noRotate <- rep((lapply(bpByTile, "sum") > 2),
-                  times=lapply(bpByTile, "length"))
-  resNoRotate <- res[noRotate, ]        # touch more than two
-  res <- res[!noRotate, ]               # touch two or fewer
+	# divide 'res' into two data frames, one where tiles touch two or fewer
+	# boundary points and one where tiles touch more than two boundary points
+	bpByTile <- split(res$bp, res$tile)
+	noRotate <- rep((lapply(bpByTile, "sum") > 2),
+		              times=lapply(bpByTile, "length"))
+	resNoRotate <- res[noRotate, ]        # touch more than two
+	res <- res[!noRotate, ]               # touch two or fewer
 
-  # vertices in each tile
-  tileLen <- diff(c(which(!duplicated(res$tile)), nrow(res)+1))
-  # find the tiles to rotate
-  bpByTile <- split(res$bp, res$tile)
-  bpByTileWhich <- lapply(bpByTile, "which")
-  toRotate <- (lapply(bpByTileWhich, "diff") == 1)
-  toRotate[is.na(toRotate)] <- FALSE
+	# vertices in each tile
+	tileLen <- diff(c(which(!duplicated(res$tile)), nrow(res)+1))
+	# find the tiles to rotate
+	bpByTile <- split(res$bp, res$tile)
+	bpByTileWhich <- lapply(bpByTile, "which")
+	toRotate <- (lapply(bpByTileWhich, "diff") == 1)
+	toRotate[is.na(toRotate)] <- FALSE
 
-  # focus on the tiles to fix
-  toFix <- bpByTileWhich[toRotate]
-  toFixLen <- tileLen[toRotate]
-  toFixMin <- lapply(toFix, "min")
+	# focus on the tiles to fix
+	toFix <- bpByTileWhich[toRotate]
+	toFixLen <- tileLen[toRotate]
+	toFixMin <- lapply(toFix, "min")
 
-  # setup a "rotation" vector
-  rotR <- unlist(toFixLen) - unlist(toFixMin)
-  rotR <- -1 - rotR
+	# setup a "rotation" vector
+	rotR <- unlist(toFixLen) - unlist(toFixMin)
+	rotR <- -1 - rotR
 
-  # a "-1" rotation means no change, "-2" means one to the right, ...
-  rot <- rep(-1, length(tileLen))
-  rot[toRotate] <- rotR
+	# a "-1" rotation means no change, "-2" means one to the right, ...
+	rot <- rep(-1, length(tileLen))
+	rot[toRotate] <- rotR
 
-  # start with an index of 1 .. len for each tile
-  newIDX <- unlist(lapply(tileLen, "seq"))
+	# start with an index of 1 .. len for each tile
+	newIDX <- unlist(lapply(tileLen, "seq"))
 
-  # rotate those indices
-  rot <- rep(rot, times=unlist(tileLen))
-  newIDX <- newIDX + rot
-  mod <- rep(unlist(tileLen), times=unlist(tileLen))
-  newIDX <- (newIDX %% mod) + 1
+	# rotate those indices
+	rot <- rep(rot, times=unlist(tileLen))
+	newIDX <- newIDX + rot
+	mod <- rep(unlist(tileLen), times=unlist(tileLen))
+	newIDX <- (newIDX %% mod) + 1
 
-  # adjust indices from 1 .. len to reflect their position in the
-  # data frame
-  base <- rep(which(!duplicated(res$tile)) - 1, times=unlist(tileLen))
-  newIDX <- newIDX + base
+	# adjust indices from 1 .. len to reflect their position in the
+	# data frame
+	base <- rep(which(!duplicated(res$tile)) - 1, times=unlist(tileLen))
+	newIDX <- newIDX + base
 
-  # reorder
-  res <- res[newIDX, ]
+	# reorder
+	res <- res[newIDX, ]
 
-  # combine the two 'res' data frames (the no rotate and rotate one)
-  if (any(noRotate)) {
-    res <- rbind(resNoRotate, res)
-    # it is safe to 'order' by tile: according to the R help on 'order',
-    # "any unresolved ties will be left in their original ordering."
-    res <- res[order(res$tile), ]
-  }
-  #----------------------------------------------------------------------------
+	# combine the two 'res' data frames (the no rotate and rotate one)
+	if (any(noRotate)) {
+		res <- rbind(resNoRotate, res)
+		# it is safe to 'order' by tile: according to the R help on 'order',
+		# "any unresolved ties will be left in their original ordering."
+		res <- res[order(res$tile), ]
+	}
+	#----------------------------------------------------------------------------
 
-  # build the POS column
-  maxPos <- max(nVerts);
-  POS <- rep(seq(from=1, to=maxPos), times=length(nVerts));
-  n <- vector();
-  n[seq(1, by=2, length.out=length(nVerts))] <- nVerts;
-  n[seq(2, by=2, length.out=length(nVerts))] <- maxPos - nVerts;
-  b <- rep(c(TRUE, FALSE), length.out=length(n));
-  POS <- POS[rep(b, n)];
+	# build the POS column
+	maxPos <- max(nVerts);
+	POS <- rep(seq(from=1, to=maxPos), times=length(nVerts));
+	n <- vector();
+	n[seq(1, by=2, length.out=length(nVerts))] <- nVerts;
+	n[seq(2, by=2, length.out=length(nVerts))] <- maxPos - nVerts;
+	b <- rep(c(TRUE, FALSE), length.out=length(n));
+	POS <- POS[rep(b, n)];
 
-  names(res)[is.element(names(res), "tile")] <- "PID"
-  res$POS <- POS
+	names(res)[is.element(names(res), "tile")] <- "PID"
+	res$POS <- POS
 
-  res <- res[, c("PID", "POS", "X", "Y")]
-  class(res) <- c("PolySet", class(res))
+	res <- res[, c("PID", "POS", "X", "Y")]
+	class(res) <- c("PolySet", class(res))
 
-  # polygons that straddle corners will be missing the corner points; add
-  # the missing corner points now
-  res <- .addCorners(res, summary)
+	# polygons that straddle corners will be missing the corner points; add
+	# the missing corner points now
+	res <- .addCorners(res, summary)
 
-  # ensure edges reach the proper extents
-  res <- .expandEdges(res, data.frame(X=summary[, "x"], Y=summary[, "y"]),
-                      xlim, ylim)
+	# ensure edges reach the proper extents
+	res <- .expandEdges(res, data.frame(X=summary[, "x"], Y=summary[, "y"]),
+		                  xlim, ylim)
 
-  # set attributes appropriate to the result
-  attr(res, "projection") <- 1;
-  attr(res, "zone") <- NULL;
+	# set attributes appropriate to the result
+	attr(res, "projection") <- 1;
+	attr(res, "zone") <- NULL;
 
-  return (res);
+	return (res);
 }
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~calcVoronoi
 
 #==============================================================================
 clipLines <- function(polys, xlim, ylim, keepExtra = FALSE)

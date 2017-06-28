@@ -1,5 +1,5 @@
 /*=============================================================================
-  Copyright (C) 2003-2013 Fisheries and Oceans Canada
+  Copyright (C) 2003-2017 Fisheries and Oceans Canada
 
   This file is part of PBS Mapping.
 
@@ -17,44 +17,23 @@
   along with PBS Mapping; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 =============================================================================*/
-/*-----------------------------------------------------------------------------
-  File: clipperWrapper.hpp
 
-  Interface between R and the Clipper library.
-
-  Author: Nicholas Boers
-  ---------------------------------------------------------------------------*/
-#ifndef _CLIPPERWRAPPER_H_
-#define _CLIPPERWRAPPER_H_
-
-#ifndef STANDALONE
+#ifndef _CONVGSHHS_H_
+#define _CONVGSHHS_H_
 
 #include <R.h>
 #include <Rdefines.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 /*-----------------------------------------------------------------------------
-  joinPolys:
+  importGSHHS:
+    This function is called by R to extract a region.
 
-  Author:  Nicholas Boers (Mar. 2013)
-
-  Notes:
-  This code is the entry point for R.
-
-  Regarding arguments, the "s" represents subject and "c" clip for the two
-  PolySets.
+   Arguments:
+     gshhsFileName	file name (string)
+     clipLimits		longitude/latitude limits for extraction
+     levels		maximum level to extract
+     minVerts		minimum vertices in an extracted polygon
   ---------------------------------------------------------------------------*/
-SEXP joinPolys(SEXP operation,
-	       SEXP sPID, SEXP sSID, SEXP sPOS, SEXP sX, SEXP sY,
-	       SEXP cPID, SEXP cSID, SEXP cPOS, SEXP cX, SEXP cY);
+SEXP importGSHHS(SEXP gshhsFileName, SEXP clipLimits, SEXP levels, SEXP minVerts);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
-#endif /* not defined STANDALONE */
-
-#endif /* _CLIPPERWRAPPER_H_ */
+#endif /* _CONVGSHHS_H_ */
