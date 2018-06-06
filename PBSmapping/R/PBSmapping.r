@@ -1479,7 +1479,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
   }
 }
 
-#==============================================================================
+#=====================================================================2018-06-05
 # Default for 'projection' must be logical type.
 # For 'plotPoints()', 'cex'and 'pch' are part of '...' -- and they may equal
 # NULL; when they equal NULL, don't try adding them to par()!
@@ -1499,6 +1499,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
                   "lwd", "mgp", "mkh", "pch", "smo", "srt", "tck",
                   "tcl", "tmag", "type", "xaxp", "xaxs", "xaxt", "xpd",
                   "yaxp", "yaxs", "yaxt");
+
   if (!is.null(version$language) && (version$language == "R")) {
     legalNames <- setdiff(legalNames, "csi");   # read-only in R
   }
@@ -1631,11 +1632,14 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
   # create plot region
   .initPlotRegion(projection=projection, xlim=xlim, ylim=ylim, plt=plt);
 
-  # plot background colour
+  ## plot background colour
+  ## note (180605): RH had to specify xpd=TRUE to get `polygon' to honour the pin regions on Windows devga device.
+  ## xpd: a logical value or NA. 
+  ##      if FALSE, all plotting is clipped to the plot region (appears to be buggy), 
+  ##      if TRUE,  all plotting is clipped to the figure region (adopted herein), and 
+  ##      if NA, all plotting is clipped to the device region (can also use this but overkill).
   if (!is.null(bg))
-    polygon(x = c(xlim[1], xlim[2], xlim[2], xlim[1]),
-            y = c(ylim[1], ylim[1], ylim[2], ylim[2]),
-            col = bg, border = 0);
+    polygon(x=xlim[c(1,2,2,1)], y=ylim[c(1,1,2,2)], col=bg, border=0, xpd=TRUE);
 
   # plot PolySet 'polys'
   if (!is.null(polys)) {
@@ -2493,9 +2497,9 @@ addPoints <- function(data, xlim = NULL, ylim = NULL, polyProps = NULL,
   invisible (polyPropsReturn);
 }
 
-#addPolys=========================================2012-03-01
+#addPolys=========================================2018-06-05
 #  Add polygons to an existing map plot.
-#---------------------------------------------------------NB
+#------------------------------------------------------NB/RH
 addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
                      border = NULL, lty = NULL, col = NULL, colHoles = NULL,
                      density = NA, angle = NULL, ...)
@@ -2729,13 +2733,14 @@ addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
       new.polyx <- .insertNAs(polyx, pPropsIdx[[propIdx]])
       new.polyy <- .insertNAs(polyy, pPropsIdx[[propIdx]])
 
-      # Subtle differences exist between the S-PLUS and R "polygon" command.
-      # The S-PLUS command fails if not given at least three points, whereas the
-      # R command draws nothing for 0-1 point and a line for 2 points.
-      # The following tests for 0 points...
+      ## Subtle differences exist between the S-PLUS and R "polygon" command.
+      ## The S-PLUS command fails if not given at least three points, whereas the
+      ## R command draws nothing for 0-1 point and a line for 2 points.
+      ## The following tests for 0 points...
+      ## RH (180605) added 'xpd=TRUE' (see line 1636)
       if (!all(is.na(new.polyx)))
         polygon(x = new.polyx, y = new.polyy, col = col, lty = polyLty,
-                border = fillBorder, density = density, angle = angle, ...);
+                border = fillBorder, density = density, angle = angle, xpd=TRUE, ...);
 
       # plot the edges
       if (is.na(as.logical(border)) || as.logical(border)) {
@@ -2745,8 +2750,9 @@ addPolys <- function(polys, xlim = NULL, ylim = NULL, polyProps = NULL,
         new.polylinex <- .insertNAs(polylinex, pPropsIdx[[propIdx]])
         new.polyliney <- .insertNAs(polyliney, pPropsIdx[[propIdx]])
 
+        ## RH (180605) added 'xpd=TRUE' (see line 1636)
         polygon(x = new.polylinex, y = new.polyliney, lty = lty,
-                border = border, density = 0, ...);
+                border = border, density = 0, xpd=TRUE, ...);
       }
     }
   }
