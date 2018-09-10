@@ -6,9 +6,36 @@ Authors:  JTS = Jon T. Schnute
           ACB = Alex Couture-Beil
           DC  = Denis Chabot
 -----------------------------------
-## Functional categories for R code follow those in Table F.1 -- Import, Plotting, Computational, Object-related, Data sets
 
-2.70.5 (2018-06-05)
+2.71.0 (2018-09-07) [Rcheck=T, Rbuild=F]
+  * R code
+    + Modified function `.validateData' (RH 180910)
+      - Keys created from > 2 columns (e.g., PID, SID, POS) were no longer being created properly.
+      - Orphaned hole check now only occurs if `polys' is actually a PolySet.
+    + Modified function 'importShapefile' to use the modified function 'placeHoles', if called to do so. (RH 180906)
+    + Modified function '.is.in' to report when all points lies on a boundary (RH 180906)
+      - There are holes is some solids that exactly define solids elsewhere.
+    + Modified function `placeHoles' in 'extraCode.r' (RH 180906)
+      - This function was using '.calcOrientation' inappropriately sometimes because
+      -   PBSmapping outer contours (solids) and inner contours (holes) do not rely on 
+      -   GIS standards of clockwise or counterclockwise tracing to determine the contour type.
+      - Modified function can now use either the orientation method or behaviour documented 
+      -   in the User's Guide: solids have POS increasing, holes have POS decreasing.
+    + Promoted 'is.in' subfunction to a hidden dot function usable by all functions. (RH 180828)
+      - The function now uses the PBSmapping C function 'findPolys' rather than relying on sp::point.in.polygon.
+    + Modified function '.validateData' to check for orphaned holes and to notify the user of their existence. (RH 180828)
+      - Issue arose when user Uli brought to light a set of polygons with 1 solid followed by 5 holes completely outside the solid.
+      - The object most likely was intended to portray 6 solids.
+      - This anomalous polygon came from using Google's OpenStreetMap folowed by a call to maptools::SpatialPolygons2PolySet.
+    + Separated functions into three distinct R files: (RH 180824)
+      - 'PBSmapping.r' contains the original suite of documented functions (more or less) for PBSmapping.
+      - 'extraFuns.r' contains any code that was added to PBSmapping after JTS and NB departed for better places.
+      - 'dotFuns.r' contains all the hidden dot functions (not documented).
+
+## Below: Functional categories for R code follow those in Table F.1 :
+## -- Import, Plotting, Computational, Object-related, Data sets
+
+2.70.5 (2018-06-05) [Rcheck=T, Rbuild=T]
   * Plotting
     + Added explicit argument `xpd=TRUE' to polygon commands in `.plotMaps' and `addPolys'. (RH 180605)
       - The polygon command was not filling in polygons properly on Windows devga device when going through examples in `.PBSfigs'.
@@ -908,3 +935,380 @@ Authors:  JTS = Jon T. Schnute
 0.91  2003-07-14  Nick
   * Documentation
     + Started the change log
+
+
+To integrate with stuff above:
+# Change Log:
+#   27 Jun 2003 [Nicholas Boers]
+#     - created empty functions, started to fill them
+#   30 Jun 2003 [Nicholas Boers]
+#     - continued to fill functions, and get the interaction between
+#       the S-Plus/R and C code working correctly (fixBounds, fixPOS,
+#       ...)
+#   02 Jul 2003 [Nicholas Boers]
+#     - continued to fill functions (clipLines, clipPolys, ...)
+#   03 Jul 2003 [Nicholas Boers]
+#     - continued to fill functions (addLines, addPolys, ...)
+#   04 Jul 2003 [Nicholas Boers]
+#     - continued to fill functions (closePolys, locateEvents,
+#       combineEvents, ...)
+#   07 Jul 2003 [Nicholas Boers]
+#     - cleaned up some functions
+#     - changed PolyChar (an instance of PolyChar) back to the strict
+#       definition from the specifications
+#   08 Jul 2003 [Nicholas Boers]
+#     - verified the "correction" of PolyChar
+#     - corrected a bug showing up in R
+#     - renamed polyChar to polyProps
+#   09 Jul 2003 [Nicholas Boers]
+#     - fixed various bugs such as incorrectly scaled axis ticks
+#     - made locateEvents aware of holes
+#     - renamed "proj" to "projection"
+#     - increased efficiency of pnpoly
+#     - generated skeletons for new functions
+#   10 Jul 2003 [Nicholas Boers]
+#     - implemented makeGrid and makeProps
+#   11 Jul 2003 [Nicholas Boers]
+#     - implemented convUL and calcArea
+#   14 Jul 2003 [Nicholas Boers]
+#     - fixed a bug in all the C-function wrappers so that they work
+#       when one row is returned
+#     - fixed numerous other bugs
+#   15 Jul 2003 [Nicholas Boers]
+#     - fixed bug in .createPolyProps, where elements in the PID/SID
+#       columns could be factors (and this would result in wrong
+#       polygons being plotted in S-Plus)
+#     - fixed numerous other bugs
+#   16 Jul 2003 [Nicholas Boers]
+#     - updated locatePoints() to test the polyset before locator() is
+#       called
+#       - made it hidden
+#     - renamed OLDPOS to oldPOS (to match documentation)
+#     - improved validation of data types: checking for NAs, rewrote
+#       validate routines
+#   17 Jul 2003 [Nicholas Boers]
+#     - finished updating the validate routines
+#     - read through the complete code looking for bugs
+#     - started to optimize the plotting routines...
+#   18 Jul 2003 [Nicholas Boers]
+#     - continue working on those plotting routines...
+#     - rewrote portions of .createPolyProps to support more efficient
+#       plotting
+#       - made it so polyProps always contains an SID column
+#   21 Jul 2003 [Nicholas Boers]
+#     - fixed addPolys so it takes advantage of the new polyProps
+#       structure
+#     - renamed locateEvents --> findPolys
+#     - implemented locateEvents and locatePolys
+#   22 Jul 2003 [Nicholas Boers]
+#     - fixed several bugs
+#     - rearranged the source file into alphabetical order
+#     - cleaned up several inconsistencies
+#   29 Jul 2003 [Nicholas Boers]
+#     - working on cleaning up the labelling of the axis
+#   30 Jul 2003 [Nicholas Boers]
+#     - cleaned up the .addAxis and .addLabels functions: now labels
+#       are moved depending on the lengths of the tick marks
+#   01 Aug 2003 [Nicholas Boers]
+#     - minor changes to .addLabels and .addAxis
+#   06 Aug 2003 [Nicholas Boers]
+#     - minor changes to addPolys to allow for different line types
+#       for shading lines
+#   12 Aug 2003 [Nicholas Boers]
+#     - minor bug corrected in combineEvents in S (but not R)
+#   15 Aug 2003 [Nicholas Boers]
+#     - tckMajor renamed to tck
+#     - tckMinor is now based on tck, rather than the other way around
+#   18 Aug 2003 [Nicholas Boers]
+#     - added an internal ".fixGSHHSWorld" function for closing
+#       Antarctica from the GSHHS data
+#     - made it so calcArea, etc. don't use "invisible" (or such) to
+#       return objects
+#     - fixed default colours (polygons or polylines determines
+#       default `col')
+#   19 Aug 2003 [Nicholas Boers]
+#     - added an `axes' parameter to the plot functions, to disable
+#       the plotting of the axis
+#   21 Aug 2003 [Nicholas Boers]
+#     - C functions renamed:
+#       - ulConv --> convUL
+#       - locateEvents --> findPolys
+#     - added a .checkDots function to look for mai in dots (may
+#       conflict with plt)
+#   22 Aug 2003 [Nicholas Boers]
+#     - removed the .checkDots function because it didn't seem
+#       necessary
+#     - removed a secton in .addAxis that was setting mex to 0
+#   20 Dec 2003 [Nicholas Boers]
+#     - in .createPolyProps(), changed codes(ordered(...)) to
+#       as.integer(ordered(...)) to stop the related 'deprecated' error
+#       message
+#   28 Dec 2003 [Nicholas Boers]
+#     - removed automatic calculation of `mgp' from .addAxis and
+#       .addLabels
+#     - added support for a user-passed `mgp' parameter
+#     - `mgp' should now be set to a default value, such as c(1.9,
+#       0.2, 0) when the package is loaded
+#   01 Jan 2004 [Nicholas Boers]
+#     - corrected handling of text in the margins
+#     - fixed bug in .createPolyProps(); removal of factors was
+#       failing because of NAs
+#     - corrected insertNAs() to prevent S-PLUS warning message (re:
+#       implied return value)
+#   ## VERSION 1.00 ## 01 Jan 2004 ############################################
+#   03 May 2004 [Nicholas Boers]
+#     - updated addPolys() to eliminate retrace lines when S-PLUS plots
+#       polygons with holes
+#   04 May 2004 [Nicholas Boers]
+#     - updated .addAxis() to fix the bug where the border/axis/etc. would
+#       shift when drawing multiple figures (i.e., mfrow)
+#     - added thinPolys()
+#   05 May 2004 [Nicholas Boers]
+#     - plot*() now recognizes xaxt/yaxt = "n"
+#     - added extractPolyData()
+#     - added support to clipping to maintain "extra" data fields
+#   07 May 2004 [Nicholas Boers]
+#     - added centroid() function; returns PolyData
+#   09 May 2004 [Nicholas Boers]
+#     - added clipPoly() function to clip one polygon against another polygon
+#   10 May 2004 [Nicholas Boers]
+#     - changed clipPoly() so it doesn't indiscriminately drop the SID column
+#   11 May 2004 [Nicholas Boers]
+#     - renamed clipPoly() to clipToPoly()
+#   12 May 2004 [Nicholas Boers]
+#     - renamed clipToPoly() to joinPolys()
+#     - added support for more-robust communication between R/S-PLUS and C
+#   16 May 2004 [Nicholas Boers]
+#     - added check on thinPolys() to ensure projection = "LL"
+#     - renamed centroid() to calcCentroid()
+#     - fixed bug in addLines() and addPolys() where xlim/ylim were ignored
+#   ## VERSION 1.10 ## 16 May 2004 ############################################
+#   20 May 2004 [Nicholas Boers]
+#     - added calcConvexHull()
+#   21 May 2004 [Nicholas Boers]
+#     - cleaned up calcConvexHull()
+#     - added support for plotting NULL PolySets (i.e., if the whole PolySet
+#       is clipped
+#     - added "projection" attribute to plotMap(), to allow for plotting
+#       NULL PolySets
+#     - added bgCol argument to plotLines -- I don't know why it wasn't already
+#       there
+#     - increased the robustness of extractPolyData() -- much better now!
+#   23 May 2004 [Nicholas Boers]
+#     - finished addPoints()
+#   26 May 2004 [Nicholas Boers]
+#     - modified all stop()/warning() messages so they don't begin with
+#       a newline
+#     - added calcLength() function
+#     - modifed calcArea() so it produces a warning when given a LL data set
+#   ## VERSION 1.20 ## 30 May 2004 ############################################
+#   02 Jun 2004 [Nicholas Boers]
+#     - fixed bug in calcLength() where floating-point imprecision would cause
+#       calculations outside the domain of acos()
+#     - updated thinPolys() to support UTM
+#   03 Jun 2004 [Nicholas Boers]
+#     - updated calcArea() to handle UTM (via a conversion to LL)
+#   07 Jun 2004 [Nicholas Boers]
+#     - added makePolyFromLines() and makePolysFromData() functions; for
+#       consistency, the base of the names should be makePoly* -- added the
+#       suffix for clarity
+#     - added addLabels() function
+#   08 Jun 2004 [Nicholas Boers]
+#     - added thickenPolys() function
+#   09 Jun 2004 [Nicholas Boers]
+#     - added .calcOrientation() to determine whether vertices are clockwise
+#       or counter-clockwise -- will be used by other functions for exporting
+#       to GIS software (to prepare holes for other interfaces)
+#   10 Jun 2004 [Nicholas Boers]
+#     - updated calcCentroid() to properly handle holes; involved adding an
+#       "integrateHoles" argument and moving the code to C
+#   ## VERSION 1.30 ## 14 June 2004 ###########################################
+#   14 Jun 2004 [Nicholas Boers]
+#     - corrected bug in .createPolyProps() where warnings could be disabled
+#       and then never reenabled; plus, this disabling was being done in the
+#       middle of a loop?  Stupid!
+#     - create .calcDist() from code in calcLength()
+#     - changed the distance formula in calcLength() to the Haversine
+#     - added "intelligent" calculation of `outCapacity' for thickenPolys()
+#       to fix a bug
+#     - fixed bug in calcArea() -- it was calling wrong C function
+#     - started appendPolys() function
+#   15 Jun 2004 [Nicholas Boers]
+#     - finished appendPolys() function
+#     - S-PLUS doesn't have an atan2() function (used in .calcDist()), so
+#       modified to work around it
+#     - renamed .integreateHoles() to .mergePolys() as it now merges in
+#       all SIDs (with retrace lines) as well as merge holes
+#     - locateEvents() and locatePolys() now set their result's attribute
+#       based on the projection of the current plot
+#     - cleaned up locateEvents(); fully tested in R/S-PLUS
+#     - added new `outStatus' value for joinPolys() -- "invalid `singlePoly'"
+#   16 Jun 2004 [Nicholas Boers]
+#     - renamed addStippling() to addStipples() -- looked in a better
+#       dictionary (http://www.webster.com/), and `stipples' appears to
+#       be correct as well
+#     - renamed calcArea()'s `sumPID' argument to `onlyPID'
+#   17 Jun 2004 [Nicholas Boers]
+#     - created empty calcSummary(), calcMean(), and calcMeanRange() functions
+#     - created rollupPolys(), which will assist me in writing the above
+#       functions
+#   18 Jun 2004 [Nicholas Boers]
+#     - any functions that relied on the fixPOS() or integrateHoles() C code
+#       now use a new function, .rollupPolys()
+#     - removed .mergePolys(); replaced by .rollupPolys()
+#     - removed .integrateHoles(); replaced by .rollupPolys()
+#     - given calcSummary(), calcMean() is redundant -- removing it
+#     - finished calcMeanRange()
+#   21 Jun 2004 [Nicholas Boers]
+#     - modified calcArea() to handle the roll-up argument (removed `sumPID'
+#       argument
+#     - changed the area column of calcArea() to "area" rather than "Area"
+#     - removed default of `mean' from combineEvent()'s FUN argument
+#     - added automatic zone calculation for convUL() when proj == "LL"
+#   22 Jun 2004 [Nicholas Boers]
+#     - added `rollup' and `close' arguments to calcLength()
+#     - renamed makePolyFromLines() to makePolysFromL()
+#     - renamed makePolysFromData() to makePolysFromD()
+#   ## VERSION 1.90 ## 22 June 2004 ###########################################
+#   23 Jun 2004 [Nicholas Boers]
+#     - changed interface to calcSummary()
+#     - changed interface to combineEvents()
+#     - renamed arguments for makePolysFromL()
+#     - added `filter' argument to thickenPolys()
+#     - renamed `tolerance' to `tol' for both thickenPolys() and thinPolys()
+#   24 Jun 2004 [Nicholas Boers]
+#     - added `polyProps' to addLabels()
+#     - added `polyProps' to addPoints()
+#     - created .addProps(), which replaced .createPolyProps()
+#     - updated addLines and addPolys so that they call .addProps()
+#   25 Jun 2004 [Nicholas Boers]
+#     - renamed makePolysFromL() to convLP()
+#     - renamed makePolysFromD() to convDP()
+#     - ensured addLines(), addPolys(), plotLines(), plotMap(), plotPolys()
+#       all returned values matching documentation
+#     - removed workarounds for bugs in R versions < 1.9.0
+#   27 Jun 2004 [Nicholas Boers]
+#     - fixed bug in .plotMaps when plotting NULL PolySet (ret not found)
+#     - added convCP() function to convert contourLines() output into a PolySet
+#   29 Jun 2004 [Nicholas Boers]
+#     - fixed return statement in addPolys()
+#     - added Rowan's `contourLines()' function, used only for S-PLUS
+#     - added isIntersecting()
+#   30 Jun 2004 [Nicholas Boers]
+#     - added isConvex()
+#     - decided to move `contourLines()' back to its own file
+#   02 Jul 2004 [Nicholas Boers]
+#     - replaced some apply(..., paste, ...)'s with a single paste()
+#       expression by building the expression at run-time
+#   05 Jul 2004 [Nicholas Boers]
+#     - in calcConvexHull(), renamed C function to `calcConvexHull'
+#   06 Jul 2004 [Nicholas Boers]
+#     - added support for `mai' in plotLines, plotMap, plotPolys
+#   08 Jul 2004 [Nicholas Boers]
+#     - extensive changes to code, including:
+#       - fixed bug where default properties could replace existing
+#         properties in `polyProps'
+#       - renamed `bgCol' argument to `bg' (increase R consistency)
+#       - removed `xlab', `ylab', etc. arguments from `plot*()'
+#       - added support for `type = "n"', and changed colouring behaviour when
+#         plotting a NULL PolySet
+#       - added `projection' argument to all `plot*()' functions: supports
+#         T/F/#/"LL"/"UTM"
+#       - added warnings for when par() paremters are ignored
+#       - with reworking, now `plot*()' accounts for `sub' argument
+#       - simplified the backup/restore of par() arguments across multiple
+#         functions, because .plotMaps() and add*() now does this
+#   10 Jul 2004 [Nicholas Boers]
+#     - removed global setting of `mgp'
+#   ## VERSION 1.91 ## 12 July 2004 ###########################################
+#   13 Jul 2004 [Nicholas Boers]
+#     - sped up `.validateData' by building more expressions at run-time
+#       to prevent using []'s to grab multiple columns from data frames
+#     - bug in .addFeature() -- looking for `polys' when it should have
+#       been looking for `data'
+#     - improved handling of C function results (improved efficiency)
+#     - found serious bug in calcCentroids(); fixed (both at the C level and
+#       in the R/S code); incorrect centroids for holes
+#     - changed the interface to `.validate*', now they return a string
+#       when they fail, rather than stopping
+#     - made it so that when a .validate*() fails, it stops() in the caller
+#       rather than the validation function; improved error messages
+#     - added `.createFastIDdig()', `.createIDs', and `.preparePolyProps'
+#       to reduce redundancy in code (addLines()/addPolys())
+#     - sped up `addLines()' and `addPolys()' with "fast ID" creation
+#     - added as.EventData(), as.LocationSet(), as.PolyData(), and
+#       as.PolySet() to support `class' attribute
+#     - added is.EventData(), is.LocationSet(), is.PolyData(), and
+#       is.PolySet() to support `class' attribute
+#     - added .validateLocationSet()
+#     - added print.EventData(), print.LocationSet(), print.PolyData(), and
+#       print.PolySet() to support `class' attribute
+#     - user-accessible functions now set their output to the appropriate
+#       class
+#   14 Jul 2004 [Nicholas Boers]
+#     - added summary.EventData(), summary.LocationSet(), ... to obtain
+#       summaries, and made print.* point to those functions
+#     - fixed bug in 1.91 where addLines() wasn't creating proper PolyProps
+#       objects
+#   15 Jul 2004 [Nicholas Boers]
+#     - added new variable, `PBSprint' to indicate whether to print our
+#       class objects as summaries or as data frames
+#     - updated .validateData() to use new .createIDs function
+#     - finished all the new functions (.createIDs, etc.), including some
+#       comments
+#     - rearranged addLines() and addPolys() to take better advantage of
+#       new .createIDs, etc. functions
+#   16 Jul 2004 [Nicholas Boers]
+#     - corrected return type of .appendPolys() (it's PolySet rather than
+#       PolyData)
+#   18 Jul 2004 [Nicholas Boers]
+#     - incorporated .createIDs into several more functions
+#     - cleaned up a bunch of code
+#   ## VERSION 1.92 ## 18 July 2004 ###########################################
+#   19 Jul 2004 [Nicholas Boers]
+#     - all summary functions now report extra columns
+#     - added argument `noFactorCols' to .validateData()
+#     - fixed bug in .validateData where a single column wouldn't be tested
+#       for numeric entries
+#     - improved .validateData() by adding checks for an increasing/decreasing
+#       POS column
+#   ## VERSION 1.93 ## 21 July 2004 ###########################################
+#   22 Jul 2004 [Nicholas Boers]
+#     - added `makeTopography' to convert imported topography data into a
+#       format accepted by the `contour' function
+#   23 Jul 2004 [Nicholas Boers]
+#     - fixed bug where addPolys() not recognizing `lwd' -- `...' wasn't being
+#       passed into the `polygon' command
+#   ## VERSION 1.94 ## 25 July 2004 ###########################################
+#   26 Jul 2004 [Nicholas Boers]
+#     - print.* now call appropriate summary.* function, rather than the
+#       generic `summary' function; no functional difference, but now my
+#       scripts for building the tech. report find this dependency
+#   28 Jul 2004 [Nicholas Boers]
+#     - rewrote joinPolys()
+#   29 Jul 2004 [Nicholas Boers]
+#     - in calcLength, rollup = 2 now issues a warning and resets that
+#       argument to 3.
+#   30 Jul 2004 [Nicholas Boers]
+#     - fixed bug in isConvex() where `convex' column would contain factors
+#       in S-PLUS
+#     - fixed bug in addLabels() where it would look at data's projection
+#       for PolyData even if placement != "DATA"
+#   ## VERSION 1.99 ## 30 July 2004 ###########################################
+#   03 Aug 2004 [Nicholas Boers]
+#     - slight modifications to `makeProps'; nothing serious
+#   04 Aug 2004 [Nicholas Boers]
+#     - added .validatePolyProps() to detect factors in PolyProps object
+#     - added call to .validatePolyProps() in .addFeature, addLines, addPolys
+#   11 Aug 2004 [Nicholas Boers]
+#     - rewrote .initPlotRegion so that it only sets directly pin/plt when
+#       necessary; it sets them via mai/mar whenever possible; this fixed a
+#       bug where mai was being ignored after the initial plot
+#   19 Aug 2004 [Nicholas Boers]
+#     - renamed calcMeanRange() to calcMidRange()
+#     - changed Earth radius to 6371.3 km
+#   ## VERSION 2.00 ## 23 Aug 2004 ############################################
+#==============================================================================
+
+
+

@@ -32,6 +32,11 @@ calcSummary (polys, rollup = 3, FUN, \dots)
   greater than 1 (say \emph{n}), names the columns \code{X1}, \code{X2},
   ..., \code{X}\emph{n} and \code{Y1}, \code{Y2}, ..., \code{Y}\emph{n}.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \code{\link{calcArea}},
   \code{\link{calcCentroid}},

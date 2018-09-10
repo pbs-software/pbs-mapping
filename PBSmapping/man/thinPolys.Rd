@@ -23,6 +23,11 @@ thinPolys (polys, tol = 1, filter = 3)
   \link{PolySet} containing the thinned data.  The function recalculates
   the \code{POS} values for each polygon.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \code{\link{thickenPolys}}.
 }

@@ -61,6 +61,11 @@ addLabels (data, xlim = NULL, ylim = NULL, polyProps = NULL,
   that can subsequently reproduce the labels on the plot.  Modify this
   data frame to tweak label positions.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \code{\link{addPoints}},
   \code{\link{calcCentroid}},

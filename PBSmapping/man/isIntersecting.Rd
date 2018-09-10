@@ -29,6 +29,11 @@ isIntersecting (polys, numericResult = FALSE)
   \code{intersecting} contains the number of intersections.  Otherwise,
   it contains a Boolean value.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \code{\link{isConvex}},
   \link{PolySet}.

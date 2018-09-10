@@ -20,6 +20,11 @@
  An artificial construct to illustrate the proof of Pythagoras' Theorem
  using trigonometry.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2008-09-03}
+}
 \seealso{
   \code{\link{addPolys}},
   \code{\link{plotPolys}},

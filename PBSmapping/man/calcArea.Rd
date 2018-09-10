@@ -37,6 +37,11 @@ calcArea (polys, rollup = 3)
   missing}), and \code{area}.  If the projection equals \code{"LL"} or
   \code{"UTM"}, the units of area are square kilometres.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \code{\link{calcCentroid}},
   \code{\link{calcLength}},

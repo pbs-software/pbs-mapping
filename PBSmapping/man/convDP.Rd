@@ -33,6 +33,11 @@ convDP (data, xColumns, yColumns)
   \link{PolySet} with the same \code{PID}s as those given in \code{data}.  If
   \code{data} has an \code{SID} column, the result will include it.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \code{\link{addPoints}},
   \code{\link{plotPoints}}.

@@ -30,6 +30,11 @@ fixPOS (polys, exteriorCCW = NA)
   \link{PolySet} with the same columns as the input, except for possible
   changes to the \code{POS}, \code{X}, and \code{Y} columns.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \code{\link{closePolys}},
   \code{\link{fixBound}},

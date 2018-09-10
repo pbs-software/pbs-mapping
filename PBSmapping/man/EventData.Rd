@@ -54,6 +54,11 @@ is.EventData(x, fullValidation = TRUE)
   The \code{as.EventData} method returns an object with classes
   \code{"EventData"} and \code{"data.frame"}, in that order.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2015-04-23}
+}
 \seealso{
   \link[PBSmapping]{PolySet},
   \link[PBSmapping]{PolyData}, 

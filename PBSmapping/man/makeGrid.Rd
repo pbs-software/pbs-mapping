@@ -45,6 +45,11 @@ makeGrid(x,y,byrow=TRUE,addSID=TRUE,projection=NULL,zone=NULL)
     y_{j+1})}{(x_i, y_j), (x_(i+1), y_j), (x_(i+1), y_(j+1)),
     (x_i, y_(j+1))}.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \code{\link{addPolys}},
   \code{\link{clipPolys}},

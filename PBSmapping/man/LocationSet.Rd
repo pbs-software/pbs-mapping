@@ -53,6 +53,11 @@ of some functions, including \code{\link{print}} (if
   The \code{as.LocationSet} method returns an object with classes
   \code{"LocationSet"} and \code{"data.frame"}, in that order.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2015-04-23}
+}
 \seealso{
   \link[PBSmapping]{PolySet},
   \link[PBSmapping]{PolyData},

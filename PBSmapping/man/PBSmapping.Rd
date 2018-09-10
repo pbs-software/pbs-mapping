@@ -24,4 +24,9 @@
   installed packages with the function \code{runDemos()} in our 
   related (and recommended) package \code{PBSmodelling}.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2008-09-03}
+}
 \keyword{documentation}

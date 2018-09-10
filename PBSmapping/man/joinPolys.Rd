@@ -68,6 +68,12 @@ joinPolys(polysA,polysB=NULL,operation="INT")
   the \code{SID} column, and depending on the input, it may recalculate
   the \code{PID} column.
 }
+\author{
+  \href{http://www.angusj.com/delphi/clipper.php}{Angus Johnson}, Computer Programmer\cr\cr
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2015-03-31}
+}
 \seealso{
   \code{\link{addPolys}},
   \code{\link{appendPolys}},

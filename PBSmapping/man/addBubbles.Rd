@@ -76,7 +76,9 @@ addBubbles(events, type=c("perceptual","surface","volume"),
   \emph{Journal of Statistical Software} \bold{15}(5).
 }
 \author{
-  Denis Chabot, Maurice Lamontagne Institute, Fisheries and Oceans Canada, Mont-Joli QC
+  \href{https://profils-profiles.science.gc.ca/en/profile/denis-chabot?wbdisable=true}{Denis Chabot}, Research Scientist\cr
+  Maurice-Lamontagne Institute, Fisheries & Oceans Canada (DFO), Mont-Joli QC\cr
+  Last modified \code{Rd: 2013-04-10}
 }
 \seealso{
   \code{\link[PBSmapping]{addPolys}}, \code{\link[PBSmapping]{surveyData}}

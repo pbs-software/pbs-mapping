@@ -16,6 +16,11 @@ importEvents(EventData, projection=NULL, zone=NULL)
 \value{
   An imported \code{EventData}.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2008-08-25}
+}
 \seealso{
   \code{\link{importPolys}}, \code{\link{importLocs}}, \code{\link{importGSHHS}}, \code{\link{importShapefile}}
 }

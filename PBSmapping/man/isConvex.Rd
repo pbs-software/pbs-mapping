@@ -23,6 +23,11 @@ isConvex (polys)
   \link{PolyData} with columns \code{PID}, \code{SID} (\emph{may be missing}),
   and \code{convex}.  Column \code{convex} contains Boolean values.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \code{\link{isIntersecting}},
   \link{PolySet}.

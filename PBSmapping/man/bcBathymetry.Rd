@@ -37,6 +37,11 @@
   1957--1962. \cr
   \url{http://topex.ucsd.edu/WWW_html/mar_topo.html}
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2008-09-03}
+}
 \seealso{
   \code{\link{contour}},
   \code{\link{contourLines}},

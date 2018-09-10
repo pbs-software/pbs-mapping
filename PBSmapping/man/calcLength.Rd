@@ -34,6 +34,11 @@ calcLength (polys, rollup = 3, close = FALSE)
   \code{"LL"}, lengths are in kilometres.  Otherwise, lengths are in the
   same unit as the input \link{PolySet}.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \code{\link{calcArea}},
   \code{\link{calcCentroid}},

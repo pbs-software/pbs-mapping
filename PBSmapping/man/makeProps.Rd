@@ -31,6 +31,11 @@ makeProps(pdata,breaks,propName="col",propVals=1:(length(breaks)-1))
   \link{PolyData} with the same columns as \code{pdata} plus an
   additional column \code{propName}.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \code{\link{addLabels}},
   \code{\link{addLines}},

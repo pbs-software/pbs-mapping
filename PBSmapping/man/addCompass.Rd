@@ -39,8 +39,10 @@ addCompass(X, Y, rot="magN", cex=1,
   Magnetic North, Geomagnetic and Magnetic Poles}
 }
 \author{
-  Rowan Haigh, Research Biologist,\cr
-  Pacific Biological Station, Fisheries and Oceans Canada, Nanaimo BC
+  \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
+  Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
+  \emph{opus locus}: Institute of Ocean Sciences (IOS), Sidney BC\cr
+  Last modified \code{Rd: 2016-04-04}
 }
 \seealso{
   \code{\link[PBSmapping]{addBubbles}},

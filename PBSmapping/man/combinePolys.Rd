@@ -28,6 +28,11 @@ combinePolys (polys)
   that \code{PID}, \code{SID}, \code{POS}, \code{X} and \code{Y} appear
   first, in that order.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2007-06-06}
+}
 \seealso{
   \code{\link{dividePolys}}
 }

@@ -56,6 +56,11 @@ worldLLhigh <- .fixGSHHSWorld(worldLLhigh)
   Geophysical Research} \bold{101}, 8741--8743. \cr
   \url{http://www.soest.hawaii.edu/pwessel/gshhg/Wessel+Smith_1996_JGR.pdf}
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2015-01-22}
+}
 \seealso{
 Data:\cr
   \code{\link[PBSmapping]{bcBathymetry}},

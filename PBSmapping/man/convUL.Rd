@@ -48,7 +48,9 @@ convUL (xydata, km=TRUE, southern=NULL)
   \url{http://www.ordnancesurvey.co.uk/oswebsite/gps/docs/A_Guide_to_Coordinate_Systems_in_Great_Britain.pdf}.
 }
 \author{
-  Nicholas Boers, Dept. of Computer Science, Grant MacEwan University, Edmonton AB
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
 }
 \seealso{
   \code{\link[PBSmapping]{closePolys}},

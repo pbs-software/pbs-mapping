@@ -92,6 +92,11 @@ plotPolys (polys, xlim = NULL, ylim = NULL, projection = FALSE,
   \code{plt}, \code{mai}, and \code{mar} will change.  When the function
   terminates, these changes persist to allow for additions to the plot.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \code{\link{addLabels}},
   \code{\link{addPolys}},

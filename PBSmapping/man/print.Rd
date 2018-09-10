@@ -34,6 +34,11 @@ local(envir=.PBSmapEnv,expr={
   print(nepacLL)
 })
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \link{EventData},
   \link{LocationSet},

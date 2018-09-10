@@ -39,6 +39,11 @@
   ocean perch assessment for the west coast of Canada in 2001. \emph{Canadian
   Science Advisory Secretariat, Research Document} \bold{2001/138}, 90 pp.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2008-09-03}
+}
 \seealso{
   \code{\link{addPoints}},
   \code{\link{combineEvents}},

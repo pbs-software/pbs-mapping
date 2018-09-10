@@ -17,6 +17,11 @@ importPolys(PolySet, PolyData=NULL, projection=NULL, zone=NULL)
 \value{
   An imported PolySet with optional PolyData attribute.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2007-06-06}
+}
 \seealso{
   \code{\link{importEvents}}, \code{\link{importLocs}}, \code{\link{importGSHHS}}, \code{\link{importShapefile}}
 }

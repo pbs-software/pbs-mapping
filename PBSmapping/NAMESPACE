@@ -19,6 +19,7 @@ exportPattern("^\\.prepare")
 exportPattern("^\\.rollup")
 exportPattern("^\\.validate")
 
+export(.is.in)
 export(.mat2df)
 
 S3method(print, EventData)
@@ -39,5 +40,4 @@ importFrom("graphics", "abline", "axis", "box", "frame", "legend",
            "lines", "locator", "par", "points", "polygon", "strheight",
            "strwidth", "symbols", "text", "title")
 importFrom("stats", "median", "na.omit", "runif")
-importFrom("utils", "data", "read.table")
-
+importFrom("utils", "data", "flush.console", "read.table")

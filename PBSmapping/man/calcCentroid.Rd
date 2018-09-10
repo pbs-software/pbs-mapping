@@ -25,6 +25,11 @@ calcCentroid (polys, rollup = 3)
   \link{PolyData} with columns \code{PID}, \code{SID} (\emph{may be missing}),
   \code{X}, and \code{Y}.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \code{\link{calcArea}},
   \code{\link{calcLength}},

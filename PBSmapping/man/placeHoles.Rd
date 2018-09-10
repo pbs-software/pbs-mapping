@@ -1,55 +1,73 @@
 \name{placeHoles}
 \alias{placeHoles}
 \title{
-  Place Holes Under Correct Solids
+  Place Holes Under Solids
 }
 \description{
-  Place secondary polygons (\code{SID}s) identified as holes 
-  (counter-clockwise rotation) under \code{SID}s identified as 
-  solids (clockwise rotation) if the vertices of the holes lie 
-  completely within the vertices of the solids. 
-  This operation is performed for each primary polygon (\code{PID}).
+  Place secondary polygons identified as holes (inner contours)
+  under primary polygons identified as solids (outer contours)
+  if the vertices of the holes lie completely within the vertices of the solids. 
+  This operation is performed for each primary polygon until all holes
+  have been assigned.
 }
 \usage{
-placeHoles(polyset, minVerts=3)
+placeHoles(polyset, minVerts=3, 
+   orient=FALSE, show.progress=FALSE, unique.pid=FALSE)
 }
 \arguments{
   \item{polyset}{a valid \pkg{PBSmapping} PolySet.}
-  \item{minVerts}{minimum number of vertices required for a polygon 
+  \item{minVerts}{\code{numeric} -- minimum number of vertices required for a polygon 
     representing a hole to be retained (does not affect solids).}
+  \item{orient}{\code{logical} -- if \code{TRUE}, use each polygon's rotation 
+    to determine its nature: clockwise = solid (outer contour), counter-clockwise =
+    hole (inner contour).}
+  \item{show.progress}{\code{logical} -- if \code{TRUE}, display on the 
+    command console the progress of placing holes under solids.}
+  \item{unique.pid}{\code{logical} -- if \code{TRUE}, ignore the input PIDs
+    and redefine them from 1 to the number of solids; this inherently destroys
+    the previous organisation that a creator may have intended for the PolySet.}
 }
 \details{
-  The algorith identifies the rotation of each polygon down to the 
-  \code{SID} level using the \pkg{PBSmapping} function \code{.calcOrientation},
-  where output values of \code{1} = solids (clockwise rotation) and 
-  \code{-1} = holes (counter-clockwise rotation).
-  Then for each solid, the function tests whether each hole 
-  occurs within the solid. 
+  The algorithm identifies outer contours (solids) and inner contours (holes)
+  using either the default PBSmapping method (solids = increasing \code{"POS"},
+  holes = decreasing \code{"POS"}) or the rotational direction of the polygons
+  (solids = clockwise, holes = counter-clockwise).
+
+  It then systematically starts matching holes with solids based on their vertices 
+  being completely within the boundaries of the solid.
+  If a hole happens to match a current solid completley (all vertices on the boundary),
+  then the hole is not matched to this solid because it is a hole in another solid
+  that creates space for the current solid.
+
   To facilitate computation, the algorithm assumes that once a 
   hole is located in a solid, it will not occur in any other solid.
   This means that for each successive solid, the number of 
   candidate holes will either decrease or stay the same.
   
-  This function makes use of the \code{point.in.polygon} function 
-  contained in the package \pkg{sp}. For each hole vertex, the latter
-  algorithm returns a numeric value: \cr
-  \code{0} = hole vertex is strictly exterior to the solid; \cr
-  \code{1} = hole vertex is strictly interior to the solid; \cr
-  \code{2} = hole vertex lies on the relative interior of an edge of the solid; \cr
-  \code{3} = hole vertex coincides with a solid vertex.
+  This function makes use of the PBSmapping hidden function \code{".is.in"}
+  which uses the C code \code{"findPolys"}. The latter only returns events found
+  in a polygon (or on the boundary) but \code{.is.in} evaluates all events and 
+  returns a list containing:\cr
+  \code{"e.in"} -- events within the polygon,\cr
+  \code{"e.out"} -- events outside the polygon,\cr
+  \code{"all.in"} -- logical value of whether all events are in the polygon,\cr
+  \code{"all.out"} -- logical value of whether all events are outside the polygon,\cr
+  \code{"all.bdry"} -- logical value of whether all events occur on the boundary of the polygon
 }
 \value{
-  Returns the input PolySet where \code{SID} holes have been arranged 
-  beneath appropriate \code{SID} solids for each \code{PID}.
-}
-\references{
-  See copyright notice in \code{\link[sp]{point.in.polygon}}.
+  Returns the input PolySet where holes have been arranged 
+  beneath appropriate solids for each \code{PID} (original or redefined).
 }
 \author{
-  Rowan Haigh, Pacific Biological Station, Fisheries and Oceans Canada, Nanaimo BC.
+  \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
+  Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
+  \emph{opus locus}: Institute of Ocean Sciences (IOS), Sidney BC\cr
+  Last modified \code{Rd: 2018-09-07}
 }
 \seealso{
-  \code{\link[PBSmapping]{importShapefile}}, \code{\link[sp]{point.in.polygon}}
+  \code{\link[PBSmapping]{findPolys}}, 
+  \code{\link[PBSmapping]{importShapefile}}, 
+  \code{\link[PBSmapping]{is.PolySet}}
 }
 \keyword{manip}
 

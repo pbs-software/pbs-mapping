@@ -7,22 +7,24 @@
 }
 \usage{
 importShapefile (fn, readDBF=TRUE, projection=NULL, zone=NULL, 
-     placeholes=FALSE, minverts=3)
+   minverts=3, placeholes=FALSE, show.progress=FALSE)
 }
 \arguments{
-  \item{fn}{file name of the shapefile to import; specifying the
+  \item{fn}{\code{character} -- file name of the shapefile to import; specifying the
     extension is optional.}
-  \item{readDBF}{Boolean value; if \code{TRUE}, it also imports the 
-    \code{.dbf} (a database containing the feature attributes) associated with the
-    shapefile.}
-  \item{projection}{optional \code{projection} attribute to override the
+  \item{readDBF}{\code{logical} --  if \code{TRUE}, import the associated
+    \code{".dbf"} (database containing feature attributes) and add as an attribute
+    to the output \code{PolySet} | \code{EventData} object.}
+  \item{projection}{\code{character} -- optional \code{projection} attribute to override the
     internally derived value.}
-  \item{zone}{optional \code{zone} attribute to override the default
+  \item{zone}{\code{numeric} -- optional \code{zone} attribute to override the default
     value of \code{NULL}.}
-  \item{placeholes}{logical: if \code{TRUE} then for every \code{PID} 
-    identify solids and holes, and place holes under appropriate solids.}
-  \item{minverts}{minimum number of vertices required for a polygon 
+  \item{minverts}{\code{numeric} -- minimum number of vertices required for a polygon 
     representing a hole to be retained (does not affect solids).}
+  \item{placeholes}{\code{logical} --  if \code{TRUE} then for every \code{PID} 
+    identify solids and holes, and place holes under appropriate solids.}
+  \item{show.progress}{\code{logical} -- if \code{TRUE}, display on the 
+    command console the progress of placing holes under solids.}
 }
 \details{
   This routine imports an ESRI shapefile (\code{.shp}) into either a
@@ -69,11 +71,20 @@ importShapefile (fn, readDBF=TRUE, projection=NULL, zone=NULL,
   file, \code{xml} (metadata from an \code{.xml} file), \code{PolyData} 
   (data from the attribute database \code{.dbf}), and \code{zone} (UTM zone).
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr\cr
+  \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
+  Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
+  \emph{opus locus}: Institute of Ocean Sciences (IOS), Sidney BC\cr
+  Last modified \code{Rd: 2018-09-07}
+}
 \seealso{
-  \code{\link[PBSmapping]{importGSHHS}}, \code{\link[PBSmapping]{importEvents}}, 
-  \code{\link[PBSmapping]{importLocs}}, \code{\link[PBSmapping]{importPolys}}, 
-  \code{\link[PBSmapping]{placeHoles}} \cr
-  In the package \pkg{sp}, see the function \code{\link[sp]{point.in.polygon}}
+  \code{\link[PBSmapping]{importGSHHS}},
+  \code{\link[PBSmapping]{importEvents}},
+  \code{\link[PBSmapping]{importLocs}},
+  \code{\link[PBSmapping]{importPolys}},
+  \code{\link[PBSmapping]{placeHoles}}
 }
 \keyword{file}
 

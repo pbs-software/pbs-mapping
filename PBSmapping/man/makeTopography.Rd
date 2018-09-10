@@ -1,6 +1,6 @@
 \name{makeTopography}
 \alias{makeTopography}
-\title{Make Topography Data From Freely Available Online Data}
+\title{Make Topography Data from Online Source}
 \description{
   Make topography data suitable for the \code{\link{contour}} and
   \code{\link{contourLines}} functions using freely available global
@@ -10,39 +10,46 @@
 makeTopography (dat, digits=2, func=NULL)
 }
 \arguments{
-  \item{dat}{data frame with three optionally-named columns: \code{X},
-    \code{Y}, and \code{Z}.  The columns must appear in that order.}
-  \item{digits}{integer indicating the precision to be used by the function
-    \code{round} on (X,Y) values.}
-  \item{func}{function to summarize Z if (X,Y) points are duplicated. 
+  \item{dat}{\code{data.frame} -- data with three optionally-named columns: \code{x},
+    \code{y}, and \code{z}.  The columns must appear in that order.}
+  \item{digits}{\code{numeric} -- integer indicating the precision to be used by the function
+    \code{round} on \code{(x,y)} values.}
+  \item{func}{\code{function} -- to summarize \code{z} if \code{(x,y)} points are duplicated. 
     Defaults to \code{mean()} if no function is specified.}
 }
 \details{
-  Data obtained through the acquisition form at
-  \url{http://topex.ucsd.edu/cgi-bin/get_data.cgi} is suitable for this
-  function.  \code{\link{read.table}} will import its ASCII files into
-  R/S, creating the \code{data} argument for this function.
+  Suitable data can be obtained through the acquisition form at:\cr
+  \url{http://topex.ucsd.edu/cgi-bin/get_data.cgi}.\cr
+  The function \code{\link{read.table}} will import dowloaded ASCII files
+  into R/S, creating objects suitable for the argument \code{dat} in \code{makeTopography}.
 
   When creating data for regions with longitude values spanning
   -180\eqn{^\circ}{ degrees} to 0\eqn{^\circ}{ degrees}, consider
-  subtracting 360 from the result's X coordinates (\code{x}).
+  subtracting 360 from the result's longitude coordinates (\code{x}).
   
   When creating bathymetry data, consider negating the result's
   elevations (\code{z}) to give depths positive values.
   
-  Combinations of (X,Y) do not need to be complete (\code{z[x,y]=NA}) or 
-  unique (\code{z[x,y]=func(Z[x,y])}).
+  Combinations of \code{(x,y)} do not need to be complete (\code{z[x,y]=NA}) or 
+  unique (\code{z[x,y] = func(z[x,y])}).
 }
 \value{
-  List with elements \code{x}, \code{y}, and \code{z}.  \code{x} and
+  List with elements \code{x}, \code{y}, and \code{z}. Elements \code{x} and
   \code{y} are vectors, while \code{z} is a matrix with rownames \code{x}
   and colnames \code{y}.
-  \code{\link{contour}} and \code{\link{contourLines}} expect data
-  conforming to this list format.
+  The functions \code{\link{contour}} and \code{\link{contourLines}}
+  expect data conforming to this list format.
 }
 \seealso{
-  \code{graphics::contour}, \code{grDevices::contourLines},
-  \code{\link{convCP}}.
+  \code{\link[graphics]{contour}} in \pkg{graphics},\cr
+  \code{\link[grDevices]{contourLines}} in \pkg{grDevices}, and \cr
+  \code{\link[PBSmapping]{convCP}} in \pkg{PBSmapping}.
+}
+\author{
+  \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
+  Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
+  \emph{opus locus}: Institute of Ocean Sciences (IOS), Sidney BC\cr
+  Last modified \code{Rd: 2018-09-10}
 }
 \examples{
 local(envir=.PBSmapEnv,expr={
@@ -64,7 +71,7 @@ local(envir=.PBSmapEnv,expr={
   alCP <- convCP(alCL)
   alPoly <- alCP$PolySet
   attr(alPoly,"projection") <- "LL"
-  plotMap(alPoly,type="n")
+  plotMap(alPoly, type="n", cex.axis=1.2, cex.lab=1.5)
   addLines(alPoly,col=icol)
   data(nepacLL,envir=.PBSmapEnv)
   addPolys(nepacLL,col="gold")

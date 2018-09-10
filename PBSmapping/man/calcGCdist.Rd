@@ -60,8 +60,10 @@ calcGCdist(lon1, lat1, lon2, lat2, R=6371.2)
   \url{http://www.movable-type.co.uk/scripts/latlong.html}
 }
 \author{
-  Rowan Haigh, Research Biologist,\cr
-  Pacific Biological Station, Fisheries and Oceans Canada, Nanaimo BC
+  \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
+  Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
+  \emph{opus locus}: Institute of Ocean Sciences (IOS), Sidney BC\cr
+  Last modified \code{Rd: 2017-06-22}
 }
 \note{
   If one uses the north geomagnetic pole as an end point, 

@@ -41,6 +41,11 @@ findCells (events, polys, includeBdry=NULL)
 \value{
   \link{LocationSet} that links events with polygons.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2014-12-15}
+}
 \seealso{
   \code{\link{findPolys}},
   \code{\link{makeGrid}},

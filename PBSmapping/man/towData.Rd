@@ -34,6 +34,11 @@
   Island, September 15 - October 2, 2001. \emph{Canadian Technical Report of
   Fisheries and Aquatic Sciences} \bold{2421}, 60 pp.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2008-09-03}
+}
 \seealso{
   \code{\link{makeProps}},
   \link{PolyData},

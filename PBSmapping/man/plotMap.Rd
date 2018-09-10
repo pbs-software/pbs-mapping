@@ -97,7 +97,9 @@ plotMap (polys, xlim = NULL, ylim = NULL, projection = TRUE,
   terminates, these changes persist to allow for additions to the plot.
 }
 \author{
-  Nicholas Boers, Dept. of Computer Science, Grant MacEwan University, Edmonton AB
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
 }
 \seealso{
   \code{\link[PBSmapping]{addLabels}},

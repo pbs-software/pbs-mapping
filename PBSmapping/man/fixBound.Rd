@@ -25,6 +25,11 @@ fixBound (polys, tol)
   \link{PolySet} identical to the input, except for possible changes in
   the \code{X} and \code{Y} columns.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \code{\link{closePolys}},
   \code{\link{fixPOS}},

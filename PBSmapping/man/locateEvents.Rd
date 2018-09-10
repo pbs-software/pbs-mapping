@@ -38,6 +38,11 @@ locateEvents (EID, n = 512, type = "p", \dots)
   \code{projection} attribute equal to the map's projection.  The
   function does not set the \code{zone} attribute.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2007-06-06}
+}
 \seealso{
   \code{\link{addPoints}},
   \code{\link{combineEvents}},

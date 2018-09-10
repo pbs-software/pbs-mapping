@@ -51,7 +51,9 @@ importGSHHS(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
   A \code{PolySet} with a \code{PolyData} attribute.
 }
 \author{
-  Nicholas Boers, Computer Science, Grant MacEwan University, Edmonton AB
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2015-02-16}
 }
 \seealso{
   \code{\link[PBSmapping]{importEvents}}, \code{\link[PBSmapping]{importLocs}}, 

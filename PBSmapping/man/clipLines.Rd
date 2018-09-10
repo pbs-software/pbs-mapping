@@ -26,6 +26,11 @@ clipLines (polys, xlim, ylim, keepExtra = FALSE)
   removed.  A new column \code{oldPOS} records the original \code{POS}
   value for each vertex.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \code{\link{clipPolys}},
   \code{\link{fixBound}}.

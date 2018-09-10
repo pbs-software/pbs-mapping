@@ -42,6 +42,11 @@ appendPolys (polys, mat, PID = NULL, SID = NULL, isHole = FALSE)
   \link{PolySet} containing \code{mat} appended to \code{polys}.  The
   function retains attributes from \code{polys}.
 }
+\author{
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+  Last modified \code{Rd: 2013-04-10}
+}
 \seealso{
   \code{\link{addPolys}},
   \code{\link{clipPolys}},
