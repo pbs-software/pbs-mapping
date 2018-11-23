@@ -6,13 +6,15 @@
   them so that Eastern Canada appears to the west of Western Europe.
 }
 \usage{
-refocusWorld (polys, xlim = NULL, ylim = NULL)
+refocusWorld (polys, xlim=NULL, ylim=NULL, clip.AN=TRUE)
 }
 \arguments{
-  \item{polys}{\link[PBSmapping]{PolySet} with one or more polygons; typically
+  \item{polys}{\code{PolySet} -- object with one or more polygons; typically
     \code{worldLL} or \code{worldLLhigh} (\emph{required}).}
-  \item{xlim}{range of X-coordinates.}
-  \item{ylim}{range of Y-coordinates.}
+  \item{xlim}{\code{numeric} -- range of X-coordinates.}
+  \item{ylim}{\code{numeric} -- range of Y-coordinates.}
+  \item{clip.AN}{\code{logical} -- if \code{TRUE}, clip expanded Antarctica to 
+    \code{'xlim'} of refocused polygons other than Antarctica and to user-defined/default \code{'ylim'}.}
 }
 \details{
   This function accepts a \link[PBSmapping]{PolySet} containing one or more polygons
@@ -31,7 +33,16 @@ refocusWorld (polys, xlim = NULL, ylim = NULL)
 \author{
   \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
   MacEwan University, Edmonton AB\cr
-  Last modified \code{Rd: 2013-04-10}
+
+  \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
+  Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
+  \emph{locus opus}: Institute of Ocean Sciences (IOS), Sidney BC\cr
+  Last modified \code{Rd: 2018-10-26}
+}
+\note{
+  The Antarctic polygon is treated as a special case in that it is expanded longitudinally
+  by duplicating it to the West and East of the base polygon. The expanded Antarctica is 
+  then clipped to the limits of the plot, or not if \code{'clip.NA=FALSE'}.
 }
 \seealso{
   \code{\link[PBSmapping]{joinPolys}}

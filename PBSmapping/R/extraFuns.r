@@ -14,6 +14,8 @@
 ##  calcGCdist...........Calculate great-circle distance
 ##  makeTopography.......Make topography data suitable for contourLines()
 ##  placeHoles...........Place holes under correct solids
+##  rotateEvents.........Rotate EventData clockwise around a central point
+##  rotatePolys..........Rotate PolySet clockwise around a central point
 ##------------------------------------------------
 
 
@@ -436,4 +438,174 @@ placeHoles = function(polyset, minVerts=3,
 	return(newpoly)
 }
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~placeHoles
+
+
+## rotateEvents--------------------------2018-11-15
+## Rotate EventData clockwise around a central point.
+## ---------------------------------------------RH
+rotateEvents = function(data, angle=40, centroid=c(500,5700),
+   proj.out, zone, plot=FALSE, keep.extra=FALSE, ...)
+{
+	data = .validateEventData(data)
+	if (is.null(angle)||is.na(angle)||!is.numeric(angle))
+		stop("Supply a numeric angle for rotation (clockwise)")
+	proj = attributes(data)$projection
+	if (missing(proj.out))
+		proj.out = proj
+	if (!missing(zone) && is.numeric(zone))
+		attr(data, "zone") = zone
+
+	keep = data[,c("X","Y")]
+	names(keep)[names(keep) %in% c("X","Y")] = c("X0","Y0")
+	if (proj=="LL") {
+		data = convUL(data)
+		keep = cbind(keep, data[,c("X","Y")])
+		names(keep)[names(keep) %in% c("X","Y")] = c("uX0","uY0")
+	}
+	zone = attributes(data)$zone
+	if (is.null(zone)||is.na(zone))
+		zone = 9
+	if (is.null(centroid)||is.na(centroid))
+		centroid = c(mean(range(data$X,na.rm=TRUE)), mean(range(data$Y,na.rm=TRUE)))
+
+	radian =  pi * (-angle)/180   ## rotate clockwise
+	R      = matrix(c(cos(radian),-sin(radian),sin(radian),cos(radian)), nrow=2, byrow=TRUE)
+
+	data$X = data$X - centroid[1]
+	data$Y = data$Y - centroid[2]
+	keep   = cbind(keep, data[,c("X","Y")])
+	names(keep)[names(keep) %in% c("X","Y")] = c("aX","aY") ## adjusted
+
+	XYrot  = t(R %*% t(data[,c("X","Y")]))
+	colnames(XYrot) = c("X","Y")
+	keep   = cbind(keep, XYrot)
+	names(keep)[names(keep) %in% c("X","Y")] = c("tX","tY") ## transformed
+
+	data$X = XYrot[,"X"] + centroid[1]
+	data$Y = XYrot[,"Y"] + centroid[2]
+	keep   = cbind(keep, data[,c("X","Y")])
+	names(keep)[names(keep) %in% c("X","Y")] = c("rX","rY") ## rotated
+
+	if (proj=="LL" & proj.out=="LL"){
+		data = convUL(data)
+	}
+	projection = attributes(data)$projection ## collecting proj and zone for rotation redundant but just in case
+
+	if (keep.extra) {
+		atts = attributes(data)
+		atts.keep = atts[setdiff(names(atts),c("names","row.names"))]
+		data = cbind(data,keep)
+		atts.poly = attributes(data)
+		attributes(data) = c(atts.poly[setdiff(names(atts.poly),names(atts.keep))], atts.keep)
+	}
+	if (plot){
+		xlim = extendrange(data$X,f=0.5); ylim = extendrange(data$Y,f=0.1)
+		plotPoints(data, pch=20, col="red", projection=projection, xlim=xlim, ylim=ylim, ...) ## just for testing
+	}
+	rotation = list()
+	collect  = c("angle","radian","centroid","R","projection","zone")
+	for (i in collect)
+		rotation[[i]] = get(i)
+	attr(data, "rotation") = rotation
+	invisible(return(data))
+}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~rotateEvents
+
+
+## rotatePolys--------------------------2018-11-15
+## Rotate PolySet clockwise around a central point.
+## ---------------------------------------------RH
+rotatePolys = function(polys, angle=40, centroid=c(500,5700),
+   proj.out, zone, xlim=c(-135,-121.5), ylim=c(47,56), plot=FALSE, keep.extra=FALSE, ...)
+{
+	polys  = .validatePolySet(polys)
+	if (is.null(angle)||is.na(angle)||!is.numeric(angle))
+		stop("Supply a numeric angle for rotation (clockwise)")
+	proj   = attributes(polys)$projection
+	if (missing(proj.out))
+		proj.out = proj
+	if (!missing(zone) && is.numeric(zone))
+		attr(polys, "zone") = zone
+
+	xylim = list()
+	if (is.null(xlim)||is.na(xlim))
+		xlim = quantile(seq(min(polys$X),max(polys$X),len=1000),c(0.25,0.75))
+	if (is.null(ylim)||is.na(ylim))
+		ylim = quantile(seq(min(polys$Y),max(polys$Y),len=1000),c(0.25,0.75))
+	xybox   = as.PolySet(data.frame(
+		PID  = rep(1,4), POS=1:4, X = xlim[c(1,1,2,2)], Y = ylim[c(1,2,2,1)] ), projection=proj)
+	xylim[[proj]] = list(xlim=xlim, ylim=ylim, xybox=xybox)
+
+	keep    = polys[,c("X","Y")]
+	names(keep)[names(keep) %in% c("X","Y")] = c("X0","Y0")
+	if (proj=="LL") {
+		polys = convUL(polys)
+		keep  = cbind(keep, polys[,c("X","Y")])
+		names(keep)[names(keep) %in% c("X","Y")] = c("uX0","uY0")
+		attr(xybox, "zone") = attributes(polys)$zone
+		xybox = convUL(xybox)
+		xylim[[attributes(xybox)$projection]] = list(xlim=range(xybox$X), ylim=range(xybox$Y), xybox=xybox)
+	}
+	zone = attributes(polys)$zone
+	if (is.null(zone)||is.na(zone))
+		zone = 9
+	if (is.null(centroid)||is.na(centroid))
+		centroid = c(mean(range(polys$X,na.rm=TRUE)), mean(range(polys$Y,na.rm=TRUE)))
+
+	radian  =  pi * (-angle)/180   ## rotate clockwise
+	R       = matrix(c(cos(radian),-sin(radian),sin(radian),cos(radian)), nrow=2, byrow=TRUE)
+
+	polys$X = polys$X - centroid[1]
+	polys$Y = polys$Y - centroid[2]
+	keep    = cbind(keep, polys[,c("X","Y")])
+	names(keep)[names(keep) %in% c("X","Y")] = c("aX","aY") ## adjusted
+
+	XYrot   = t(R %*% t(polys[,c("X","Y")]))
+	colnames(XYrot) = c("X","Y")
+	keep    = cbind(keep, XYrot)
+	names(keep)[names(keep) %in% c("X","Y")] = c("tX","tY") ## transformed
+
+	polys$X = XYrot[,"X"] + centroid[1]
+	polys$Y = XYrot[,"Y"] + centroid[2]
+	keep    = cbind(keep, polys[,c("X","Y")])
+	names(keep)[names(keep) %in% c("X","Y")] = c("rX","rY") ## rotated
+
+	xybox$X = xybox$X - centroid[1]
+	xybox$Y = xybox$Y - centroid[2]
+	boxrot  = t(R %*% t(xybox[,c("X","Y")]))
+	colnames(boxrot) = c("X","Y")
+	xybox$X = boxrot[,"X"] + centroid[1]
+	xybox$Y = boxrot[,"Y"] + centroid[2]
+	xylim[["rot"]] = list(xlim=range(xybox$X), ylim=range(xybox$Y), xybox=xybox)
+	xylim[["out"]] = xylim[["rot"]]
+
+	if (proj=="LL" & proj.out=="LL"){
+		polys = convUL(polys)
+		attr(xybox, "zone") = attributes(polys)$zone
+		xybox = convUL(xybox)
+		xylim[["out"]] = list(xlim=range(xybox$X), ylim=range(xybox$Y), xybox=xybox)
+	}
+	if (keep.extra) {
+		atts  = attributes(polys)
+		atts.keep = atts[setdiff(names(atts),c("names","row.names"))]
+		polys = cbind(polys,keep)
+		atts.poly = attributes(polys)
+		attributes(polys) = c(atts.poly[setdiff(names(atts.poly),names(atts.keep))], atts.keep)
+	}
+	if (plot){
+		plotMap(polys, col="green", xlim=xylim$out$xlim, ylim=xylim$out$ylim, ...) ## just for testing
+		addPolys(xybox, border="red", lwd=2)
+	}
+	projection = attributes(polys)$projection ## collecting proj and zone for rotation redundant but just in case
+
+	if (!keep.extra)
+		xylim = xylim[c(1, length(xylim))]
+	rotation = list()
+	collect  = c("angle","radian","centroid","R","xylim","projection","zone")
+	for (i in collect)
+		rotation[[i]] = get(i)
+	attr(polys, "rotation") = rotation
+	invisible(return(polys))
+}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~rotatePolys
 

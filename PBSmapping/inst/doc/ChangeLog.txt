@@ -7,6 +7,20 @@ Authors:  JTS = Jon T. Schnute
           DC  = Denis Chabot
 -----------------------------------
 
+2.72.0 (2018-11-23) [Rcheck=T, Rbuild=T]
+  * R code
+    + Modified function `makeGrid' to alternatively construct a regular hexagonal tesselation. (RH 181120)
+      - Default: type='square'; alternative: type='hexagon'; no triangular tesselation at present.
+      - The hexagonal grid can either be by row (pointy topped) or by column (flat topped).
+    + Add new functions `rotatePolys' and `rotateEvents' to rotate maps clockwise. (RH 181115)
+      - Suggestion from one of the reviewers of the Redstripe Rockfish assessment.
+      - Spurred by implementation of ggplot's annoying ability to rotate maps in PBS groundfish package `gfsynopsis'.
+
+2.71.1 (2018-10-26) [Rcheck=F, Rbuild=F]
+  * R code
+    + Modified function `refocusWorld' (RH 181026)
+      - Added in new code to detect Antarctica, expand it, and clip it.
+
 2.71.0 (2018-09-07) [Rcheck=T, Rbuild=F]
   * R code
     + Modified function `.validateData' (RH 180910)

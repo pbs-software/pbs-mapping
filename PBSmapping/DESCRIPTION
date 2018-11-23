@@ -1,6 +1,6 @@
 Package:    PBSmapping
-Version:    2.71.0
-Date:       2018-09-10
+Version:    2.72.0
+Date:       2018-11-23
 Title:      Mapping Fisheries Data and Spatial Analysis Tools
 Authors@R: c(
    person(c("Jon", "T."), "Schnute", role = "aut", email = "schnutej-dfo@shaw.ca"),
