@@ -80,7 +80,7 @@ rotateEvents(data, angle=40, centroid=c(500,5700),
   \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
   Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
   \emph{locus opus}: Institute of Ocean Sciences (IOS), Sidney BC\cr
-  Last modified \code{Rd: 2018-11-23}
+  Last modified \code{Rd: 2019-03-14}
 }
 \note{
   The map rotation algorithm is not heavily tested at this time.
@@ -90,15 +90,16 @@ rotateEvents(data, angle=40, centroid=c(500,5700),
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link[PBSmapping]{as.PolySet}},
-\code{\link[PBSmapping]{clipPolys}},
-\code{\link[PBSmapping]{nepacLL}},
-\code{\link[PBSmapping]{plotMap}},
-\code{\link[PBSmapping]{plotPoints}},
-\code{\link[PBSmapping]{refocusWorld}},
-\code{\link[PBSmapping]{surveyData}}
+In package \pkg{PBSmapping}:\cr
+  \code{as.PolySet} in \link[PBSmapping]{PolySet},
+  \code{\link[PBSmapping]{clipPolys}},
+  \code{\link[PBSmapping]{nepacLL}},
+  \code{\link[PBSmapping]{plotMap}},
+  \code{\link[PBSmapping]{plotPoints}},
+  \code{\link[PBSmapping]{refocusWorld}},
+  \code{\link[PBSmapping]{surveyData}}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{manip}% use one of  RShowDoc("KEYWORDS")
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+

@@ -11,17 +11,17 @@
 \method{summary}{PolySet}(object, \dots)
 }
 \arguments{
-  \item{object}{a PBS Mapping object, such as EventData, a LocationSet,
-    PolyData, or a PolySet.}
-  \item{\dots}{further arguments passed to or from other methods.}
+  \item{object}{\code{object} -- a PBSmapping object: EventData, LocationSet,
+    PolyData, or PolySet.}
+  \item{\dots}{\code{dots} -- further arguments passed to or from other methods.}
 }
 \description{
   \code{summary} method for PBS Mapping classes.
 }
 \details{
   After creating a list of summary statistics, this function assigns the
-  class \code{"summary.PBS"} to the output in order to accomplish
-  formatted printing via \code{\link{print.summary.PBS}}.
+  class \code{'summary.PBS'} to the output in order to accomplish
+  formatted printing via \code{print.summary.PBS}.
 }
 \value{
   A list of summary statistics.
@@ -37,14 +37,15 @@ local(envir=.PBSmapEnv,expr={
 \author{
   \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
   MacEwan University, Edmonton AB\cr
-  Last modified \code{Rd: 2013-04-10}
+  Last modified \code{Rd: 2019-03-14}
 }
 \seealso{
-  \link{EventData},
-  \link{LocationSet},
-  \code{\link{PBSprint}},
-  \link{PolyData},
-  \link{PolySet}.
+In package \pkg{PBSmapping}:\cr
+  \link[PBSmapping]{EventData},
+  \link[PBSmapping]{LocationSet},
+  \link[PBSmapping]{PolyData},
+  \link[PBSmapping]{PolySet},
+  \code{\link[PBSmapping]{PBSprint}}
 }
 \keyword{methods}
 

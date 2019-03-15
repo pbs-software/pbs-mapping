@@ -7,6 +7,23 @@ Authors:  JTS = Jon T. Schnute
           DC  = Denis Chabot
 -----------------------------------
 
+2.72.1 (2019-03-14) [Rcheck=T, Rbuild=T]
+  * C code
+    + Removed 'undeclared' SEXP variables from `importGSHHS' (see below) because they had been defined on lines 62:63. (RH 190314)
+      - RH fumbling around in C lead to R crashing when importGSHHS() was called.
+    + Changed the PROTECT and UNPROTECT calls in `clipperWrapper.cpp' and `convGSHHS.c'. (RH 190313)
+      - Disabled 'protectCount' in `clipperWrapper.cpp' because CRAN's rchk cannot determine whether stacks are imbalanced.
+      - Added undeclared SEXP variables to function `importGSHHS' in `convGSHHS.c'.
+      - Updated copyright date ranges in relevant C files.
+  * R code
+    + Modified function `refocusWorld' for datasets that don't extend into Antaractica, e.g. borders (RH 190314)
+      - Added line 'if (any(is.Ant)) {' before processing polygons with >100 vertices that lie south of -60 degrees latitude.
+    + Changed `is.na()' to `all(is.na())' in function addBubbles. (RH 190313)
+      - Rdevcheck choked on this example, but this may be only because it is the first example and there is another issue.
+    + Modified function `makeGrid' to create hexagons in a pattern consistent with that of rectangles. (RH 190104)
+      - If argument `byrow=T', rectangles and hexagons have PIDs that increment by column, otherwise by row.
+      - Changed default value of argument `type' from `square' to `rectangle'.
+
 2.72.0 (2018-11-23) [Rcheck=T, Rbuild=T]
   * R code
     + Modified function `makeGrid' to alternatively construct a regular hexagonal tesselation. (RH 181120)

@@ -1,5 +1,5 @@
 ##==============================================================================
-## Copyright (C) 2003-2018  Fisheries and Oceans Canada
+## Copyright (C) 2003-2019  Fisheries and Oceans Canada
 ## Nanaimo, British Columbia
 ## This file is part of PBS Mapping.
 ##
@@ -2639,10 +2639,10 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 	gshhsDB.name = basename(substitute(gshhsDB))
 	isBorder = grepl("borders",gshhsDB.name)
 
-	#-----FORMAT-BORDERS-CHANGES-------------------
+	##-----FORMAT-BORDERS-CHANGES-------------------
 	## Sometimes border longitudes lie between (-180,180) or (0,360).
 	## Easiest solution is to import all and use refocusWorld.
-	#----------------------------------------------
+	##----------------------------------------------
 	if (isBorder) {
 		.checkClipLimits(c(xlim, ylim))
 		#DBdir  = dirname(substitute(gshhsDB))
@@ -2652,7 +2652,6 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 			as.integer(maxLevel), as.integer(n), PACKAGE = "PBSmapping")
 		xPS  = refocusWorld(as.PolySet(as.data.frame(xres),projection="LL"),xlim=xlim,ylim=ylim)
 		if (is.null(xPS) || !length(xPS$PID)) return(NULL)
-#browser()
 		attr(xPS, "PolyData") <- attr(xres, "PolyData")
 		if (useWest) xlim <- xlim - 360.
 		if (!all(xlim==attributes(xPS)$rf.xlim)) {  ## refocusWorld adjusts xlims
@@ -2661,11 +2660,11 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 		}
 		return(xPS)
 	}
-	#----------------------------------------------
+	## ----------------------------------------------
 	## Headers in GSHHS database range from 0 to 360 while the underlying data
 	## range from -180 to 180; if xlim spans the globe use c(0,360) and 
 	## refocusWorld the world
-	#----------------------------------------------
+	## ----------------------------------------------
 	xlim.orig <- NULL
 	if (abs(diff(xlim)) >= 360) {
 		xlim.orig <- xlim
@@ -2673,7 +2672,6 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 			as.integer(maxLevel), as.integer(n), PACKAGE = "PBSmapping")
 		xPS  = refocusWorld(as.PolySet(as.data.frame(xres),projection="LL"),xlim=xlim,ylim=ylim)
 		if (is.null(xPS) || !length(xPS$PID)) return(NULL)
-#browser();return()
 		PolyData    <- attr(xres, "PolyData")
 		clipAsPolys <- attr(xres, "clipAsPolys")
 		if (useWest) xlim <- xlim - 360.
@@ -2683,17 +2681,17 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 		}
 	}
 	else {
-		#----------------------------------------------
+		## ----------------------------------------------
 		## Try to subset the workd using the C code (tricky)
 		## Set up limits: for lon, (-20, 360)
-		#----------------------------------------------
+		## ----------------------------------------------
 		limits <- list(c(xlim, ylim))
 		.checkClipLimits(limits[[1]])
 		overlap = ifelse(grepl("gshhs",gshhsDB.name),-20.,0.)
 		nxlim   = normAngle(xlim)
 
 		## Check if xlim spans the Greenwich meridian
-		#----------------------------------------------
+		## ----------------------------------------------
 		green0 = (nxlim[1] >= nxlim[2]) | nxlim[2] > 340.
 		green1 = nxlim[1]==0  && grepl("gshhs",gshhsDB.name)
 		green2 = nxlim[2]==0  && grepl("gshhs",gshhsDB.name)
@@ -2721,7 +2719,6 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 			}
 		}
 		isWest = isitWest(limits[[1]][1:2]) # defined solely by user's xlim
-#browser();return()
 
 		## Initilialize
 		x = xbit = list()
@@ -2729,21 +2726,19 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 		clipAsPolys = logical()
 		PolyData = data.frame()
 
-		#Go through 1 or 2 limits, depending on whether `xlim' includes 0 degrees
-		#----------------------------------------------
+		## Go through 1 or 2 limits, depending on whether `xlim' includes 0 degrees
+		## ----------------------------------------------
 		for (i in 1:length(limits)) {
 			.checkClipLimits(limits[[i]])
 			## return an R object -- C call unfortunately converts western hemisphere to negative
 			#xres <- .Call("importGSHHS", as.character(gshhsDB), as.numeric(c(0,360,0,90)), as.integer(maxLevel), as.integer(n), PACKAGE = "PBSmapping") # debug only
-			#browser();return()
 			xres <- .Call("importGSHHS", as.character(gshhsDB), as.numeric(limits[[i]]),
 				as.integer(maxLevel), as.integer(n), PACKAGE = "PBSmapping")
 			if (is.null(xres) || !length(xres$PID)) next
-#if(i==2){browser();return()}
 
 			## Attempt to reverse the mess created by the C-code.
 			## If xlim spans the Internation Date Line but not Greenwich
-			#----------------------------------------------
+			## ----------------------------------------------
 			dateline = (normAngle(xlim[1]) >= 45. & normAngle(xlim[2]) <= 315.) & !green
 			#if ( any(is.element(c(180,-180),floor(limits[[i]][1]):ceiling(limits[[i]][2]))) & !green ) {
 			if (dateline) {
@@ -2752,10 +2747,9 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 				xmove = is.element(xres[["PID"]],pneg)
 				xres[["X"]][xmove] = normAngle(xres[["X"]][xmove])
 			}
-#browser();return()
 			#isWestMess = median(xres[["X"]]) < 0  ## `isWestMess' can be different than `isWest'
 
-			#collect attributes also from each C call
+			## Collect attributes also from each C call
 			pdata <- as.data.frame(attr(xres, "PolyData"))
 			clipAsPolys <- c(clipAsPolys, attr(xres, "clipAsPolys"))
 
@@ -2775,8 +2769,8 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 			PolyData = rbind(PolyData,pdata)
 			xbit[[i]] = xres  ## collect the separate results for debugging only
 		}
-#browser();return()
-		#if ( "PBSmodelling" %in% rownames(installed.packages()) ) { # primarily for debugging
+		## Code to activate when debugging
+		#if ( "PBSmodelling" %in% rownames(installed.packages()) ) {
 		#	if ( exists("XBIT",envir=.PBSmapEnv) )
 		#		PBSmodelling::tget(XBIT, tenv=.PBSmapEnv) else XBIT = list()
 		#	XBIT[[gshhsDB.name]] = xbit
@@ -2786,10 +2780,10 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 		if (length(x)==0 || !length(x$PID))
 			return(NULL)
 
-		## headers in the GSHHS database range from 0 to 360 while the underlying data
-		## ranges from -180 to 180; if our xlim > 180, shift it
+		## Headers in the GSHHS database range from 0 to 360 while the underlying
+		## data ranges from -180 to 180; if our xlim > 180, shift it
 		xoff = 0.
-		#else if (max(xlim) > 180) { # too harsh for places like NZ
+		#else if (max(xlim) > 180) { ## too harsh for places like NZ
 		if (median(xlim) > 180) {
 			xlim.orig <- xlim
 			if (useWest) {
@@ -2804,11 +2798,10 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 
 		## Convert the list to a PolySet
 		xPS <- as.PolySet(as.data.frame(x), projection = "LL")
-	} #----- end else 
-#browser();return()
+	} ##----- end else 
 
 	## Clip the PolySet
-	#----------------------------------------------
+	## ----------------------------------------------
 	if (any(clipAsPolys))
 		xPS <- clipPolys(xPS, xlim=xlim, ylim=ylim)
 	else
@@ -3393,14 +3386,15 @@ locatePolys <- function(pdata, n = 512, type = "o", ...)
 }
 
 
-## makeGrid-----------------------------2018-11-20
+## makeGrid-----------------------------2019-01-04
 ## Make a regular tesselation (default squares)
 ## The code checks the Xs and Ys for errors, 
 ## and then generates the Xs and Ys.
-## Hexagonal tesselation added 181120 (RH)
+## Hexagonal tesselation added (RH 181120)
+## Changed hexagon orientation to match rectangles when byrow=T (RH 190104)
 ## ------------------------------------------NB|RH
 makeGrid <- function(x, y, byrow=TRUE, addSID=TRUE, 
-   projection=NULL, zone = NULL, type="square")
+   projection=NULL, zone = NULL, type="rectangle")
 {
 	## check Xs and Ys for errors
 	dX <- diff(x);
@@ -3414,7 +3408,7 @@ makeGrid <- function(x, y, byrow=TRUE, addSID=TRUE,
 	numX <- length(x);
 	numY <- length(y);
 
-	if (type=="square") {
+	if (type=="rectangle") {
 		## generate the Xs and Ys
 		nV <- 4; nX = numX - 1; nY = numY -1
 		x1 <- rep(x[1:(numX - 1)], times = numY - 1);
@@ -3437,8 +3431,32 @@ makeGrid <- function(x, y, byrow=TRUE, addSID=TRUE,
 		rY    = dY[1]/2
 		ff    = 0.5 ## intrusion/extrusion factor for hexagon vertices
 
-		## hexagons (pointy-topped) by contiguous rows -- odd-even row centroids need to be staggered
+		## Change hexagon behaviour byrow to be consistent with rectangles -- byrow increments PID by column (RH 190104)
 		if (byrow) {
+			## hexagons (flat-topped) by contiguous columns -- odd-even column centroids need to be staggered
+			## Start vertices from left-most
+			oY    = rY * c(0, 1, 1, 0, -1, -1)
+			yodd  = as.vector(sapply(y,function(a,b){a+b},b=oY))
+			yeven = as.vector(sapply(y[-1],function(a,b){a+b},b=oY)) - rY
+			yP    = rep(c(yodd,yeven),floor(nX/2))
+			if (!(nX%%2)==0)
+				yP = c(yP, yodd)
+
+			## Get PID, SID, POS before xP
+			oddY = !(1:nX)%%2==0
+			nny  = rep(c(nY,nY-1),length(oddY))[1:length(oddY)]
+			pid  = rep(1:length(nny), nny*nV)
+			sid  = as.vector(unlist(lapply(table(pid)/nV,function(a,n){rep(1:a,each=n)},n=nV)))
+			pos  = rep(1:nV, times=sum(table(pid)/nV))
+
+			## Deal with X based on PID
+			oX    = rX * c(-(1+ff), -ff, ff, (1+ff), ff, -ff)
+			xlst = lapply(1:nX, function(i,xx,nn,oo) {
+				rep(xx[i] + oo, nn[i])
+			}, xx=x, nn=as.vector(table(pid)/nV), oo=oX)
+			xP = as.vector(unlist(xlst))
+		} else {
+			## hexagons (pointy-topped) by contiguous rows -- odd-even row centroids need to be staggered
 			## Start vertices from bottom-most
 			oX    = rX * c(0,-1,-1,0,1,1)
 			#oX    = rX * sin(arads)
@@ -3462,35 +3480,12 @@ makeGrid <- function(x, y, byrow=TRUE, addSID=TRUE,
 				rep(yy[i] + oo, nn[i])
 			}, yy=y, nn=as.vector(table(pid)/nV), oo=oY)
 			yP = as.vector(unlist(ylst))
-		} else {
-			## hexagons (flat-topped) by contiguous columns -- odd-even column centroids need to be staggered
-			## Start vertices from left-most
-			oY    = rY * c(0, 1, 1, 0, -1, -1)
-			yodd  = as.vector(sapply(y,function(a,b){a+b},b=oY))
-			yeven = as.vector(sapply(y[-1],function(a,b){a+b},b=oY)) - rY
-			yP    = rep(c(yodd,yeven),floor(nX/2))
-			if (!(nX%%2)==0)
-				yP = c(yP, yodd)
-
-			## Get PID, SID, POS before xP
-			oddY = !(1:nX)%%2==0
-			nny  = rep(c(nY,nY-1),length(oddY))[1:length(oddY)]
-			pid  = rep(1:length(nny), nny*nV)
-			sid  = as.vector(unlist(lapply(table(pid)/nV,function(a,n){rep(1:a,each=n)},n=nV)))
-			pos  = rep(1:nV, times=sum(table(pid)/nV))
-
-			## Deal with X based on PID
-			oX    = rX * c(-(1+ff), -ff, ff, (1+ff), ff, -ff)
-			xlst = lapply(1:nX, function(i,xx,nn,oo) {
-				rep(xx[i] + oo, nn[i])
-			}, xx=x, nn=as.vector(table(pid)/nV), oo=oX)
-			xP = as.vector(unlist(xlst))
 		}
 	}
 
 	## Make data frame
 	pSet <- data.frame(PID = pid, SID = sid, POS = pos, X = xP, Y = yP);
-	if (!addSID || (!byrow && type=="square")) {
+	if (!addSID || (!byrow && type=="rectangle")) {
 		## adjust for alternative indexing
 		pSet <- .createGridIDs(pSet, addSID, byrow);
 	}
@@ -3730,7 +3725,7 @@ print.summary.PBS <- function(x, ...)
 }
 
 
-## refocusWorld-------------------------2018-10-26
+## refocusWorld-------------------------2019-03-14
 ##  Refocus the 'worldLL'/'worldLLhigh' data sets.
 ## ------------------------------------------NB|RH
 refocusWorld <- function(polys, xlim=NULL, ylim=NULL, clip.AN=TRUE)
@@ -3839,30 +3834,32 @@ refocusWorld <- function(polys, xlim=NULL, ylim=NULL, clip.AN=TRUE)
 
 	## Deal with Antarctica (RH 181026)
 	is.Ant   = sapply(yrng,function(x){all(x< -60)}) & sapply(npol,function(x){x>100})
-	pid.Ant  = ppid[[names(is.Ant)[is.Ant]]]
-	if (pid.Ant %in% nrng$PID) {
-		z.Ant    = is.element(npolys$PID,pid.Ant) & npolys$X>=0 & npolys$X<=360 & !is.na(npolys$X) & npolys$Y> -90 & !is.na(npolys$Y)
-		p0.Ant   = npolys[z.Ant,]
-		## Reverse direction of polygon from west to east (if necessary)
-		if (p0.Ant$X[1] > rev(p0.Ant$X)[1])
-			p0.Ant = p0.Ant[nrow(p0.Ant):1,]
-		## Get the Antarctic base polygon and add duplicates to West and East
-		pW.Ant   = pE.Ant = p0.Ant
-		pW.Ant$X = pW.Ant$X - 360
-		pE.Ant$X = pE.Ant$X + 360
-		vW.Ant   = pW.Ant[1,,drop=FALSE]
-		vE.Ant   = pE.Ant[nrow(pE.Ant),,drop=FALSE]
-		vW.Ant$Y = vE.Ant$Y = -90
-		## Stitch together lower W vertex, three Antarcticas (West, Central, East), and lower E vertex
-		big.Ant  = rbind(vW.Ant, pW.Ant, p0.Ant, pE.Ant, vE.Ant)
-		big.Ant$POS = 1:nrow(big.Ant)
-		## Replace Antarctica
-		npolys   = npolys[!is.element(npolys$PID,pid.Ant),]
-		if (clip.AN) {
-			clip.Ant = clipPolys(big.Ant, xlim=range(npolys$X), ylim=ylim)  ## Antarctica clipped
-			npolys   = rbind(npolys, clip.Ant[,colnames(npolys)])
-		} else {
-			npolys   = rbind(npolys, big.Ant[,colnames(npolys)])
+	if (any(is.Ant)) { ## borders don't usually extend into Antarctica (RH 190314)
+		pid.Ant  = ppid[[names(is.Ant)[is.Ant]]]
+		if (pid.Ant %in% nrng$PID) {
+			z.Ant    = is.element(npolys$PID,pid.Ant) & npolys$X>=0 & npolys$X<=360 & !is.na(npolys$X) & npolys$Y> -90 & !is.na(npolys$Y)
+			p0.Ant   = npolys[z.Ant,]
+			## Reverse direction of polygon from west to east (if necessary)
+			if (p0.Ant$X[1] > rev(p0.Ant$X)[1])
+				p0.Ant = p0.Ant[nrow(p0.Ant):1,]
+			## Get the Antarctic base polygon and add duplicates to West and East
+			pW.Ant   = pE.Ant = p0.Ant
+			pW.Ant$X = pW.Ant$X - 360
+			pE.Ant$X = pE.Ant$X + 360
+			vW.Ant   = pW.Ant[1,,drop=FALSE]
+			vE.Ant   = pE.Ant[nrow(pE.Ant),,drop=FALSE]
+			vW.Ant$Y = vE.Ant$Y = -90
+			## Stitch together lower W vertex, three Antarcticas (West, Central, East), and lower E vertex
+			big.Ant  = rbind(vW.Ant, pW.Ant, p0.Ant, pE.Ant, vE.Ant)
+			big.Ant$POS = 1:nrow(big.Ant)
+			## Replace Antarctica
+			npolys   = npolys[!is.element(npolys$PID,pid.Ant),]
+			if (clip.AN) {
+				clip.Ant = clipPolys(big.Ant, xlim=range(npolys$X), ylim=ylim)  ## Antarctica clipped
+				npolys   = rbind(npolys, clip.Ant[,colnames(npolys)])
+			} else {
+				npolys   = rbind(npolys, big.Ant[,colnames(npolys)])
+			}
 		}
 	}
 	row.names(npolys) <- NULL;

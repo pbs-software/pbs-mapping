@@ -1,5 +1,5 @@
 /*=============================================================================
-  Copyright (C) 2003-2017 Fisheries and Oceans Canada
+  Copyright (C) 2003-2019 Fisheries and Oceans Canada
 
   This file is part of PBS Mapping.
 
@@ -17,6 +17,7 @@
   along with PBS Mapping; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 =============================================================================*/
+
 /*-----------------------------------------------------------------------------
   File: PBSmapping.c
 
@@ -69,7 +70,7 @@
     04 Jan 2004 [Nicholas Boers]
       - cosmetic changes to the code
     04 Jan 2004 [Nicholas Boers]
-       ## VERSION 1.00 ########################################################
+    ## VERSION 1.00 ########################################################
     04 May 2004 [Nicholas Boers]
       - added thinPolys() function
     08 May 2004 [Nicholas Boers]
@@ -90,7 +91,7 @@
       - discovered setjmp.h (setjmp() and longjmp())!!!  Now I can reliably
         detect memory allocation errors that occur in GPC!!!
     16 May 2004 [Nicholas Boers]
-       ## VERSION 1.10 ########################################################
+    ## VERSION 1.10 ########################################################
     20 May 2004 [Nicholas Boers]
       - added convexHull()
     24 May 2004 [Nicholas Boers]
@@ -102,7 +103,7 @@
       - added support for all R-accessible functions to interface with
         MemCheckDeluxe
     30 May 2004 [Nicholas Boers]
-       ## VERSION 1.20 ########################################################
+    ## VERSION 1.20 ########################################################
     02 Jun 2004 [Nicholas Boers]
       - updated thinPolys() to support UTM
     08 Jun 2004 [Nicholas Boers]
@@ -135,7 +136,7 @@
       - changed calcArea() to match new interface for calcPolyArea(); can now
         return negative areas for holes; substantially simplified function
     22 Jun 2004 [Nicholas Boers]
-       ## VERSION 1.90 ########################################################
+    ## VERSION 1.90 ########################################################
     28 Jun 2004 [Nicholas Boers]
       - added isIntersecting() to determine if a polygon is self-intersecting
     29 Jun 2004 [Nicholas Boers]
@@ -148,11 +149,11 @@
       - renamed `convexHull()' to `calcConvexHull()'; it called
         calcConvexHull(), and renamed this call to convexHull()
     12 Jul 2004 [Nicholas Boers]
-       ## VERSION 1.91 ########################################################
+    ## VERSION 1.91 ########################################################
     18 Jul 2004 [Nicholas Boers]
-       ## VERSION 1.92 ########################################################
+    ## VERSION 1.92 ########################################################
     21 Jul 2004 [Nicholas Boers]
-       ## VERSION 1.93 ########################################################
+    ## VERSION 1.93 ########################################################
     28 Jul 2004 [Nicholas Boers]
       - rewrote joinPolys() and added several functions to support it
         (gpcOutputPoly(), gpcCreatePoly()); the code is much cleaner (and
@@ -169,7 +170,7 @@
       - moved isRetrace() to polygons.c
       - moved linesIntersect() to polygons.c
     23 Aug 2004 [Nicholas Boers]
-       ## VERSION 2.00 ########################################################
+    ## VERSION 2.00 ########################################################
     14 Nov 2004 [Nicholas Boers]
       - replaced all instances of long with PBSINT to quickly support R's
         use of `int' rather than `long'
@@ -177,7 +178,7 @@
       - checked GPC functions to ensure appropriate types were being passed
         into the GPC, because I won't make similar replacements within that
         module
-    For future changes, see the ChangeLog file.
+    For changes after this point, see the ChangeLog file.
   ---------------------------------------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>

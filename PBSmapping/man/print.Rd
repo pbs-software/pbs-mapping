@@ -13,15 +13,15 @@
 \method{print}{summary.PBS}(x, \dots)
 }
 \arguments{
-  \item{x}{a PBS Mapping object of appropriate \code{class}.}
-  \item{\dots}{additional arguments to \code{\link{print}}.}
+  \item{x}{\code{object} -- a PBS Mapping object of appropriate \code{class}.}
+  \item{\dots}{\code{dots} -- additional arguments to \code{\link{print}}.}
 }
 \description{
   This function displays information about a PBS Mapping object.
 
-  \code{\link{summary.EventData}}, \code{\link{summary.LocationSet}},
-  \code{\link{summary.PolyData}}, and \code{\link{summary.PolySet}}
-  produce an object with class \code{summary.PBS}.
+  Functions \code{'summary.EventData'}, \code{'summary.LocationSet'},
+  \code{'summary.PolyData'}, and \code{'summary.PolySet'}
+  produce an object with class \code{'summary.PBS'}.
 }
 \examples{
 local(envir=.PBSmapEnv,expr={
@@ -37,15 +37,18 @@ local(envir=.PBSmapEnv,expr={
 \author{
   \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
   MacEwan University, Edmonton AB\cr
-  Last modified \code{Rd: 2013-04-10}
+  Last modified \code{Rd: 2019-03-14}
 }
 \seealso{
-  \link{EventData},
-  \link{LocationSet},
-  \code{\link{PBSprint}},
-  \link{PolyData},
-  \link{PolySet},
-  \code{\link{summary}}.
+In package \pkg{PBSmapping}:\cr
+  Data structures:
+  \link[PBSmapping]{EventData},
+  \link[PBSmapping]{LocationSet},
+  \link[PBSmapping]{PolyData},
+  \link[PBSmapping]{PolySet}\cr
+  Functions:
+  \code{\link[PBSmapping]{PBSprint}},
+  \code{\link[PBSmapping]{summary}}
 }
 \keyword{IO}
 

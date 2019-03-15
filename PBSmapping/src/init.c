@@ -1,5 +1,5 @@
 /*=============================================================================
-  Copyright (C) 2003-2017 Fisheries and Oceans Canada
+  Copyright (C) 2003-2019 Fisheries and Oceans Canada
 
   This file is part of PBS Mapping.
 
@@ -29,25 +29,25 @@
 
 static const R_CMethodDef CEntries[]  = {
     /* PBSmapping.c */
-    {"calcArea",        (DL_FUNC) &calcArea, 7},         /* line 1086 */
-    {"calcCentroid",    (DL_FUNC) &calcCentroid, 7},     /* line 1159 */
-    {"calcOrientation", (DL_FUNC) &calcOrientation, 7},  /* line 1233 */
-    {"clip",            (DL_FUNC) &clip, 9},             /* line  356 */
-    {"closePolys",      (DL_FUNC) &closePolys, 8},       /* line  679 */
-    {"convUL",          (DL_FUNC) &convUL, 8},           /* line 1035 */
-    {"findCells",       (DL_FUNC) &findCells, 7},        /* line  863 */
-    {"findPolys",       (DL_FUNC) &findPolys, 9},        /* line  918 */
-    {"isConvex",        (DL_FUNC) &isConvex, 7},         /* line 1297 */
-    {"isIntersecting",  (DL_FUNC) &isIntersecting, 8},   /* line 1361 */
-    {"rollupPolys",     (DL_FUNC) &rollupPolys, 12},     /* line  460 */
-    {"thickenPolys",    (DL_FUNC) &thickenPolys, 12},    /* line 1428 */
-    {"thinPolys",       (DL_FUNC) &thinPolys, 10},       /* line 1515 */
+    {"calcArea",        (DL_FUNC) &calcArea, 7},         /* line 1087 */
+    {"calcCentroid",    (DL_FUNC) &calcCentroid, 7},     /* line 1160 */
+    {"calcOrientation", (DL_FUNC) &calcOrientation, 7},  /* line 1234 */
+    {"clip",            (DL_FUNC) &clip, 9},             /* line  357 */
+    {"closePolys",      (DL_FUNC) &closePolys, 8},       /* line  680 */
+    {"convUL",          (DL_FUNC) &convUL, 8},           /* line 1036 */
+    {"findCells",       (DL_FUNC) &findCells, 7},        /* line  864 */
+    {"findPolys",       (DL_FUNC) &findPolys, 9},        /* line  919 */
+    {"isConvex",        (DL_FUNC) &isConvex, 7},         /* line 1298 */
+    {"isIntersecting",  (DL_FUNC) &isIntersecting, 8},   /* line 1362 */
+    {"rollupPolys",     (DL_FUNC) &rollupPolys, 12},     /* line  461 */
+    {"thickenPolys",    (DL_FUNC) &thickenPolys, 12},    /* line 1429 */
+    {"thinPolys",       (DL_FUNC) &thinPolys, 10},       /* line 1516 */
     {NULL, NULL, 0}
 };
 
 static const R_CallMethodDef CallEntries[] = {
     {"joinPolys",   (DL_FUNC) &joinPolys, 11},    /* clipperWrapper.cpp: 524 */
-    {"importGSHHS", (DL_FUNC) &importGSHHS, 4},   /* convGSHHS.c:        204 */
+    {"importGSHHS", (DL_FUNC) &importGSHHS, 4},   /* convGSHHS.c:        206 */
     {NULL, NULL, 0}
 };
 

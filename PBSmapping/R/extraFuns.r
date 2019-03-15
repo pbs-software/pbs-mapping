@@ -7,6 +7,7 @@
 ##------------------------------------------------
 ## Extra functionality added by RH & DC after 
 ## NB & JTS moved on to bigger and better things.
+##
 ## Functions:
 ## =========
 ##  addBubbles...........Draw bubbles of radius proportional to the z variable
@@ -19,7 +20,7 @@
 ##------------------------------------------------
 
 
-## addBubbles---------------------------2010-01-07
+## addBubbles---------------------------2019-03-13
 ##  Takes EventData and optional arguments to draw
 ##  bubbles of radius proportional to the z variable.
 ##
@@ -43,132 +44,124 @@ addBubbles <- function(events, type = c("perceptual", "surface", "volume"),
    legend.type = c("nested", "horiz", "vert"),
    legend.title = "Abundance", legend.cex = .8, ...)
 {
-  ## validate events
-  events <- .validateEventData(events)
-  if (is.character(events))
-    stop(paste("Invalid EventData 'events'.\n", events, sep=""));
-  if (!is.element("Z", names(events)))
-    stop ("EventData is missing required column 'Z'.\n");
+	## validate events
+	events <- .validateEventData(events)
+	if (is.character(events))
+		stop(paste("Invalid EventData 'events'.\n", events, sep=""));
+	if (!is.element("Z", names(events)))
+		stop ("EventData is missing required column 'Z'.\n");
 
-  ## check arguments before we get too far
-  type <- match.arg(type)
-  if (!is.null(legend.pos))
-    legend.type <- match.arg(legend.type)
+	## check arguments before we get too far
+	type <- match.arg(type)
+	if (!is.null(legend.pos))
+		legend.type <- match.arg(legend.type)
 
-  ## set z.max if necessary
-  if (is.null(z.max) || is.na(z.max))
-    z.max <- max(events$Z, na.rm=TRUE)
+	## set z.max if necessary
+	if (is.null(z.max) || all(is.na(z.max)))
+		z.max <- max(events$Z, na.rm=TRUE)
 
-  ## adjust legend breaks if necessary
-  if (is.null(legend.breaks) || is.na(legend.breaks))
-    legend.breaks <- pretty(range(events$Z), 3)[-1]
-  else if (is.vector(legend.breaks) && length(legend.breaks) == 1)
-    legend.breaks <- pretty(range(events$Z), legend.breaks)[-1]
+	## adjust legend breaks if necessary
+	if (is.null(legend.breaks) || all(is.na(legend.breaks)))
+		legend.breaks <- pretty(range(events$Z), 3)[-1]
+	else if (is.vector(legend.breaks) && length(legend.breaks) == 1)
+		legend.breaks <- pretty(range(events$Z), legend.breaks)[-1]
 
-  if (show.actual)
-    legend.breaks <- signif(legend.breaks / max(legend.breaks)
-                            * max(events$Z, na.rm=TRUE), 3)
+	if (show.actual)
+		legend.breaks <- signif(legend.breaks / max(legend.breaks) * max(events$Z, na.rm=TRUE), 3)
 
-  ## determine x/y range of plotting region
-  usr.xdiff <- par("usr")[2] - par("usr")[1]
-  usr.ydiff <- par("usr")[4] - par("usr")[3]
+	## determine x/y range of plotting region
+	usr.xdiff <- par("usr")[2] - par("usr")[1]
+	usr.ydiff <- par("usr")[4] - par("usr")[3]
 
-  ## for sizing in inches, it's important to use the X rather than Y axis
-  ##
-  ## max.size is diameter (inches); /2 for radius; /par()$pin[1] (inches)
-  ## for fraction of width (inches); *usr.xdiff to convert to width to
-  ## user coordinates
-  ##
-  ## min.size is diameter (inches)
-  stand.rad <- (max.size / 2) / par("pin")[1] * usr.xdiff
-  stand.rad.min <- (min.size / 2) / par("pin")[1] * usr.xdiff
-  
-  ## sorting from large to small ensures that small bubbles will not be hidden
-  ## behind large bubbles
-  events <- events[order(events$Z, decreasing=TRUE), ]
- 
-  ## determine the size of each circle/legend circle based on the selected type
-  type <- match.arg(type)
-  switch(type,
-         volume = {
-           radii     <- stand.rad.min + ((events$Z      / z.max)^(1/3)) * (stand.rad - stand.rad.min)
-           radii.leg <- stand.rad.min + ((legend.breaks / z.max)^(1/3)) * (stand.rad - stand.rad.min)
-         },
-         surface = {
-           radii     <- stand.rad.min + sqrt(events$Z      / z.max) * (stand.rad - stand.rad.min)
-           radii.leg <- stand.rad.min + sqrt(legend.breaks / z.max) * (stand.rad - stand.rad.min)
-         },
-         perceptual = {
-           # default (if type unspecified)
-           radii     <- stand.rad.min + ((events$Z      / z.max)^0.57) * (stand.rad - stand.rad.min)
-           radii.leg <- stand.rad.min + ((legend.breaks / z.max)^0.57) * (stand.rad - stand.rad.min)
-         }
-         )
+	## for sizing in inches, it's important to use the X rather than Y axis
+	## max.size is diameter (inches); /2 for radius; /par()$pin[1] (inches)
+	##   for fraction of width (inches); *usr.xdiff to convert to width to user coordinates
+	## min.size is diameter (inches)
+	stand.rad <- (max.size / 2) / par("pin")[1] * usr.xdiff
+	stand.rad.min <- (min.size / 2) / par("pin")[1] * usr.xdiff
+	
+	## sorting from large to small ensures that small bubbles will not be hidden
+	## behind large bubbles
+	events <- events[order(events$Z, decreasing=TRUE), ]
 
-  ## handle multiple colours
-  if (is.vector (symbol.bg) && length(symbol.bg) > 1)
-    getColour <- colorRamp (symbol.bg)
-  else
-    ## ensure that the function returns X colours when called with X values
-    getColour <- function(x) { t(col2rgb(symbol.bg, alpha=TRUE))[rep(1,length(x)), ] }
+	## determine the size of each circle/legend circle based on the selected type
+	type <- match.arg(type)
+	switch(type,
+		volume = {
+			radii     <- stand.rad.min + ((events$Z      / z.max)^(1/3)) * (stand.rad - stand.rad.min)
+			radii.leg <- stand.rad.min + ((legend.breaks / z.max)^(1/3)) * (stand.rad - stand.rad.min)
+		},
+		surface = {
+			radii     <- stand.rad.min + sqrt(events$Z      / z.max) * (stand.rad - stand.rad.min)
+			radii.leg <- stand.rad.min + sqrt(legend.breaks / z.max) * (stand.rad - stand.rad.min)
+		},
+		perceptual = {
+			# default (if type unspecified)
+			radii     <- stand.rad.min + ((events$Z      / z.max)^0.57) * (stand.rad - stand.rad.min)
+			radii.leg <- stand.rad.min + ((legend.breaks / z.max)^0.57) * (stand.rad - stand.rad.min)
+		}
+	)
 
-  ## obtain colours for the background (as a matrix)
-  bgs <- getColour((events$Z - min(legend.breaks)) / (max(legend.breaks) - min(legend.breaks)))
-  if (ncol(bgs) == 3)
-    bgs <- cbind(bgs, 255) # add the alpha channel if necessary
-  ## ... now deal with Z values outside of the range
-  if (is.vector (symbol.bg) && length(symbol.bg) > 1)
-    {
-      outside <- events$Z < min(legend.breaks) | events$Z > max(legend.breaks)
-      if (sum(outside) > 0)
-        {
-          bgs[outside,] <- matrix(c(255,255,255,0), ncol=4)[rep(1,sum(outside)), ]
-          warning(sum(outside),
-                  " events were outside the legend range and were plotted with",
-                  " transparent interiors.  Consider using the addBubbles",
-                  " arguments 'legend.breaks', 'min.size', and 'symbol.zero'",
-                  " to improve the output.")
-        }
-    }
-  
-  ## obtain colours for the legend (as a matrix)
-  bgs.leg <- getColour((legend.breaks - min(legend.breaks)) / (max(legend.breaks) - min(legend.breaks)))
-  if (ncol(bgs.leg) == 3)
-    bgs.leg <- cbind(bgs.leg, 255) # add the alpha channel if necessary
-  
-  ## convert the matrices to hex values (#RRGGBBAA)
-  bgs <- rgb(bgs[,1], bgs[,2], bgs[,3], bgs[,4], maxColorValue=255)
-  bgs.leg <- rgb(bgs.leg[,1], bgs.leg[,2], bgs.leg[,3], bgs.leg[,4], maxColorValue=255)
+	## handle multiple colours
+	if (is.vector (symbol.bg) && length(symbol.bg) > 1)
+		getColour <- colorRamp (symbol.bg)
+	else
+		## ensure that the function returns X colours when called with X values
+		getColour <- function(x) { t(col2rgb(symbol.bg, alpha=TRUE))[rep(1,length(x)), ] }
 
-  ## compare events$Z to 0; cannot simply use "== 0" given floating-point type
-  isZero <- unlist(lapply(events$Z, all.equal, current = 0)) == "TRUE"
+	## obtain colours for the background (as a matrix)
+	bgs <- getColour((events$Z - min(legend.breaks)) / (max(legend.breaks) - min(legend.breaks)))
+	if (ncol(bgs) == 3)
+		bgs <- cbind(bgs, 255) # add the alpha channel if necessary
+	## ... now deal with Z values outside of the range
+	if (is.vector (symbol.bg) && length(symbol.bg) > 1) {
+		outside <- events$Z < min(legend.breaks) | events$Z > max(legend.breaks)
+		if (sum(outside) > 0) {
+			bgs[outside,] <- matrix(c(255,255,255,0), ncol=4)[rep(1,sum(outside)), ]
+			warning(sum(outside),
+			" events were outside the legend range and were plotted with",
+			" transparent interiors.  Consider using the addBubbles",
+			" arguments 'legend.breaks', 'min.size', and 'symbol.zero'",
+			" to improve the output.")
+		}
+	}
 
-  ## plot the circles (data with non-zero radii)
-  symbols(events$X[!isZero], events$Y[!isZero], circles = radii[!isZero],
-          inches = FALSE, bg = bgs[!isZero], fg = symbol.fg, add = TRUE)
+	## obtain colours for the legend (as a matrix)
+	bgs.leg <- getColour((legend.breaks - min(legend.breaks)) / (max(legend.breaks) - min(legend.breaks)))
+	if (ncol(bgs.leg) == 3)
+		bgs.leg <- cbind(bgs.leg, 255) # add the alpha channel if necessary
 
-  ## plot the zero symbol for points (where necessary)
-  if (any(isZero) && (!is.logical(symbol.zero) || symbol.zero)) {
-    if (is.logical(symbol.zero))
-      symbol.zero <- "+" # set to default
+	## convert the matrices to hex values (#RRGGBBAA)
+	bgs <- rgb(bgs[,1], bgs[,2], bgs[,3], bgs[,4], maxColorValue=255)
+	bgs.leg <- rgb(bgs.leg[,1], bgs.leg[,2], bgs.leg[,3], bgs.leg[,4], maxColorValue=255)
 
-    dots <- list(...);
-    if (!is.null(dots$pch))
-      stop("Specify 'pch' through 'symbol.zero'")
+	## compare events$Z to 0; cannot simply use "== 0" given floating-point type
+	isZero <- unlist(lapply(events$Z, all.equal, current = 0)) == "TRUE"
 
-    points(events$X[isZero], events$Y[isZero], pch = symbol.zero, ...)
-  }
+	## plot the circles (data with non-zero radii)
+	symbols(events$X[!isZero], events$Y[!isZero], circles = radii[!isZero],
+		inches = FALSE, bg = bgs[!isZero], fg = symbol.fg, add = TRUE)
 
-  ## plot the legend if there's a position specified for it
-  if (!is.null(legend.pos)) {
-    # only plot zero symbol if used
-    if (!any(isZero))
-      symbol.zero <- FALSE;
-    .addBubblesLegend (radii.leg, usr.xdiff, usr.ydiff, symbol.zero, symbol.fg,
-                       bgs.leg, legend.pos, legend.breaks, legend.type,
-                       legend.title, legend.cex, ...)
-  }
-  invisible()
+	## plot the zero symbol for points (where necessary)
+	if (any(isZero) && (!is.logical(symbol.zero) || symbol.zero)) {
+		if (is.logical(symbol.zero))
+			symbol.zero <- "+" # set to default
+		dots <- list(...);
+		if (!is.null(dots$pch))
+			stop("Specify 'pch' through 'symbol.zero'")
+		points(events$X[isZero], events$Y[isZero], pch = symbol.zero, ...)
+	}
+
+	## plot the legend if there's a position specified for it
+	if (!is.null(legend.pos)) {
+		# only plot zero symbol if used
+		if (!any(isZero))
+			symbol.zero <- FALSE;
+		.addBubblesLegend (radii.leg, usr.xdiff, usr.ydiff, symbol.zero, symbol.fg,
+			bgs.leg, legend.pos, legend.breaks, legend.type,
+			legend.title, legend.cex, ...)
+	}
+	invisible()
 }
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~addBubbles
 

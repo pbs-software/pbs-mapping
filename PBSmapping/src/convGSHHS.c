@@ -1,5 +1,5 @@
 /*=============================================================================
-  Copyright (C) 2003-2013 Fisheries and Oceans Canada
+  Copyright (C) 2003-2019 Fisheries and Oceans Canada
 
   This file is part of PBS Mapping.
 
@@ -17,6 +17,7 @@
   along with PBS Mapping; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 =============================================================================*/
+
 /*-----------------------------------------------------------------------------
   File: convGSHHS.c
 
@@ -61,52 +62,55 @@ static int extractCur = FALSE;	/* Boolean; extracting current polygon? */
 static SEXP psetPID, psetSID, psetPOS, psetX, psetY;
 static SEXP pdatPID, pdatSID, pdatLevel, pdatSource;
 
-/* if a polygon is (a) outside of the limits, (b) has too few vertices,
-   or (c) is at too high of a level, skip it */
-#define SET_POLY_INCLUSION	do {					\
-	if ((e < xlim[0] || w > xlim[1] || n < ylim[0] || s > ylim[1])	\
-	    || h_n < minimumVerts || level > maximumLevel)		\
-	    extractCur = FALSE;						\
-	else								\
-	    extractCur = TRUE;						\
-    } while (0)
+/* Skip a polygon if it is
+   (a) outside of the limits,
+   (b) has too few vertices, or
+   (c) is at too high of a level */
+#define SET_POLY_INCLUSION do { \
+	if ((e < xlim[0] || w > xlim[1] || n < ylim[0] || s > ylim[1]) \
+		|| h_n < minimumVerts || level > maximumLevel) \
+		extractCur = FALSE; \
+	else \
+		extractCur = TRUE; \
+	} while (0)
 
-/* if a line is (a) outside of the limits or (b) has too few vertices,
-   skip it */
-#define SET_LINE_INCLUSION	do {					\
-	if ((e < xlim[0] || w > xlim[1] || n < ylim[0] || s > ylim[1])	\
-	    || h_n < minimumVerts)					\
-	    extractCur = FALSE;						\
-	else								\
-	    extractCur = TRUE;						\
-    } while (0)
+/* Skip a line if it is
+   (a) outside of the limits or 
+   (b) has too few vertices */
+#define SET_LINE_INCLUSION do { \
+	if ((e < xlim[0] || w > xlim[1] || n < ylim[0] || s > ylim[1]) \
+		|| h_n < minimumVerts) \
+		extractCur = FALSE; \
+	else \
+		extractCur = TRUE; \
+	} while (0)
 
 /* polyCountPoints(...): Callback for gshhs; prior to extracting, this
    routine is used to determine the number of points that we'll need to
    extract.
   
    Arguments:
-     c		kind {P,L} for polygon or line, respectively
-     h_id	identifier
-     n		number of points
-     level	1 land, 2 lake, 3 island_in_lake, 4 pond_in_island_in_lake
-     source	0 = CIA WDBII, 1 = WVS
-     area	area of polygon in 1/10 km^2
-     f_area	area of original full-resolution polygon in 1/10 km^2
-     w,e,s,n	min/max extent
-     container	identifier of parent (at level-1)
-     ancestor	polygon's full-resolution ancestor
+     c         kind {P,L} for polygon or line, respectively
+     h_id      identifier
+     n         number of points
+     level     1 land, 2 lake, 3 island_in_lake, 4 pond_in_island_in_lake
+     source    0 = CIA WDBII, 1 = WVS
+     area      area of polygon in 1/10 km^2
+     f_area    area of original full-resolution polygon in 1/10 km^2
+     w,e,s,n   min/max extent
+     container identifier of parent (at level-1)
+     ancestor  polygon's full-resolution ancestor
  */
 void polyCountPoints (char c, int  h_id, int h_n, int level, char source,
-		      double area, double f_area, double w, double e,
-		      double s, double n, int container, int ancestor)
+                      double area, double f_area, double w, double e,
+                      double s, double n, int container, int ancestor)
 {
-    SET_POLY_INCLUSION;
+	SET_POLY_INCLUSION;
 
-    if (extractCur) {
-	numPolys++;
-	numPoints += h_n;
-    }
+	if (extractCur) {
+		numPolys++;
+		numPoints += h_n;
+	}
 }
 
 /* polyExtract(...): Callback for gshhs; when extracting polygons,
@@ -119,66 +123,66 @@ void polyCountPoints (char c, int  h_id, int h_n, int level, char source,
      if level 4, PID = container, SID = h_id, POS = reverse
 */
 void polyExtract (char c, int  h_id, int h_n, int level, char source,
-		  double area, double f_area, double w, double e,
-		  double s, double n, int container, int ancestor)
+                  double area, double f_area, double w, double e,
+                  double s, double n, int container, int ancestor)
 {
-    SET_POLY_INCLUSION;
+	SET_POLY_INCLUSION;
 
-    if (extractCur) {
-	if (level == 2 || level == 4) {
-	    /* a hole */
-	    pid = container;
-	    sid = h_id;		/* non-zero => decreasing pos */
-	    pos = h_n;
-	} else {
-	    /* an outer boundary */
-	    pid = h_id;
-	    sid = 0;		/* 0 => increasing pos */
-	    pos = 0;
+	if (extractCur) {
+		if (level == 2 || level == 4) {
+			/* a hole */
+			pid = container;
+			sid = h_id; /* non-zero => decreasing pos */
+			pos = h_n;
+		} else {
+			/* an outer boundary */
+			pid = h_id;
+			sid = 0; /* 0 => increasing pos */
+			pos = 0;
+		}
+
+		/* save the polygon in the PolyData */
+		INTEGER_POINTER(pdatPID)[numPolys] = pid;
+		INTEGER_POINTER(pdatSID)[numPolys] = sid;
+		INTEGER_POINTER(pdatLevel)[numPolys] = level;
+		INTEGER_POINTER(pdatSource)[numPolys] = (source == 'W' ? 1 : 0);
+
+		numPolys++;
 	}
-
-	/* save the polygon in the PolyData */
-	INTEGER_POINTER(pdatPID)[numPolys] = pid;
-	INTEGER_POINTER(pdatSID)[numPolys] = sid;
-	INTEGER_POINTER(pdatLevel)[numPolys] = level;
-	INTEGER_POINTER(pdatSource)[numPolys] = (source == 'W' ? 1 : 0);
-
-	numPolys++;
-    }
 }
 
 /* lineCountPoints(...): Callback for gshhs; similar to one for polys. */
 void lineCountPoints (char c, int h_id, int h_n, int level, char source, 
-		      double w, double e, double s, double n)
+                      double w, double e, double s, double n)
 {
-    SET_LINE_INCLUSION;
+	SET_LINE_INCLUSION;
 
-    if (extractCur) {
-	numLines++;
-	numPoints += h_n;
-    }
+	if (extractCur) {
+		numLines++;
+		numPoints += h_n;
+	}
 }
 
 /* lineExtract(...): Callback for gshhs; similar to previous, but for
    lines rather than polygons. */
 void lineExtract (char c, int h_id, int h_n, int level, char source, 
-		  double w, double e, double s, double n)
+                  double w, double e, double s, double n)
 {
-    SET_LINE_INCLUSION;
+	SET_LINE_INCLUSION;
 
-    if (extractCur) {
-	pid = h_id;
-	sid = 0;		/* 0 => increasing pos */
-	pos = 0;
+	if (extractCur) {
+		pid = h_id;
+		sid = 0;  /* 0 => increasing pos */
+		pos = 0;
 
-	/* save the line in the PolyData */
-	INTEGER_POINTER(pdatPID)[numLines] = pid;
-	INTEGER_POINTER(pdatSID)[numLines] = sid;
-	INTEGER_POINTER(pdatLevel)[numLines] = level;
-	INTEGER_POINTER(pdatSource)[numLines] = (source == 'W' ? 1 : 0);
+		/* save the line in the PolyData */
+		INTEGER_POINTER(pdatPID)[numLines] = pid;
+		INTEGER_POINTER(pdatSID)[numLines] = sid;
+		INTEGER_POINTER(pdatLevel)[numLines] = level;
+		INTEGER_POINTER(pdatSource)[numLines] = (source == 'W' ? 1 : 0);
 
-	numLines++;
-    }
+		numLines++;
+	}
 }
 
 /* extractPoint(...): Callback for gshhs; when extracting lines/polygons,
@@ -186,123 +190,123 @@ void lineExtract (char c, int h_id, int h_n, int level, char source,
 */
 void extractPoint (double lon, double lat)
 {
-    if (extractCur) {
-	/* save the point in the PolySet */
-	INTEGER_POINTER(psetPID)[numPoints] = pid;
-	INTEGER_POINTER(psetSID)[numPoints] = sid;
-	INTEGER_POINTER(psetPOS)[numPoints] = pos;
-	NUMERIC_POINTER(psetX)[numPoints] = lon;
-	NUMERIC_POINTER(psetY)[numPoints] = lat;
-	
-	pos += (sid ? -1 : 1);	/* 0 => increasing; non-zero => decreasing */
-	numPoints++;
-    }
+	if (extractCur) {
+		/* save the point in the PolySet */
+		INTEGER_POINTER(psetPID)[numPoints] = pid;
+		INTEGER_POINTER(psetSID)[numPoints] = sid;
+		INTEGER_POINTER(psetPOS)[numPoints] = pos;
+		NUMERIC_POINTER(psetX)[numPoints] = lon;
+		NUMERIC_POINTER(psetY)[numPoints] = lat;
+
+		pos += (sid ? -1 : 1);	/* 0 => increasing; non-zero => decreasing */
+		numPoints++;
+	}
 }
 
-
-SEXP
-importGSHHS(SEXP gshhsFileName, SEXP clipLimits, SEXP levels, SEXP minVerts)
+SEXP importGSHHS(SEXP gshhsFileName, SEXP clipLimits, SEXP levels, SEXP minVerts)
 {
-    char *cmdList[] = {"", "-L", "" };	/* for calling gshhs to list polygons */
-    char *cmdExtract[] = {"", "" };	/* for calling gshhs to extract 
-					   polygons */
+	char *cmdList[] = {"", "-L", "" }; /* for calling gshhs to list polygons */
+	char *cmdExtract[] = {"", "" }; /* for calling gshhs to extract polygons */
 
-    SEXP polySet, polyData, temp;
+	SEXP polySet, polyData, temp; /* need to protect 3 variables */
+	/* These are declared on lines 62:63 as static; redefining here causes R to crash. */
+	/* SEXP psetPID, psetSID, psetPOS, psetX, psetY; */
+	/* SEXP pdatPID, pdatSID, pdatLevel, pdatSource; */
 
-    /* obtain arguments */
-    cmdList[2] = cmdExtract[1] = (char *)CHAR(STRING_ELT(gshhsFileName,0));
-    xlim[0] = NUMERIC_POINTER(clipLimits)[0];
-    xlim[1] = NUMERIC_POINTER(clipLimits)[1];
-    ylim[0] = NUMERIC_POINTER(clipLimits)[2];
-    ylim[1] = NUMERIC_POINTER(clipLimits)[3];
-    maximumLevel = INTEGER_POINTER(levels)[0];
-    minimumVerts = INTEGER_POINTER(minVerts)[0];
+	/* obtain arguments */
+	cmdList[2] = cmdExtract[1] = (char *)CHAR(STRING_ELT(gshhsFileName,0));
+	xlim[0] = NUMERIC_POINTER(clipLimits)[0];
+	xlim[1] = NUMERIC_POINTER(clipLimits)[1];
+	ylim[0] = NUMERIC_POINTER(clipLimits)[2];
+	ylim[1] = NUMERIC_POINTER(clipLimits)[3];
+	maximumLevel = INTEGER_POINTER(levels)[0];
+	minimumVerts = INTEGER_POINTER(minVerts)[0];
 
-    /* calculate the number of points to extract */
-    Rprintf ("importGSHHS status:\n");
-    Rprintf ("--> Pass 1: ");
-    numPoints = numPolys = numLines = 0;
-    polygonHeader = &polyCountPoints;
-    lineHeader = &lineCountPoints;
-    point = NULL;
-    if (gshhs (3, cmdList) != EXIT_SUCCESS)
-	error("call to gshhs failed.\n");
-    if (numPolys && numLines)
-	error ("encountered both polygons and lines: unsupported.\n");
-    Rprintf ("complete: %d bounding boxes within limits.\n",
-	     numPolys + numLines);
+	/* calculate the number of points to extract */
+	Rprintf ("importGSHHS status:\n");
+	Rprintf ("--> Pass 1: ");
+	numPoints = numPolys = numLines = 0;
+	polygonHeader = &polyCountPoints;
+	lineHeader = &lineCountPoints;
+	point = NULL;
+	if (gshhs (3, cmdList) != EXIT_SUCCESS)
+		error("call to gshhs failed.\n");
+	if (numPolys && numLines)
+		error ("encountered both polygons and lines: unsupported.\n");
+	Rprintf ("complete: %d bounding boxes within limits.\n",
+	numPolys + numLines);
 
-    /* set up the polySet that we'll return */
-    PROTECT(polySet = allocVector(VECSXP, 5));
+	/* set up the polySet that we'll return */
+	polySet = PROTECT(allocVector(VECSXP, 5)); /* protect 1 */
 
-    /* add attribute to indicate whether we later need to clip */
-    PROTECT(temp = allocVector(INTSXP, 1));
-    INTEGER_POINTER(temp)[0] = (numPolys ? 1 : 0);    
-    setAttrib(polySet, install("clipAsPolys"), temp);
-    UNPROTECT(1);
+	/* add attribute to indicate whether we later need to clip */
+	temp = PROTECT(allocVector(INTSXP, 1)); /* protect 2 */
+	INTEGER_POINTER(temp)[0] = (numPolys ? 1 : 0);
+	setAttrib(polySet, install("clipAsPolys"), temp);
+	UNPROTECT(1); /* unprotect 2 */
 
-    /* add column names to polySet */
-    PROTECT(temp = allocVector(STRSXP, 5));
-    SET_STRING_ELT(temp, 0, mkChar("PID"));
-    SET_STRING_ELT(temp, 1, mkChar("SID"));
-    SET_STRING_ELT(temp, 2, mkChar("POS"));
-    SET_STRING_ELT(temp, 3, mkChar("X"));
-    SET_STRING_ELT(temp, 4, mkChar("Y"));
-    setAttrib(polySet, R_NamesSymbol, temp);
-    UNPROTECT(1); // temp now protected by polySet
+	/* add column names to polySet */
+	temp = PROTECT(temp = allocVector(STRSXP, 5)); /* protect 2 */
+	SET_STRING_ELT(temp, 0, mkChar("PID"));
+	SET_STRING_ELT(temp, 1, mkChar("SID"));
+	SET_STRING_ELT(temp, 2, mkChar("POS"));
+	SET_STRING_ELT(temp, 3, mkChar("X"));
+	SET_STRING_ELT(temp, 4, mkChar("Y"));
+	setAttrib(polySet, R_NamesSymbol, temp);
+	UNPROTECT(1); /* unprotect 2;  temp now protected by polySet */
 
-    /* add columns to polySet */
-    PROTECT(psetPID = allocVector(INTSXP, numPoints));
-    PROTECT(psetSID = allocVector(INTSXP, numPoints));
-    PROTECT(psetPOS = allocVector(INTSXP, numPoints));
-    PROTECT(psetX = allocVector(REALSXP, numPoints));
-    PROTECT(psetY = allocVector(REALSXP, numPoints));
-    SET_VECTOR_ELT(polySet, 0, psetPID);
-    SET_VECTOR_ELT(polySet, 1, psetSID);
-    SET_VECTOR_ELT(polySet, 2, psetPOS);
-    SET_VECTOR_ELT(polySet, 3, psetX);
-    SET_VECTOR_ELT(polySet, 4, psetY);
-    UNPROTECT(5); // vectors now protected by polySet
+	/* add columns to polySet */
+	psetPID = PROTECT(allocVector(INTSXP, numPoints));  /* protect 2 */
+	psetSID = PROTECT(allocVector(INTSXP, numPoints));  /* protect 3 */
+	psetPOS = PROTECT(allocVector(INTSXP, numPoints));  /* protect 4 */
+	psetX   = PROTECT(allocVector(REALSXP, numPoints)); /* protect 5 */
+	psetY   = PROTECT(allocVector(REALSXP, numPoints)); /* protect 6 */
+	SET_VECTOR_ELT(polySet, 0, psetPID);
+	SET_VECTOR_ELT(polySet, 1, psetSID);
+	SET_VECTOR_ELT(polySet, 2, psetPOS);
+	SET_VECTOR_ELT(polySet, 3, psetX);
+	SET_VECTOR_ELT(polySet, 4, psetY);
+	UNPROTECT(5); /* remove last 5 from stack; vectors now protected by polySet */
 
-    /* set up the PolyData that we'll return */
-    PROTECT(polyData = allocVector(VECSXP, 4));
+	/* set up the PolyData that we'll return */
+	polyData = PROTECT(allocVector(VECSXP, 4)); /* protect 2 */
 
-    /* add column names to polyData */
-    PROTECT(temp = allocVector(STRSXP, 4));
-    SET_STRING_ELT(temp, 0, mkChar("PID"));
-    SET_STRING_ELT(temp, 1, mkChar("SID"));
-    SET_STRING_ELT(temp, 2, mkChar("Level"));
-    SET_STRING_ELT(temp, 3, mkChar("Source"));
-    setAttrib(polyData, R_NamesSymbol, temp);
-    UNPROTECT(1); // temp now protected by polyData
-    
-    /* add columns to PolyData */
-    PROTECT(pdatPID = allocVector(INTSXP, numPolys + numLines));
-    PROTECT(pdatSID = allocVector(INTSXP, numPolys + numLines));
-    PROTECT(pdatLevel = allocVector(INTSXP, numPolys + numLines));
-    PROTECT(pdatSource = allocVector(INTSXP, numPolys + numLines));
-    SET_VECTOR_ELT(polyData, 0, pdatPID);
-    SET_VECTOR_ELT(polyData, 1, pdatSID);
-    SET_VECTOR_ELT(polyData, 2, pdatLevel);
-    SET_VECTOR_ELT(polyData, 3, pdatSource);
-    UNPROTECT(4); // vectors now protected by polyData
+	/* add column names to polyData */
+	temp = PROTECT(allocVector(STRSXP, 4)); /* protect 3 */
+	SET_STRING_ELT(temp, 0, mkChar("PID"));
+	SET_STRING_ELT(temp, 1, mkChar("SID"));
+	SET_STRING_ELT(temp, 2, mkChar("Level"));
+	SET_STRING_ELT(temp, 3, mkChar("Source"));
+	setAttrib(polyData, R_NamesSymbol, temp);
+	UNPROTECT(1); /* unprotect 3; temp now protected by polyData */
+	
+	/* add columns to PolyData */
+	pdatPID    = PROTECT(allocVector(INTSXP, numPolys + numLines)); /* protect 3 */
+	pdatSID    = PROTECT(allocVector(INTSXP, numPolys + numLines)); /* protect 4 */
+	pdatLevel  = PROTECT(allocVector(INTSXP, numPolys + numLines)); /* protect 5 */
+	pdatSource = PROTECT(allocVector(INTSXP, numPolys + numLines)); /* protect 6 */
+	SET_VECTOR_ELT(polyData, 0, pdatPID);
+	SET_VECTOR_ELT(polyData, 1, pdatSID);
+	SET_VECTOR_ELT(polyData, 2, pdatLevel);
+	SET_VECTOR_ELT(polyData, 3, pdatSource);
+	UNPROTECT(4); /* remove last 4 from stack; vectors now protected by polyData */
 
-    /* attach polyData to polySet as "PolyData" attribute */
-    setAttrib(polySet, install("PolyData"), polyData);
-    UNPROTECT(1); // polyData now protected by polySet
+	/* attach polyData to polySet as "PolyData" attribute */
+	setAttrib(polySet, install("PolyData"), polyData);
+	UNPROTECT(1); /* unprotect 2; polyData now protected by polySet */
 
-    /* extract the polygons */
-    Rprintf ("--> Pass 2: ");
-    numPoints = numPolys = numLines = 0;
-    polygonHeader = &polyExtract;
-    lineHeader = &lineExtract;
-    point = &extractPoint;
-    if (gshhs (2, cmdExtract) != EXIT_SUCCESS)
-	error("call to gshhs failed.\n");
-    Rprintf ("complete.\n");
-    Rprintf ("--> Clipping...\n");
+	/* extract the polygons */
+	Rprintf ("--> Pass 2: ");
+	numPoints = numPolys = numLines = 0;
+	polygonHeader = &polyExtract;
+	lineHeader = &lineExtract;
+	point = &extractPoint;
+	if (gshhs (2, cmdExtract) != EXIT_SUCCESS)
+		error("call to gshhs failed.\n");
+	Rprintf ("complete.\n");
+	Rprintf ("--> Clipping...\n");
 
-    UNPROTECT(1); // polySet is the last one...
+	UNPROTECT(1); /* unprotect 1; polySet is the last one... */
 
-    return (polySet);
+	return (polySet);
 }
