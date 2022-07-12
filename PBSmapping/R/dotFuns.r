@@ -190,171 +190,141 @@
 
 #==============================================================================
 
-#.addBubblesLegend----------------------2012-03-01
+#.addBubblesLegend----------------------2022-07-05
 #  Construct legend for the function addBubble.
-#--------------------------------------------DC/NB
+#--------------------------------------------DC|NB
 .addBubblesLegend <- function(radii.leg, usr.xdiff, usr.ydiff,
-                              symbol.zero, symbol.fg, symbol.bg,
-                              legend.pos, legend.breaks,
-                              legend.type, legend.title, legend.cex, ...)
+   symbol.zero, symbol.fg, symbol.bg, legend.pos, legend.breaks,
+   legend.type, legend.title, legend.cex, ...)
 {
-  # ratio of y to x: units-per-inch (Y) / units-per-inch (X)
-  ratio.y.x = (usr.ydiff / par("pin")[2]) / (usr.xdiff / par("pin")[1])
+	## ratio of y to x: units-per-inch (Y) / units-per-inch (X)
+	ratio.y.x = (usr.ydiff / par("pin")[2]) / (usr.xdiff / par("pin")[1])
 
-  # calculate the height and width of the legend, which is essential
-  # to calculating its position
-  gap.x <- par("cxy")[1] * legend.cex / 2
-  gap.y <- par("cxy")[2] * legend.cex / 2
-  radii.leg.y <- radii.leg * ratio.y.x
-  leg.tex.w <- strwidth(legend.breaks, units = "user") * legend.cex
-  title.w = strwidth(legend.title)
-  max.tex.w <- max(leg.tex.w)
+	## calculate the height and width of the legend, which is essential to calculating its position
+	gap.x <- par("cxy")[1] * legend.cex / 2
+	gap.y <- par("cxy")[2] * legend.cex / 2
+	radii.leg.y <- radii.leg * ratio.y.x
+	leg.tex.w <- strwidth(legend.breaks, units = "user") * legend.cex
+	title.w = strwidth(legend.title)
+	max.tex.w <- max(leg.tex.w)
 
-  switch(legend.type,
-         nested = {
-           # height of the legend is the biggest bubble + title
-           legend.height <- 2 * max(radii.leg.y) + 3 * gap.y
-           legend.width <- 2 * max(radii.leg) + gap.x + max.tex.w },
-         horiz = {
-           # height of the legend is the biggest bubble + title + tag
-           legend.height <- 2 * max(radii.leg.y) + 3 * gap.y
-           legend.width <- 2 * sum(radii.leg) +
-             (length(legend.breaks) - 1) * gap.x },
-         vert = {
-           legend.height <- 2 * sum(radii.leg.y) +
-             (length(legend.breaks) - 1) * gap.y + 3 * gap.y
-           legend.width <- 2 * max(radii.leg) + gap.x + max.tex.w }
-         )
+	switch(legend.type,
+		nested = {
+			## height of the legend is the biggest bubble + title
+			legend.height <- 2 * max(radii.leg.y) + 3 * gap.y
+			legend.width <- 2 * max(radii.leg) + gap.x + max.tex.w
+		},
+		horiz = {
+			## height of the legend is the biggest bubble + title + tag
+			legend.height <- 2 * max(radii.leg.y) + 3 * gap.y
+			legend.width <- 2 * sum(radii.leg) + (length(legend.breaks) - 1) * gap.x
+		},
+		vert = {
+			legend.height <- 2 * sum(radii.leg.y) + (length(legend.breaks) - 1) * gap.y + 3 * gap.y
+			legend.width <- 2 * max(radii.leg) + gap.x + max.tex.w
+		}
+	)
 
-  # reflect an adjustment in X if the title is broader than the legend
-  if (title.w > legend.width) {
-    w.adj <- (title.w - legend.width) / 2
-  } else {
-    w.adj <- 0
-  }
+	## reflect an adjustment in X if the title is broader than the legend
+	if (title.w > legend.width) {
+		w.adj <- (title.w - legend.width) / 2
+	} else {
+		w.adj <- 0
+	}
 
-  # if we already have positions, keep them; otherwise, calculate
-  # positions given the described corner
-  if (class(legend.pos) == "numeric") {
-    legend.loc <- legend.pos
-  } else {
-    corners <- c("bottomleft", "bottomright", "topleft", "topright")
-    if (legend.pos %in% corners) {
-      legend.loc <- switch(legend.pos,
-        bottomleft =
-          c(par("usr")[1] + 0.025 * usr.xdiff + w.adj,
-            par("usr")[3] + 0.025 * usr.ydiff + legend.height),
-        bottomright =
-          c(par("usr")[2] - (0.025 * usr.xdiff + legend.width + w.adj),
-            par("usr")[3] + 0.025 * usr.ydiff + legend.height),
-        topleft =
-          c(par("usr")[1] + 0.025 * usr.xdiff + w.adj,
-            par("usr")[4] - 0.025 * usr.ydiff),
-        topright =
-          c(par("usr")[2] - (0.025 * usr.xdiff + legend.width + w.adj),
-            par("usr")[4] - 0.025 * usr.ydiff));
-    }
-  }
+	## if we already have positions, keep them; otherwise, calculate
+	## positions given the described corner
+	#if (class(legend.pos) == "numeric") {
+	if (inherits(legend.pos, "numeric")) {
+		legend.loc <- legend.pos
+	} else {
+		corners <- c("bottomleft", "bottomright", "topleft", "topright")
+		if (legend.pos %in% corners) {
+			legend.loc <- switch(legend.pos,
+				bottomleft =
+					c(par("usr")[1] + 0.025 * usr.xdiff + w.adj, par("usr")[3] + 0.025 * usr.ydiff + legend.height),
+				bottomright =
+					c(par("usr")[2] - (0.025 * usr.xdiff + legend.width + w.adj), par("usr")[3] + 0.025 * usr.ydiff + legend.height),
+				topleft =
+					c(par("usr")[1] + 0.025 * usr.xdiff + w.adj, par("usr")[4] - 0.025 * usr.ydiff),
+				topright =
+					c(par("usr")[2] - (0.025 * usr.xdiff + legend.width + w.adj), par("usr")[4] - 0.025 * usr.ydiff)
+			);
+		}
+	}
+	## the calling function should already have validated legend.type
+	switch(legend.type,
+		nested = {
+			## legend.loc[1] specifies X for *center* of circle; we need
+			## to shift it right by the largest radius
+			legend.loc[1] <- legend.loc[1] + max(radii.leg)
+			## the legend will be drawn from the bottom up; shift
+			## legend.loc[2] so that it refers to the bottom
+			legend.loc[2] <- legend.loc[2] - legend.height
+			r <- rev(radii.leg)
+			bb <- rev(legend.breaks)
 
-  # the calling function should already have validated legend.type
-  switch(legend.type,
-         nested = {
-           # legend.loc[1] specifies X for *center* of circle; we need
-           # to shift it right by the largest radius
-           legend.loc[1] <- legend.loc[1] + max(radii.leg)
-           # the legend will be drawn from the bottom up; shift
-           # legend.loc[2] so that it refers to the bottom
-           legend.loc[2] <- legend.loc[2] - legend.height
-           
-           r <- rev(radii.leg)
-           bb <- rev(legend.breaks)
+			## position of the right edge of the text labels legend
+			x.text.leg <- legend.loc[1] + max(r) + gap.x + max.tex.w
 
-           # position of the right edge of the text labels legend
-           x.text.leg <- legend.loc[1] + max(r) + gap.x + max.tex.w
+			## draw the circles, lines, and labels
+			for (i in 1:length(r)) {
+				symbols(legend.loc[1], legend.loc[2] + r[i] * ratio.y.x,
+					circles=r[i], inches=FALSE, add=TRUE, bg=symbol.bg[length(r)-i+1], fg=symbol.fg)
+				lines(c(legend.loc[1], legend.loc[1] + r[1] + gap.x), rep(legend.loc[2] + 2 * r[i] * ratio.y.x, 2))
+				text(x.text.leg, legend.loc[2] + 2 * r[i] * ratio.y.x, bb[i], adj=c(1, .5), cex=legend.cex)
+			}
+			## add the title
+			x.title.leg <- legend.loc[1] - max(radii.leg) + (legend.width / 2)
+			text(x.title.leg, legend.loc[2]+legend.height, legend.title, adj=c(0.5,0.5), cex=legend.cex+0.2, col="black")
 
-           # draw the circles, lines, and labels
-           for (i in 1:length(r)) {
-             symbols(legend.loc[1], legend.loc[2] + r[i] * ratio.y.x,
-                     circles=r[i], inches=FALSE, add=TRUE, bg=symbol.bg[length(r)-i+1],
-                     fg=symbol.fg)
-             lines(c(legend.loc[1], legend.loc[1] + r[1] + gap.x),
-                   rep(legend.loc[2] + 2 * r[i] * ratio.y.x, 2))
-             text(x.text.leg, legend.loc[2] + 2 * r[i] * ratio.y.x, bb[i],
-                  adj=c(1, .5), cex=legend.cex)
-           }
-
-           # add the title
-           x.title.leg <- legend.loc[1] - max(radii.leg) + (legend.width / 2)
-           text(x.title.leg, legend.loc[2]+legend.height, legend.title,
-                adj=c(0.5,0.5), cex=legend.cex+0.2, col="black")
-
-           # set positions for plotting of zero (later)
-           zlab <- c(x.title.leg, legend.loc[2]+legend.height/4) },
-         
-         horiz = {
-           # legend.loc[2] currently identifies the top of the legend
-           legend.loc[2] <- legend.loc[2] + max(radii.leg.y) - legend.height 
-
-           # compute offsets for horizontal spacing
-           offset <- vector()
-           for (i in 1:length(radii.leg))
-             offset[i] <- 2 * sum(radii.leg[1:i]) - radii.leg[i] +
-               (i - 1) * gap.x
-
-           # draw circles, labels
-           symbols(legend.loc[1] + offset,
-                   rep(legend.loc[2],length(radii.leg)),
-                   circles = radii.leg, inches = FALSE, bg = symbol.bg,
-                   fg = symbol.fg, add = TRUE)
-           text(legend.loc[1] + offset, legend.loc[2] + radii.leg.y + gap.y,
-                legend.breaks, adj = c(0.5, 0.5), cex = legend.cex)
-
-           # add the title
-           text(legend.loc[1] + legend.width / 2,
-                legend.loc[2] + legend.height - max(radii.leg.y),
-                legend.title, adj = c(0.5, 0.5), cex = legend.cex + 0.2,
-                col = "black")
-
-           # set positions for plotting of zero (later)
-           zlab <- c(legend.loc[1], legend.loc[2] - legend.height / 8) },
-
-         vert = {
-           # part of the calculations have been made above to
-           # calculate the height of the legend
-           if (any(legend.pos == c("bottomleft","topleft")))
-             legend.loc[1] <- legend.loc[1] + 0.05 * usr.xdiff
-
-           # compute offsets for vertical spacing
-           offset <- vector()
-           for (i in 1:length(legend.breaks))
-             offset[i] <- gap.y + 2 * sum(radii.leg.y[1:i]) - radii.leg.y[i] +
-               i * gap.y
-
-           # draw circles, labels
-           symbols(rep(legend.loc[1], length(legend.breaks)),
-                   legend.loc[2] - offset,
-                   circles = radii.leg, bg = symbol.bg, fg = symbol.fg,
-                   inches = FALSE, add = TRUE)
-           x.text.leg <- legend.loc[1] + max(radii.leg) + gap.x + max.tex.w
-           text(rep(x.text.leg, length(legend.breaks)), legend.loc[2] - offset,
-                legend.breaks,
-                cex = legend.cex, adj = c(1, 0.5), col="black")
-
-           # add the title
-           text(legend.loc[1] + legend.width / 2 - max(radii.leg),
-                legend.loc[2], legend.title, adj = c(0.5, 0.5),
-                cex = legend.cex + 0.2, col = "black")
-
-           # set positions for plotting of zero (later)
-           zlab <- c(legend.loc[1] + legend.width / 8, legend.loc[2]) }
-         )
-
-  # plot the zero if need be
-  if (!is.logical(symbol.zero))
-    legend(zlab[1], zlab[2], legend = "zero", pch = symbol.zero, xjust = 0,
-           yjust = 1, bty = "n", cex = 0.8, x.intersp = 0.5)
-
-  invisible()
+			## set positions for plotting of zero (later)
+			zlab <- c(x.title.leg, legend.loc[2]+legend.height/4) 
+		},
+		horiz = {
+			## legend.loc[2] currently identifies the top of the legend
+			legend.loc[2] <- legend.loc[2] + max(radii.leg.y) - legend.height 
+			## compute offsets for horizontal spacing
+			offset <- vector()
+			for (i in 1:length(radii.leg))
+				offset[i] <- 2 * sum(radii.leg[1:i]) - radii.leg[i] + (i - 1) * gap.x
+			## draw circles, labels
+			symbols(legend.loc[1] + offset, rep(legend.loc[2],length(radii.leg)),
+				circles = radii.leg, inches = FALSE, bg = symbol.bg, fg = symbol.fg, add = TRUE)
+			text(legend.loc[1] + offset, legend.loc[2] + radii.leg.y + gap.y, 
+				legend.breaks, adj = c(0.5, 0.5), cex = legend.cex)
+			## add the title
+			text(legend.loc[1] + legend.width / 2, legend.loc[2] + legend.height - max(radii.leg.y),
+				legend.title, adj = c(0.5, 0.5), cex = legend.cex + 0.2, col = "black")
+			## set positions for plotting of zero (later)
+			zlab <- c(legend.loc[1], legend.loc[2] - legend.height / 8) 
+		},
+		vert = {
+			## part of the calculations have been made above to calculate the height of the legend
+			if (any(legend.pos == c("bottomleft","topleft")))
+				legend.loc[1] <- legend.loc[1] + 0.05 * usr.xdiff
+			## compute offsets for vertical spacing
+			offset <- vector()
+			for (i in 1:length(legend.breaks))
+				offset[i] <- gap.y + 2 * sum(radii.leg.y[1:i]) - radii.leg.y[i] + i * gap.y
+			## draw circles, labels
+			symbols(rep(legend.loc[1], length(legend.breaks)), legend.loc[2] - offset,
+				circles = radii.leg, bg = symbol.bg, fg = symbol.fg, inches = FALSE, add = TRUE)
+			x.text.leg <- legend.loc[1] + max(radii.leg) + gap.x + max.tex.w
+			text(rep(x.text.leg, length(legend.breaks)), legend.loc[2] - offset, legend.breaks,
+				cex = legend.cex, adj = c(1, 0.5), col="black")
+			## add the title
+			text(legend.loc[1] + legend.width / 2 - max(radii.leg), legend.loc[2],
+				legend.title, adj = c(0.5, 0.5), cex = legend.cex + 0.2, col = "black")
+			## set positions for plotting of zero (later)
+			zlab <- c(legend.loc[1] + legend.width / 8, legend.loc[2])
+		}
+	)
+	## plot the zero if need be
+	if (!is.logical(symbol.zero))
+		legend(zlab[1], zlab[2], legend = "zero", pch = symbol.zero, xjust = 0,
+			yjust = 1, bty = "n", cex = 0.8, x.intersp = 0.5)
+	invisible(legend.loc)
 }
 
 #==============================================================================

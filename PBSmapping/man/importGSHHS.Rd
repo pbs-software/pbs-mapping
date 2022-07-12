@@ -3,7 +3,9 @@
 \title{Import Data from a GSHHS Database}
 \description{
   Import data from a GSHHS database and convert data into a \code{PolySet}
-  with a \code{PolyData} attribute.
+  with a \code{PolyData} attribute. 
+  The database was originally called \sQuote{Global Self-consistent, Hierarchical, High-resolution Shoreline}
+  (GSHHS, Wessel and Smith 1996), but \sQuote{Shoreline} was subsequently expanded to include more \sQuote{Geography} (GSHHG).
 }
 \usage{
 importGSHHS(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
@@ -13,7 +15,7 @@ importGSHHS(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
     looks for \code{gshhs_f.b} in the root of the \pkg{PBSmapping} library
     directory.}
   \item{xlim}{range of X-coordinates (for clipping).
-    The range should be between 0 and 360.}
+    The range should be between 0 and 360, starting at the Greenwich meridian and wrapping eastward around the globe.}
   \item{ylim}{range of Y-coordinates (for clipping).}
   \item{maxLevel}{maximum level of polygons to import:
     1 (land), 2 (lakes on land), 3 (islands in lakes), or 4 (ponds on
@@ -21,22 +23,20 @@ importGSHHS(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
   \item{n}{minimum number of vertices that must exist in a line/polygon
     in order for it to be imported.}
   \item{useWest}{logical: if \code{TRUE}, convert the X-coordinates (longitude)
-    to \eqn{^\circ}{deg}W (western hemisphere -180 to 0).}
+    to \eqn{^\circ}{deg}W (western hemisphere -180 to 0, i.e., west of the Greenwich meridian).}
 }
 \details{
   This routine requires a binary GSHHG (Global Self-consistent, Hierarchical,
-  High-resolution Geography) database file. The GSHHG database has been released
-  in the public domain and may be downloaded from \cr
-  \url{http://www.soest.hawaii.edu/pwessel/gshhg/}.\cr
+  High-resolution Geography) database file. The \href{http://www.soest.hawaii.edu/pwessel/gshhg/}{GSHHG database} has been released
+  in the public domain.
   At the time of writing, the most recent binary database was the archive
-  file called \code{gshhg-bin-2.3.4.zip}.
+  file called \code{gshhg-bin-2.3.7.zip}.
 
   The archive contains multiple binary files that contain geographical
   coordinates for shorelines (\code{gshhs}), rivers (\code{wdb_rivers}), and
   borders (\code{wdb_borders}).
-  The latter two come from World DataBank II (WDBII): \cr
-  \url{http://meta.wikimedia.org/wiki/Geographical_data#CIA_World_DataBank_II_and_derivates} \cr
-  The five resolutions available are: \cr
+  The latter two come from \href{https://meta.wikimedia.org/wiki/Geographical_data#CIA_World_DataBank_II_and_derivates}{World DataBank II} (WDBII).
+  The five resolutions available are:
   full (\code{f}), high (\code{h}), intermediate (\code{i}), low (\code{l}), and coarse (\code{c}).
 
   This routine returns a \code{PolySet} object with an associated
@@ -50,14 +50,26 @@ importGSHHS(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 \value{
   A \code{PolySet} with a \code{PolyData} attribute.
 }
+\references{
+Wessel, P., and Smith, W.H.F. (1996)
+\href{http://www.soest.hawaii.edu/pwessel/gshhg/Wessel+Smith_1996_JGR.pdf}{A Global Self-consistent, Hierarchical, High-resolution Shoreline Database}.
+\emph{J. Geophys. Res.} \bold{101} 8741-8743.
+}
 \author{
   \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
-  MacEwan University, Edmonton AB\cr
-  Last modified \code{Rd: 2015-02-16}
+  MacEwan University, Edmonton AB
+
+  Maintainer: \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
+  Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
+  \emph{locus opus}: Institute of Ocean Sciences (IOS), Sidney BC\cr
+  Last modified \code{Rd: 2021-01-11}
 }
 \seealso{
-  \code{\link[PBSmapping]{importEvents}}, \code{\link[PBSmapping]{importLocs}}, 
-  \code{\link[PBSmapping]{importPolys}},  \code{\link[PBSmapping]{importShapefile}}
+In package \pkg{PBSmapping}:\cr
+  \code{\link[PBSmapping]{importEvents}},
+  \code{\link[PBSmapping]{importLocs}}, 
+  \code{\link[PBSmapping]{importPolys}},
+  \code{\link[PBSmapping]{importShapefile}}
 }
 \note{
   The function calls a C routine, also called \code{importGSHHS}, which returns

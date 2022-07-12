@@ -8,10 +8,10 @@
 convUL (xydata, km=TRUE, southern=NULL)
 }
 \arguments{
-  \item{xydata}{data frame with columns \code{X} and \code{Y}.}
-  \item{km}{Boolean value; if \code{TRUE}, UTM coordinates within
+  \item{xydata}{\code{numeric} -- data frame with columns \code{X} and \code{Y}.}
+  \item{km}{\code{logical} -- if \code{TRUE}, UTM coordinates within
     \code{xydata} are in kilometres; otherwise, metres.}
-  \item{southern}{Boolean value; if \code{TRUE}, forces conversions from
+  \item{southern}{\code{logical} -- if \code{TRUE}, forces conversions from
     UTM to longitude/latitude to produce coordinates within the
     southern hemisphere.  For conversions from UTM, this argument defaults to
     \code{FALSE}. For conversions from LL, the function determines 
@@ -43,14 +43,16 @@ convUL (xydata, km=TRUE, southern=NULL)
   \code{projection} attribute matches the new projection.
 }
 \references{
-  Ordnance Survey. (2010) A guide to coordinate systems
-  in Great Britain. \emph{Report D00659} \bold{(v2.1)}. Southampton, UK. \cr
-  \url{http://www.ordnancesurvey.co.uk/oswebsite/gps/docs/A_Guide_to_Coordinate_Systems_in_Great_Britain.pdf}.
+  Ordnance Survey. (2020) 
+  \href{https://www.ordnancesurvey.co.uk/documents/resources/guide-coordinate-systems-great-britain.pdf}{A guide to coordinate systems in Great Britain}.
+  Copyright Ordnance Survey 2018 \bold{(v3.6)}. Southampton, UK.
 }
 \author{
-  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
-  MacEwan University, Edmonton AB\cr
-  Last modified \code{Rd: 2013-04-10}
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor, MacEwan University, Edmonton AB\cr
+  Maintainer: \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
+  Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
+  \emph{locus opus}: Regional Headquarters, Vancouver BC\cr
+  Last modified \code{Rd: 2022-07-06}
 }
 \seealso{
   \code{\link[PBSmapping]{closePolys}},

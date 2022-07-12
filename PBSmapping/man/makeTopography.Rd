@@ -1,9 +1,11 @@
 \name{makeTopography}
 \alias{makeTopography}
-\title{Make Topography Data from Online Source}
+\title{
+  Make Topography Data from Online Source
+}
 \description{
-  Make topography data suitable for the \code{\link{contour}} and
-  \code{\link{contourLines}} functions using freely available global
+  Make topography data suitable for the \code{'graphics::contour'} and
+  \code{'grDevices::contourLines'} functions using freely available global
   seafloor topography data.
 }
 \usage{
@@ -18,10 +20,9 @@ makeTopography (dat, digits=2, func=NULL)
     Defaults to \code{mean()} if no function is specified.}
 }
 \details{
-  Suitable data can be obtained through the acquisition form at:\cr
-  \url{http://topex.ucsd.edu/cgi-bin/get_data.cgi}.\cr
-  The function \code{\link{read.table}} will import dowloaded ASCII files
-  into R/S, creating objects suitable for the argument \code{dat} in \code{makeTopography}.
+  Suitable data can be obtained through the \href{https://topex.ucsd.edu/cgi-bin/get_data.cgi}{Topex acquisition form}.
+  The function \code{'utils::read.table'} will import dowloaded ASCII files into R,
+  creating objects suitable for the argument \code{'dat'} in \code{'makeTopography'}.
 
   When creating data for regions with longitude values spanning
   -180\eqn{^\circ}{ degrees} to 0\eqn{^\circ}{ degrees}, consider
@@ -37,19 +38,25 @@ makeTopography (dat, digits=2, func=NULL)
   List with elements \code{x}, \code{y}, and \code{z}. Elements \code{x} and
   \code{y} are vectors, while \code{z} is a matrix with rownames \code{x}
   and colnames \code{y}.
-  The functions \code{\link{contour}} and \code{\link{contourLines}}
+  The functions \code{'graphics::contour'} and \code{'grDevices::contourLines'}
   expect data conforming to this list format.
 }
 \seealso{
-  \code{\link[graphics]{contour}} in \pkg{graphics},\cr
-  \code{\link[grDevices]{contourLines}} in \pkg{grDevices}, and \cr
-  \code{\link[PBSmapping]{convCP}} in \pkg{PBSmapping}.
+In package \pkg{graphics}:\cr
+  \code{\link[graphics]{contour}}\cr
+In package \pkg{grDevices}:\cr
+  \code{\link[grDevices]{contourLines}}\cr
+In package \pkg{PBSmapping}:\cr
+  \code{\link[PBSmapping]{convCP}}
 }
 \author{
-  \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
+  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB\cr
+
+  Maintainer: \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
   Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
-  \emph{opus locus}: Institute of Ocean Sciences (IOS), Sidney BC\cr
-  Last modified \code{Rd: 2018-09-10}
+  \emph{locus opus}: Institute of Ocean Sciences (IOS), Sidney BC\cr
+  Last modified \code{Rd: 2021-01-11}
 }
 \examples{
 local(envir=.PBSmapEnv,expr={

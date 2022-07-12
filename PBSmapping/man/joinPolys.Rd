@@ -2,27 +2,25 @@
 \alias{joinPolys}
 \title{Join One or Two PolySets using a Logic Operation}
 \description{
-  Join one or two \link{PolySet}s using a logic operation.
+  Join one or two PolySets using a logic operation.
 }
 \usage{
-joinPolys(polysA,polysB=NULL,operation="INT")
+joinPolys(polysA, polysB=NULL, operation="INT")
 }
 \arguments{
-  \item{polysA}{\link{PolySet} to join.}
-  \item{polysB}{optional second \link{PolySet} with which to join.}
+  \item{polysA}{\link[PBSmapping]{PolySet} to join.}
+  \item{polysB}{optional second \link[PBSmapping]{PolySet} with which to join.}
   \item{operation}{one of \code{"DIFF"}, \code{"INT"}, \code{"UNION"},
     or \code{"XOR"}, representing difference, intersection, union, and
     exclusive-or, respectively.}
 }
 \details{
-  This function interfaces with the Clipper library, specifically version
-  6.2.1 released 2014-10-31 (\url{http://www.angusj.com/delphi/clipper.php}),
-  developed by Angus Johnson.  Prior to 2013-03-23, \code{joinPolys} used
-  the General Polygon Clipper library 
-  (\url{http://www.cs.man.ac.uk/aig/staff/alan/software/}) by
-  Alan Murta at the University of Manchester.  We keep this historic
-  reference to GPC because \code{joinPolys} remains faithful to Murta's
-  definition of a generic polygon, which we describe below.
+  This function interfaces with the \href{http://www.angusj.com/delphi/clipper.php}{Clipper library},
+  specifically version 6.2.1 released 2014-10-31, developed by Angus Johnson.
+  Prior to 2013-03-23, \code{'joinPolys'} used the General Polygon Clipper library
+  by Alan Murta at the University of Manchester.
+  We keep this historic reference to GPC because \code{'joinPolys'} remains faithful
+  to Murta's definition of a generic polygon, which we describe below.
   
   Murta (2004) defines a \emph{generic polygon} (or \emph{polygon set})
   as zero or more disjoint boundaries of arbitrary configuration.  He
@@ -34,63 +32,66 @@ joinPolys(polysA,polysB=NULL,operation="INT")
   PolySet.  For example, the polygons for a given \code{PID} cannot
   be arranged arbitrarily.
   
-  If \code{polysB} is \code{NULL}, this function sequentially applies
-  the \code{operation} between the generic polygons in \code{polysA}.
-  For example, suppose \code{polysA} contains three generic polygons (A,
-  B, C).  The function outputs the PolySet containing ((A \emph{op} B)
-  \emph{op} C).
+  If \code{'polysB'} is \code{NULL}, this function sequentially applies
+  the logic \code{'operation'} between the generic polygons in \code{'polysA'}.
+  For example, suppose \code{'polysA'} contains three generic polygons (A, B, C).
+  The function outputs the PolySet containing ((A \emph{op} B) \emph{op} C).
   
-  If \code{polysB} is not \code{NULL}, this function applies
-  \code{operation} between each generic polygon in \code{polysA} and
-  each one in \code{polysB}.  For example, suppose \code{polysA}
-  contains two generic polygons (A, B) and \code{polysB} contains two
-  generic polygons (C, D).  The function's output is the concatenation
-  of A \emph{	} C, B \emph{op} C, A \emph{op} D, B \emph{op} D, with
-  \code{PID}s 1 to 4, respectively.  Generally there are \emph{n}
-  times \emph{m} comparisons, where \emph{n} = number of polygons in
-  \code{polysA} and \emph{m} = number of polygons in \code{polysB}.  If
-  \code{polysB} contains only one generic polygon, the function
-  maintains the \code{PID}s from \code{polysA}.  It also maintains them
-  when \code{polysA} contains only one generic polygon and the
-  \code{operation} is difference.  Otherwise, if \code{polysA} contains
-  only one generic polygon, it maintains the \code{PID}s from
-  \code{polysB}.
+  If \code{'polysB'} is not \code{NULL}, this function applies the logic \code{'operation'}
+  between each generic polygon in \code{'polysA'} and each one in \code{'polysB'}.
+  For example, suppose \code{'polysA'} contains two generic polygons \code{(A, B)}
+  and \code{'polysB'} contains two generic polygons \code{(C, D)}.
+  The function's output is the concatenation of
+  A \emph{op} C, B \emph{op} C, A \emph{op} D, B \emph{op} D, with \code{PID}s 1 to 4, respectively.
+  Generally there are \emph{n} times \emph{m} comparisons, where \emph{n} = number of polygons
+  in \code{'polysA'} and \emph{m} = number of polygons in \code{'polysB'}.
+  If \code{'polysB'} contains only one generic polygon, the function
+  maintains the \code{PID}s from \code{'polysA'}.
+  It also maintains them when \code{'polysA'} contains only one generic polygon and
+  the \code{'operation'} is \code{"DIFF"} (difference).
+  Otherwise, if \code{'polysA'} contains only one generic polygon, it maintains
+  the \code{PID}s from \code{'polysB'}.
 }
 \value{
-  If \code{polysB} is \code{NULL}, the resulting PolySet contains
+  If \code{'polysB'} is \code{NULL}, the resulting PolySet contains
   a single generic polygon (one \code{PID}), possibly with several
-  components (\code{SID}s).  The function recalculates the \code{PID}
-  and \code{SID} columns.
+  components (\code{SID}s).
+  The function recalculates the \code{PID} and \code{SID} columns.
   
-  If \code{polysB} is not \code{NULL}, the resulting PolySet
-  contains one or more generic polygons (\code{PID}s), each with
-  possibly several components (\code{SID}s).  The function recalculates
-  the \code{SID} column, and depending on the input, it may recalculate
-  the \code{PID} column.
+  If \code{'polysB'} is not \code{NULL}, the resulting PolySet contains one or more
+  generic polygons (\code{PID}s), each with possibly several components (\code{SID}s).
+  The function recalculates the \code{SID} column, and depending on the input,
+  it may recalculate the \code{PID} column.
 }
 \author{
-  \href{http://www.angusj.com/delphi/clipper.php}{Angus Johnson}, Computer Programmer\cr\cr
-  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
-  MacEwan University, Edmonton AB\cr
-  Last modified \code{Rd: 2015-03-31}
+  C code: \href{http://www.angusj.com/delphi/clipper.php}{Angus Johnson}, Computer Programmer
+
+  Implementation: \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
+  MacEwan University, Edmonton AB
+
+  Maintainer: \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
+  Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
+  \emph{locus opus}: Institute of Ocean Sciences (IOS), Sidney BC\cr
+  Last modified \code{Rd: 2021-01-11}
 }
 \seealso{
-  \code{\link{addPolys}},
-  \code{\link{appendPolys}},
-  \code{\link{clipPolys}},
-  \code{\link{closePolys}},
-  \code{\link{fixBound}},
-  \code{\link{fixPOS}},
-  \code{\link{locatePolys}},
-  \code{\link{plotMap}},
-  \code{\link{plotPoints}},
-  \code{\link{thickenPolys}},
-  \code{\link{thinPolys}}.
+In package \pkg{PBSmapping}:\cr
+  \code{\link[PBSmapping]{addPolys}},
+  \code{\link[PBSmapping]{appendPolys}},
+  \code{\link[PBSmapping]{clipPolys}},
+  \code{\link[PBSmapping]{closePolys}},
+  \code{\link[PBSmapping]{fixBound}},
+  \code{\link[PBSmapping]{fixPOS}},
+  \code{\link[PBSmapping]{locatePolys}},
+  \code{\link[PBSmapping]{plotMap}},
+  \code{\link[PBSmapping]{plotPoints}},
+  \code{\link[PBSmapping]{thickenPolys}},
+  \code{\link[PBSmapping]{thinPolys}}
 }
 \references{
-  Murta, A. (2004) \emph{A General Polygon Clipping Library}.
-  Accessed: July 29, 2004.\cr
-  \url{http://www.cs.man.ac.uk/aig/staff/alan/software/gpc.html}
+  Murta, A. (2004) \emph{A General Polygon Clipping Library}. Accessed: Jul 29, 2004.
+
+  Johnson, A. (2014) \emph{Clipper} -- an open source freeware library for clipping and offsetting lines and polygons. Accessed: Oct 31, 2014.
 }
 \examples{
 local(envir=.PBSmapEnv,expr={

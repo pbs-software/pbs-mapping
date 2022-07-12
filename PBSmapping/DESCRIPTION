@@ -1,6 +1,6 @@
 Package:    PBSmapping
-Version:    2.72.1
-Date:       2019-03-14
+Version:    2.73.1
+Date:       2022-07-12
 Title:      Mapping Fisheries Data and Spatial Analysis Tools
 Authors@R: c(
    person(c("Jon", "T."), "Schnute", role = "aut", email = "schnutej-dfo@shaw.ca"),
@@ -19,7 +19,7 @@ Author: Jon T. Schnute [aut], Nicholas Boers [aut], Rowan Haigh [aut, cre],
    Angus Johnson [ctb], Paul Wessel [ctb], Franklin Antonio [ctb],
    Nicholas J. Lewin-Koh [ctb], Roger Bivand [ctb]
 Maintainer: Rowan Haigh <rowan.haigh@dfo-mpo.gc.ca>
-Copyright:  2003-2019, Fisheries and Oceans Canada
+Copyright:  2003-2022, Fisheries and Oceans Canada
 Depends:    R (>= 3.5.0)
 Suggests:   foreign, maptools, deldir
 SystemRequirements: C++11

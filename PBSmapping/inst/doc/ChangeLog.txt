@@ -7,6 +7,25 @@ Authors:  JTS = Jon T. Schnute
           DC  = Denis Chabot
 -----------------------------------
 
+2.73.1 (2022-07-12) [Rcheck=T, Rbuild=T]
+  * R code
+    + Modified R function `.addBubblesLegend' to satisfy CRAN
+      - From : if (class(legend.pos) == "numeric") {
+      - To   : if (inherits(legend.pos, "numeric")) {
+  * C code
+    + Modified `clipperWrapper' to bring Sint and Sfloat into scope.
+      - moved `typedef int Sint; typedef double Sfloat;' from `clipperWrapper.cpp' to `clipperWrapper.h'
+    + Updated copyright dates in PBSmapping C source files.
+  * Documentation
+    + Updated a few Rd files with broken hyperlinks to Internet addresses.
+
+2.73.0 (2021-01-11) [Rcheck=T, Rbuild=T]
+  * R code
+    + Modified function `addBubbles' to accept negative data values. (RH 210111)
+    + Added new functions `RGB2RYB' and `RYB2RGB' based on the equations in Sugita and Takahashi (2015,2017). (RH 210106)
+      - Converts between the Red-Green-Blue and Red-Yellow-Blue colour schemes.
+    + Modified function `addCompass' to include magnetic pole positions from the NOAA's IGRF-13 model (1900-2025). (RH 210104)
+
 2.72.1 (2019-03-14) [Rcheck=T, Rbuild=T]
   * C code
     + Removed 'undeclared' SEXP variables from `importGSHHS' (see below) because they had been defined on lines 62:63. (RH 190314)
@@ -180,7 +199,7 @@ Authors:  JTS = Jon T. Schnute
     + Modified gshhs.h to address Issue 30. (JTS 140218)
   * Import
     + Modified the function `importShapefile` to treat shape types (5,15,25) like 5, (3,13,23) like 3, and (1,11,21) like 1. (RH 131220)
-      - See `ESRI Shapefile Technical Description: An ESRI White Paper—July 1998` for more details.
+      - See `ESRI Shapefile Technical Description: An ESRI White Paper-July 1998` for more details.
   * Documentation
     + Updated `PBSmapping-UG.pdf` to reflect the new website for GSHHS, now called GSHHG. (RH 130503)
     + Added Authors to DESCRIPTION file (based on C source code annotations); updated copyright dates. (RH 130503)

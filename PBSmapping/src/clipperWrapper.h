@@ -1,5 +1,5 @@
 /*=============================================================================
-  Copyright (C) 2003-2019 Fisheries and Oceans Canada
+  Copyright (C) 2003-2022 Fisheries and Oceans Canada
 
   This file is part of PBS Mapping.
 
@@ -32,6 +32,10 @@
 
 #include <R.h>
 #include <Rdefines.h>
+
+typedef int Sint;
+typedef double Sfloat;
+
 
 #ifdef __cplusplus
 extern "C" {

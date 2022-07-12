@@ -1,24 +1,26 @@
 \name{addCompass}
 \alias{addCompass}
 \title{
-  Add Compass to Map
+  Add Compass Rose to Map
 }
 \description{
   Add a compass rose to an existing map, similar to those found on 
   nautical charts showing both true north and magnetic north.
 }
 \usage{
-addCompass(X, Y, rot="magN", cex=1, 
-   col.compass=c("gainsboro","blue","yellow","black"), ...)
+addCompass(X, Y, rot="magN", useWest=TRUE, year,
+   cex=1, col.compass=c("gainsboro","blue","yellow","black"), ...)
 }
 \arguments{
-  \item{X}{Longitude coordinate (degrees N) for centroid of compass rose.}
-  \item{Y}{Latitude coordinate (degrees W) for centroid of compass rose.}
-  \item{rot}{Rotation (degrees) counterclockwise from 0 degrees (true North). See Details.}
-  \item{cex}{Character expansion to use in the display.}
-  \item{col.compass}{Colours for compass rose components (in order):\cr
-    1=background compass, 2=rotated arms, 3=central button, 4=pch (broder).}
-  \item{\dots}{Additional parameters to pass to the \code{text} function.}
+  \item{X}{\code{numeric} -- longitude coordinate (degrees N) for centroid of compass rose.}
+  \item{Y}{\code{numeric} -- latitude coordinate (degrees W) for centroid of compass rose.}
+  \item{rot}{\code{numeric|character} -- Rotation (degrees) counterclockwise from 0 degrees (true North, see details).}
+  \item{useWest}{\code{logical} -- if \code{TRUE}, assumes longitude coordinates are centered on Greenwich extending westward to -180 and eastward to 180.}
+  \item{year}{\code{numeric} -- specific year to use from IGRF-13 (see details).}
+  \item{cex}{\code{numeric} -- character expansion to use in the display.}
+  \item{col.compass}{\code{character} -- colours for compass rose components (in order):\cr
+    1=background compass, 2=rotated arms, 3=central button, 4=pch (border).}
+  \item{\dots}{\code{dots} -- additional parameters to pass to the \code{text} function.}
 }
 \details{
   The basic idea comes from Jim Lemon (see References), but is modified here
@@ -26,23 +28,29 @@ addCompass(X, Y, rot="magN", cex=1,
 
   The default rotation (\code{"magN"}) is a calculation of the initial
   bearing of a great-circle arc from the compass position to the north
-  geomagnetic pole using the function \code{\link[PBSmapping]{calcGCdist}}.
+  geomagnetic rot using the function \code{\link[PBSmapping]{calcGCdist}}.
+  The default year is the current year, but the user can choose years from
+  1900 to 2025 for approximate rot locations using model output from NOAA's IGRF-13
+  (\href{https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html}{International Geomagnetic Reference Field}).
+
+  The user can also specify a fixed rotation (e.g. \code{rot=-30}) or no
+  rotation (either \code{rot=0} or \code{rot="trueN"}).
 }
 \value{
-  No valule returned.
+  No value returned.
 }
 \references{
   \href{https://stat.ethz.ch/pipermail/r-sig-geo/2010-February/007564.html}{%
   [R-sig-Geo] How to display a compass rose on a map}
 
-  \href{http://wdc.kugi.kyoto-u.ac.jp/poles/polesexp.html}{%
+  \href{https://wdc.kugi.kyoto-u.ac.jp/poles/polesexp.html}{%
   Magnetic North, Geomagnetic and Magnetic Poles}
 }
 \author{
   \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
   Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
-  \emph{opus locus}: Institute of Ocean Sciences (IOS), Sidney BC\cr
-  Last modified \code{Rd: 2016-04-04}
+  \emph{locus opus}: Regional Headquarters, Vancouver BC\cr
+  Last modified \code{Rd: 2022-07-05}
 }
 \seealso{
   \code{\link[PBSmapping]{addBubbles}},
@@ -57,7 +65,7 @@ local(envir=.PBSmapEnv,expr={
   par(mfrow=c(1,1),mar=c(3,4,0.5,0.5))
   plotMap(nepacLL, xlim=c(-134.5,-124.5), ylim=c(48,55), plt=NULL,
     col="lightyellow", cex.axis=1.2, cex.lab=1.5)
-  addCompass(-132, 49.5, cex=1.5)
+  addCompass(-132, 49.5, rot=-12, cex=1.5)
 })
 }
 \keyword{aplot}

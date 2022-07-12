@@ -1,5 +1,5 @@
 ##================================================
-## Copyright (C) 2003-2018  Fisheries & Oceans Canada
+## Copyright (C) 2003-2021  Fisheries & Oceans Canada
 ## Nanaimo, British Columbia
 ## This file is part of PBS Mapping.
 ##================================================
@@ -17,14 +17,16 @@
 ##  placeHoles...........Place holes under correct solids
 ##  rotateEvents.........Rotate EventData clockwise around a central point
 ##  rotatePolys..........Rotate PolySet clockwise around a central point
+##  RGB2RYB..............Convert RGB colours to RYB colours
+##  RYB2RGB..............Convert RYB colours to RGB colours
 ##------------------------------------------------
 
 
-## addBubbles---------------------------2019-03-13
-##  Takes EventData and optional arguments to draw
-##  bubbles of radius proportional to the z variable.
+## addBubbles---------------------------2021-01-11
+##  Use EventData and optional arguments to draw
+##  bubbles of radius proportional to the z-variable.
 ##
-##  Modified (and for the legend, strongly inspired) from:
+##  Modified from (and for the legend, strongly inspired by):
 ##    S. Tanimura, C. Kuroiwa, and T. Mizota. Proportional symbol
 ##    mapping in R. Journal of Statistical Software, 15(5):1-7,
 ##    Jan. 2006. [http://www.jstatsoft.org]
@@ -32,17 +34,19 @@
 ##  Modifications by Denis Chabot allow it to work with PBSmapping,
 ##  add one type of bubble (z proportional to volume of bubble)
 ##  and make it possible to draw several maps with bubbles that all
-##  have the same radii (instead of each bubble plot having a radii
-##  that depends on the max z value for that plot). Can add a
+##  have the same radii (instead of each bubble plot having radii
+##  that depend on the max z value for each plot). Can add a
 ##  legend in one of 4 corners or at a specific x-y positiion.
-## ------------------------------------------DC/RH
-addBubbles <- function(events, type = c("perceptual", "surface", "volume"),
-   z.max = NULL, min.size = 0, max.size = 0.8, symbol.zero = "+",
-   symbol.fg = rgb(0,0,0,0.60), symbol.bg = rgb(0,0,0,0.30),
-   legend.pos = "bottomleft", legend.breaks = NULL,
-   show.actual = FALSE,
-   legend.type = c("nested", "horiz", "vert"),
-   legend.title = "Abundance", legend.cex = .8, ...)
+
+##  Small modifications by Rowan Haigh (Jan 2011) to allow
+##  bubbles with negative values.
+## ------------------------------------------DC|RH
+addBubbles <- function(events, type=c("perceptual","surface","volume"),
+   z.max=NULL, min.size=0, max.size=0.8, symbol.zero="+",
+   symbol.fg=rgb(0,0,0,0.60), symbol.bg=rgb(0,0,0,0.30),
+   legend.pos="bottomleft", legend.breaks=NULL,
+   show.actual=FALSE, legend.type=c("nested","horiz","vert"),
+   legend.title="Abundance", legend.cex=.8, neg.col="RYB", ...)
 {
 	## validate events
 	events <- .validateEventData(events)
@@ -56,18 +60,22 @@ addBubbles <- function(events, type = c("perceptual", "surface", "volume"),
 	if (!is.null(legend.pos))
 		legend.type <- match.arg(legend.type)
 
+	## addBubbles was not initially designed to deal with negative values; attempt to fix (RH 201006)
+	z.min = min(0,min(events$Z, na.rm=TRUE))
+	events$sign = sign(events$Z)
+
 	## set z.max if necessary
 	if (is.null(z.max) || all(is.na(z.max)))
-		z.max <- max(events$Z, na.rm=TRUE)
+		z.max <- max(abs(events$Z), na.rm=TRUE) ## RH 201006
 
 	## adjust legend breaks if necessary
 	if (is.null(legend.breaks) || all(is.na(legend.breaks)))
-		legend.breaks <- pretty(range(events$Z), 3)[-1]
+		legend.breaks <- pretty(range(abs(events$Z)), 3)[-1]
 	else if (is.vector(legend.breaks) && length(legend.breaks) == 1)
-		legend.breaks <- pretty(range(events$Z), legend.breaks)[-1]
+		legend.breaks <- pretty(range(abs(events$Z)), legend.breaks)[-1]
 
 	if (show.actual)
-		legend.breaks <- signif(legend.breaks / max(legend.breaks) * max(events$Z, na.rm=TRUE), 3)
+		legend.breaks <- signif(legend.breaks / max(abs(legend.breaks)) * max(abs(events$Z), na.rm=TRUE), 3)
 
 	## determine x/y range of plotting region
 	usr.xdiff <- par("usr")[2] - par("usr")[1]
@@ -80,28 +88,26 @@ addBubbles <- function(events, type = c("perceptual", "surface", "volume"),
 	stand.rad <- (max.size / 2) / par("pin")[1] * usr.xdiff
 	stand.rad.min <- (min.size / 2) / par("pin")[1] * usr.xdiff
 	
-	## sorting from large to small ensures that small bubbles will not be hidden
-	## behind large bubbles
+	## sorting from large to small ensures that small bubbles will not be hidden behind large bubbles
 	events <- events[order(events$Z, decreasing=TRUE), ]
 
 	## determine the size of each circle/legend circle based on the selected type
 	type <- match.arg(type)
 	switch(type,
 		volume = {
-			radii     <- stand.rad.min + ((events$Z      / z.max)^(1/3)) * (stand.rad - stand.rad.min)
-			radii.leg <- stand.rad.min + ((legend.breaks / z.max)^(1/3)) * (stand.rad - stand.rad.min)
+			radii     <- stand.rad.min + ((abs(events$Z)      / z.max)^(1/3)) * (stand.rad - stand.rad.min)
+			radii.leg <- stand.rad.min + ((abs(legend.breaks) / z.max)^(1/3)) * (stand.rad - stand.rad.min)
 		},
 		surface = {
-			radii     <- stand.rad.min + sqrt(events$Z      / z.max) * (stand.rad - stand.rad.min)
-			radii.leg <- stand.rad.min + sqrt(legend.breaks / z.max) * (stand.rad - stand.rad.min)
+			radii     <- stand.rad.min + sqrt(abs(events$Z)      / z.max) * (stand.rad - stand.rad.min)
+			radii.leg <- stand.rad.min + sqrt(abs(legend.breaks) / z.max) * (stand.rad - stand.rad.min)
 		},
 		perceptual = {
 			# default (if type unspecified)
-			radii     <- stand.rad.min + ((events$Z      / z.max)^0.57) * (stand.rad - stand.rad.min)
+			radii     <- stand.rad.min + ((abs(events$Z)      / z.max)^0.57) * (stand.rad - stand.rad.min)
 			radii.leg <- stand.rad.min + ((legend.breaks / z.max)^0.57) * (stand.rad - stand.rad.min)
 		}
 	)
-
 	## handle multiple colours
 	if (is.vector (symbol.bg) && length(symbol.bg) > 1)
 		getColour <- colorRamp (symbol.bg)
@@ -113,24 +119,50 @@ addBubbles <- function(events, type = c("perceptual", "surface", "volume"),
 	bgs <- getColour((events$Z - min(legend.breaks)) / (max(legend.breaks) - min(legend.breaks)))
 	if (ncol(bgs) == 3)
 		bgs <- cbind(bgs, 255) # add the alpha channel if necessary
+
 	## ... now deal with Z values outside of the range
 	if (is.vector (symbol.bg) && length(symbol.bg) > 1) {
 		outside <- events$Z < min(legend.breaks) | events$Z > max(legend.breaks)
 		if (sum(outside) > 0) {
 			bgs[outside,] <- matrix(c(255,255,255,0), ncol=4)[rep(1,sum(outside)), ]
 			warning(sum(outside),
-			" events were outside the legend range and were plotted with",
-			" transparent interiors.  Consider using the addBubbles",
-			" arguments 'legend.breaks', 'min.size', and 'symbol.zero'",
-			" to improve the output.")
+			" events outside the legend range and plotted with transparent interiors.\n\t",
+			"Consider using addBubbles arguments:\n\t'legend.breaks', 'min.size', and 'symbol.zero' to improve output.")
 		}
 	}
-
+	## ... now deal with negative Z values
+	if (any(events$sign<0)) {
+		isNeg <- is.element(events$sign, -1)
+		if (sum(isNeg) > 0) {
+			if (neg.col %in% c("RGB","RYB")) {
+				RGB = bgs[isNeg,1:3,drop=FALSE]
+				if (neg.col=="RYB") {
+					RYB  = RGB2RYB(RGB)
+					iRGB = RYB2RGB(1-RYB) * 255
+				} else if (neg.col=="RGB") {
+					iRGB = (1 - RGB/255) * 255
+				}
+				bgs[isNeg,] = cbind(iRGB,bgs[isNeg,4,drop=FALSE])
+			} else {
+				bgs[isNeg,] = matrix(col2rgb(neg.col,alpha=TRUE), nrow=sum(isNeg), ncol=4, byrow=TRUE)
+			}
+			warning(sum(isNeg),
+			" events were negative and plotted with alternate colour.\n\t",
+			ifelse(neg.col %in% c("RGB","RYB"), "Complementary colours to those specified by 'symbol.bg' were automatically calculated.",""))
+		}
+	} else {
+		isNeg = FALSE
+	}
 	## obtain colours for the legend (as a matrix)
 	bgs.leg <- getColour((legend.breaks - min(legend.breaks)) / (max(legend.breaks) - min(legend.breaks)))
 	if (ncol(bgs.leg) == 3)
 		bgs.leg <- cbind(bgs.leg, 255) # add the alpha channel if necessary
-
+	## Adjust for negative values
+	if(any(legend.breaks<0)){
+		negleg = legend.breaks < 0
+		bgs.leg[negleg,] = cbind(abs(bgs.leg[negleg,1:3,drop=FALSE]-255),bgs.leg[negleg,4,drop=FALSE])
+		radii.leg[negleg] = -radii.leg[negleg]
+	}
 	## convert the matrices to hex values (#RRGGBBAA)
 	bgs <- rgb(bgs[,1], bgs[,2], bgs[,3], bgs[,4], maxColorValue=255)
 	bgs.leg <- rgb(bgs.leg[,1], bgs.leg[,2], bgs.leg[,3], bgs.leg[,4], maxColorValue=255)
@@ -149,40 +181,78 @@ addBubbles <- function(events, type = c("perceptual", "surface", "volume"),
 		dots <- list(...);
 		if (!is.null(dots$pch))
 			stop("Specify 'pch' through 'symbol.zero'")
-		points(events$X[isZero], events$Y[isZero], pch = symbol.zero, ...)
+		col.zero = dots$col.zero
+		if (is.null(col.zero))
+			col.zero = "black"
+		#points(events$X[isZero], events$Y[isZero], pch=symbol.zero, col=col.zero, ...)
+		dots.ok = dots[!(names(dots) %in% c("pch","col","col.zero"))]
+		do.call(points, args=c(list(x=events$X[isZero], y=events$Y[isZero], pch=symbol.zero, col=col.zero), dots.ok))
 	}
-
 	## plot the legend if there's a position specified for it
 	if (!is.null(legend.pos)) {
 		# only plot zero symbol if used
 		if (!any(isZero))
 			symbol.zero <- FALSE;
-		.addBubblesLegend (radii.leg, usr.xdiff, usr.ydiff, symbol.zero, symbol.fg,
-			bgs.leg, legend.pos, legend.breaks, legend.type,
-			legend.title, legend.cex, ...)
+		leg.out = .addBubblesLegend (radii.leg, usr.xdiff, usr.ydiff, symbol.zero, symbol.fg, bgs.leg, legend.pos, legend.breaks, legend.type, legend.title, legend.cex, ...)
+		if (any(isNeg)) {
+			neg.col = unique(bgs[isNeg])
+			neg.xy = leg.out$zlab
+			neg.xy[2] = neg.xy[2] - 0.015*diff(par()$usr[3:4])
+			legend(neg.xy[1], neg.xy[2], legend="negative", pch=21, col="black", pt.bg=neg.col, text.col=neg.col, bty="n", cex=0.8, xjust=0, yjust=1, x.intersp=0.5)
+		}
 	}
 	invisible()
 }
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~addBubbles
 
 
-## addCompass---------------------------2016-04-01
+## addCompass---------------------------2021-01-04
 ##  Add a compass rose to a map.
 ## ---------------------------------------------RH
-addCompass <- function(X, Y, rot="magN", cex=1, 
-   col.compass=c("gainsboro","blue","yellow","black"), ...)
+addCompass <- function(X, Y, rot="magN", useWest=TRUE, year,
+   cex=1, col.compass=c("gainsboro","blue","yellow","black"), ...)
 {
-	## Geomagnetic North Pole
-	Npole = as.EventData(data.frame(
-		EID = 2015:2020,
-		X   = -c(72.6, 72.7, 72.8, 73.0, 73.1, 73.2),
-		Y   = c(80.4, 80.4, 80.5, 80.5, 80.6, 80.6)),
-		projection="LL")
-	if (rot=="magN") {
-		year = substring(Sys.Date(),1,4)
-		Nmag = Npole[Npole$EID%in%year,]
-		rot = -calcGCdist(X,Y,Nmag$X,Nmag$Y)$theta
+	## Geomagnetic vs. magnetic poles (http://wdc.kugi.kyoto-u.ac.jp/poles/polesexp.html)
+	## Note: south pole shenaningans not considered yet.
+	Mpoles = data.frame(
+		EID = c(1900, 1905, 1910, 1915, 1920, 1925, 1930, 1935, 1940, 1945, 1950, 1955, 1960, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025),
+		X.magN = c(-68.8, -68.7, -68.7, -68.6, -68.4, -68.3, -68.3, -68.4, -68.5, -68.5, -68.8, -69.2, -69.5, -69.9, -70.2, -70.5, -70.8, -70.9, -71.1, -71.4, -71.6, -71.8, -72.2, -72.6, -72.6, -72.6, -72.7, -72.7, -72.7, -72.7, -72.7, -72.7, -72.6, -72.6),
+		Y.magN = c(78.7, 78.7, 78.7, 78.6, 78.6, 78.6, 78.6, 78.6, 78.5, 78.5, 78.5, 78.5, 78.6, 78.6, 78.7, 78.8, 78.9, 79, 79.2, 79.4, 79.6, 79.8, 80.1, 80.4, 80.4, 80.5, 80.5, 80.6, 80.7, 80.7, 80.7, 80.8, 80.8, 80.9),
+		X.magS = c(111.2, 111.3, 111.3, 111.4, 111.6, 111.7, 111.7, 111.6, 111.5, 111.5, 111.2, 110.8, 110.5, 110.1, 109.8, 109.5, 109.2, 109.1, 108.9, 108.6, 108.4, 108.2, 107.8, 107.4, 107.4, 107.4, 107.3, 107.3, 107.3, 107.3, 107.3, 107.3, 107.4, 107.4),
+		Y.magS = c(78.7, 78.7, 78.7, 78.6, 78.6, 78.6, 78.6, 78.6, 78.5, 78.5, 78.5, 78.5, 78.6, 78.6, 78.7, 78.8, 78.9, 79, 79.2, 79.4, 79.6, 79.8, 80.1, 80.4, 80.4, 80.5, 80.5, 80.6, 80.7, 80.7, 80.7, 80.8, 80.8, 80.9),
+		X.gmagN = c(-96.2, -96.5, -96.7, -97, -97.4, -98, -98.7, -99.3, -99.9, -100.2, -100.9, -101.4, -101, -101.3, -101, -100.6, -101.7, -102.6, -103.7, -105.3, -109.6, -118.2, -132.8, -160, -167.8, -175.5, -176.9, -169.6, -162.9, -156.8, -151.3, -146.4, -142, -138.1),
+		Y.gmagN = c(70.5, 70.7, 70.8, 71, 71.3, 71.8, 72.3, 72.8, 73.3, 73.9, 74.6, 75.2, 75.3, 75.6, 75.9, 76.2, 76.9, 77.4, 78.1, 79, 81, 83.2, 85, 86.3, 86.5, 86.6, 86.6, 86.6, 86.5, 86.4, 86.3, 86.1, 86, 85.8),
+		X.gmagS = c(148.3, 148.5, 148.6, 148.5, 148.2, 147.6, 146.8, 145.8, 144.6, 144.4, 143.5, 141.5, 140.2, 139.5, 139.4, 139.5, 139.3, 139.2, 138.9, 138.7, 138.3, 137.8, 137.3, 136.6, 136.4, 136.3, 136.2, 136, 135.9, 135.7, 135.5, 135.4, 135.2, 135.1),
+		Y.gmagS = c(71.7, 71.5, 71.2, 70.8, 70.4, 70, 69.5, 69.1, 68.6, 68.2, 67.9, 67.2, 66.7, 66.3, 66, 65.7, 65.4, 65.1, 64.9, 64.8, 64.7, 64.5, 64.4, 64.3, 64.2, 64.2, 64.2, 64.1, 64.1, 64, 64, 63.9, 63.9, 63.9)
+	)
+	## Borrow PBStools function 'findPV'
+	findPV = function (p, v) {
+		sapply(p, function(x, v) {
+		which(abs(v - x) == min(abs(v - x)))[1] }, v=v)
 	}
+	if (!useWest){
+		Mpoles$X.magN = Mpoles$X.magN + 360
+		Mpoles$X.gmagN = Mpoles$X.magN + 360
+	}
+	if (missing(year) || length(year)>1)
+		year = as.numeric(substring(Sys.Date(),1,4))
+
+	if (!is.numeric(rot)) {
+		if (rot=="trueN") {
+			rot = 0
+		} else {
+			.rot = paste0("\\.",rot)
+			if (sum(grepl(.rot,colnames(Mpoles))) != 2)
+				stop (paste0("Choose 'rot' from one of:\n\t'", paste0(unique(gsub("[XY]\\.","",colnames(Mpoles)[-1])),collapse="', '"), "'"))
+			Nmag = Mpoles[findPV(year,Mpoles$EID), c("EID",grep(.rot,colnames(Mpoles),value=TRUE))]
+			if (nrow(Nmag)==0)
+				stop ("Subsetting 'Mpoles' went awry")
+			colnames(Nmag) = c("EID","X","Y")
+			Nmag = as.EventData(Nmag, projection="LL")
+			rot  = -calcGCdist(X,Y,Nmag$X,Nmag$Y)$theta
+		}
+	}
+
 	oldcex  = par(cex=cex, no.readonly=TRUE); on.exit(par(oldcex))
 	mheight = strheight("M")
 	xylim   = par("usr")
@@ -218,15 +288,16 @@ addCompass <- function(X, Y, rot="magN", cex=1,
 	rspans  = rep(mheight*rads[1],length(rotate.angles))
 	xrotate = cos(rotate.angles) * rspans * xmult + X
 	yrotate = sin(rotate.angles) * rspans + Y
-	lines(xrotate[c(1,3,5,2,4)],yrotate[c(1,3,5,2,4)],col=col.rot,lwd=2)
+	lines(xrotate[c(1,3,5,2,4)],yrotate[c(1,3,5,2,4)],col=col.rot)
 	points(mean(xcross),mean(ycross),pch=21,col=col.pch,bg=col.but)
 
 	## Add NEWS labels
 	txtxpoints = cos(rotate.angles) * 1.25 * rspans[1] * xmult + X
 	txtypoints = sin(rotate.angles) * 1.25 * rspans[1] + Y
+#browser();return()
 	text(txtxpoints,txtypoints,c("E","N","W","S"),...)
 }
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~addCompass
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~addCompass
 
 
 ## calcGCdist---------------------------2016-04-01
@@ -601,4 +672,89 @@ rotatePolys = function(polys, angle=40, centroid=c(500,5700),
 	invisible(return(polys))
 }
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~rotatePolys
+
+
+## RGB2RYB------------------------------2021-01-06
+##  Convert RGB colours to RYB colours.
+##  Algorithm based on Sugita and Takahashi (2015,2017)
+## [http://nishitalab.org/user/UEI/publication/Sugita_IWAIT2015.pdf]
+## [https://danielhaim.com/research/downloads/Computational%20RYB%20Color%20Model%20and%20its%20Applications.pdf]
+## ---------------------------------------------RH
+RGB2RYB = function(RGBmat)
+{
+	if (is.null(dim(RGBmat))) if (length(RGBmat)>2) RGBmat<-matrix(RGBmat, ncol=3,byrow=TRUE)
+	if (nrow(RGBmat)==3 && ncol(RGBmat)!=3) RGBmat = t(RGBmat)
+	## Re-scale to 1
+	if (any(RGBmat>1)) RGBmat = RGBmat/255
+	## Deconstruct to vectors
+	R.rgb = RGBmat[,1]
+	G.rgb = RGBmat[,2]
+	B.rgb = RGBmat[,3]
+	## Remove whiteness
+	#I.w  = apply(RGBmat,1,min)
+	I.w   = pmin(R.rgb,G.rgb,B.rgb)
+	r.rgb = R.rgb - I.w
+	g.rgb = G.rgb - I.w
+	b.rgb = B.rgb - I.w
+	## Calculate ryb values
+	r.ryb = r.rgb - pmin(r.rgb,g.rgb)
+	y.ryb = 0.5 * (g.rgb + pmin(r.rgb,g.rgb))
+	b.ryb = 0.5 * (b.rgb + g.rgb - pmin(r.rgb,g.rgb))
+	## Normalise (p=prime symbol)
+	n = pmax(r.ryb,y.ryb,b.ryb) / pmax(r.rgb,g.rgb,b.rgb)
+	n[n==0] = 1 ## for cases when n=0
+	rp.ryb = r.ryb / n
+	yp.ryb = y.ryb / n
+	bp.ryb = b.ryb / n
+	## Add black component for subtractive color mixing
+	I.b   = pmin(1-R.rgb,1-G.rgb,1-B.rgb)
+	R.ryb = rp.ryb + I.b
+	Y.ryb = yp.ryb + I.b
+	B.ryb = bp.ryb + I.b
+	RYB   = cbind(red=R.ryb, yellow=Y.ryb, blue=B.ryb)
+	return(RYB)
+}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~RGB2RYB
+
+
+## RYB2RGB------------------------------2021-01-06
+##  Convert RYB colours to RGB colours.
+##  Algorithm based on Sugita and Takahashi (2015,2017)
+## [http://nishitalab.org/user/UEI/publication/Sugita_IWAIT2015.pdf]
+## [https://danielhaim.com/research/downloads/Computational%20RYB%20Color%20Model%20and%20its%20Applications.pdf]
+## ---------------------------------------------RH
+RYB2RGB = function(RYBmat)
+{
+	if (is.null(dim(RYBmat))) if (length(RYBmat)>2) RYBmat<-matrix(RYBmat, ncol=3,byrow=TRUE)
+	if (nrow(RYBmat)==3 && ncol(RYBmat)!=3) RYBmat = t(RYBmat)
+	## Re-scale to 1
+	if (any(RYBmat>1)) RYBmat = RYBmat/255
+	## Deconstruct to vectors
+	R.ryb = RYBmat[,1]
+	Y.ryb = RYBmat[,2]
+	B.ryb = RYBmat[,3]
+	## Remove black 
+	I.b   = pmin(R.ryb,Y.ryb,B.ryb)
+	r.ryb = R.ryb - I.b
+	y.ryb = Y.ryb - I.b
+	b.ryb = B.ryb - I.b
+	## Calculate rgb values
+	r.rgb = r.ryb + y.ryb - pmin(y.ryb,b.ryb)
+	g.rgb = y.ryb + pmin(y.ryb,b.ryb)
+	b.rgb = 2 * (b.ryb - pmin(y.ryb,b.ryb))
+	## Normalise (p=prime symbol)
+	n = pmax(r.rgb,g.rgb,b.rgb) / pmax(r.ryb,y.ryb,b.ryb)
+	n[n==0] = 1 ## for cases when n=0
+	rp.rgb = r.rgb / n
+	gp.rgb = g.rgb / n
+	bp.rgb = b.rgb / n
+	## Add white component
+	I.w   = pmin(1-R.ryb,1-Y.ryb,1-B.ryb)
+	R.rgb = rp.rgb + I.w
+	G.rgb = gp.rgb + I.w
+	B.rgb = bp.rgb + I.w
+	RGB   = cbind(red=R.rgb, green=G.rgb, blue=B.rgb)
+	return(RGB)
+}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~RYB2RGB
 
