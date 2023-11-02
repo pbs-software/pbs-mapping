@@ -5,7 +5,25 @@ Authors:  JTS = Jon T. Schnute
           RH  = Rowan Haigh
           ACB = Alex Couture-Beil
           DC  = Denis Chabot
+          CG  = Chris Grandin
+          AJ  = Angus Johnson
+          PW  = Paul Wessel
+          FA  = Franklin Antonio
+          NLK = Nicholas J Lewin-Koh
+          RB  = Roger Bivand
+          SA  = Sean Anderson
 -----------------------------------
+
+2.73.3 (2023-10-30) [Rcheck=T, Rbuild=T]
+  * Documentation
+    + Added Rd documentation files for .PBmapEnv and a few functions. (RH 231030)
+    + Updated Rd files with Nick's new particulars.
+  * R code
+    + Removed (temporarily) function `importShapefile' until/if RB's C code can be incorporated into PBSmapping. (RH 231027)
+
+2.73.2 (2022-09-06) [Rcheck=T, Rbuild=T]
+  * Documentation
+    + Updated `calcArea.Rd' and `convUL.Rd' so that `\emph' does not appear in math rendering.
 
 2.73.1 (2022-07-12) [Rcheck=T, Rbuild=T]
   * R code
@@ -111,7 +129,7 @@ Authors:  JTS = Jon T. Schnute
 
 2.70.3 (2017-06-26)
   * C code
-    + Registered C routines (new CRAN request) using Roger Bivand's maptools `init.c' as a template. (NB/RH 170626)
+    + Registered C routines (new CRAN request) using RB's maptools `init.c' as a template. (NB/RH 170626)
   * Documentation
     + Updated the User's Guide to use Arial font to be more consistent with DFO CSAS and Canadian Technical Reports. (RH 170622)
 

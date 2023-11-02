@@ -59,8 +59,8 @@ makeGrid(x, y, byrow=TRUE, addSID=TRUE,
   The PolySet is a set of hexagonal grid cells when \code{type='hexagon'}.
 }
 \author{
-  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
-  MacEwan University, Edmonton AB
+  \href{https://github.com/boersn/}{Nicholas M. Boers}, Staff Software Engineer\cr
+  Jobber, Edmonton AB
 
   \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
   Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr

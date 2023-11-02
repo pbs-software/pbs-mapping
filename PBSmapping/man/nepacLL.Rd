@@ -43,11 +43,11 @@ nepacLLhigh <- thinPolys(nepacLLhigh, tol=0.1, filter=3)
 
 worldLL <- importGSHHS("gshhs_l.b", xlim=c(-20,360), ylim=c(-90,90), 
            level=1, n=15, xoff=0)
-worldLL <- .fixGSHHSWorld(worldLL)
+worldLL <- PBSmapping:::.fixGSHHSWorld(worldLL)
 
 worldLLhigh <- importGSHHS("gshhs_i.b", xlim=c(-20,360),
                ylim=c(-90,90), level=1, n=15, xoff=0)
-worldLLhigh <- .fixGSHHSWorld(worldLLhigh)
+worldLLhigh <- PBSmapping:::.fixGSHHSWorld(worldLLhigh)
 }
 }
 \references{
@@ -57,9 +57,9 @@ worldLLhigh <- .fixGSHHSWorld(worldLLhigh)
   \url{http://www.soest.hawaii.edu/pwessel/gshhg/Wessel+Smith_1996_JGR.pdf}
 }
 \author{
-  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
-  MacEwan University, Edmonton AB\cr
-  Last modified \code{Rd: 2015-01-22}
+  \href{https://github.com/boersn/}{Nicholas M. Boers}, Staff Software Engineer\cr
+  Jobber, Edmonton AB\cr
+  Last modified \code{Rd: 2023-10-30}
 }
 \seealso{
 Data:\cr
@@ -69,7 +69,6 @@ Data:\cr
 
 Functions:\cr
   \code{\link[PBSmapping]{importGSHHS}},
-  \code{\link[PBSmapping]{importShapefile}}, 
   \code{\link[PBSmapping]{plotMap}},
   \code{\link[PBSmapping]{plotPolys}},
   \code{\link[PBSmapping]{addPolys}},

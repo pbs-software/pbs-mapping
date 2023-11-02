@@ -37,8 +37,8 @@ calcVoronoi (xydata, xlim = NULL, ylim = NULL, eps = 1e-09, frac = 0.0001)
   \link{PolySet} with columns \code{PID}, \code{POS}, \code{X}, and \code{Y}.
 }
 \author{
-  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
-  MacEwan University, Edmonton AB\cr
+  \href{https://github.com/boersn/}{Nicholas M. Boers}, Staff Software Engineer\cr
+  Jobber, Edmonton AB\cr
   Last modified \code{Rd: 2013-04-10}
 }
 \seealso{

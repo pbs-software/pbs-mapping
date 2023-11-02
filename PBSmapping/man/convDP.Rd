@@ -34,8 +34,8 @@ convDP (data, xColumns, yColumns)
   \code{data} has an \code{SID} column, the result will include it.
 }
 \author{
-  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
-  MacEwan University, Edmonton AB\cr
+  \href{https://github.com/boersn/}{Nicholas M. Boers}, Staff Software Engineer\cr
+  Jobber, Edmonton AB\cr
   Last modified \code{Rd: 2013-04-10}
 }
 \seealso{

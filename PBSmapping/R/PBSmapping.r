@@ -69,7 +69,7 @@
 ##  importGSHHS..........Import a GSHHG binary file provided by Paul Wessel
 ##  importLocs...........Import a text file and convert into a LocationSet
 ##  importPolys..........Import a text file and convert into a PolySet with optional PolyData attribute
-##  importShapefile......Import an ArcGIS shapefile
+##  importShapefile......Import an ArcGIS shapefile (temporarily removed due to maptools disappearing)
 ##  is.EventData.........Returns TRUE if its argument is of class EventData.
 ##  is.LocationSet.......Returns TRUE if its argument is of class LocationSet
 ##  is.PolyData..........Returns TRUE if its argument is of class PolyData
@@ -2441,7 +2441,7 @@ importEvents <- function(EventData, projection=NULL, zone=NULL)
 }
 
 
-## importGSHHS--------------------------2015-02-12
+## importGSHHS--------------------------2023-06-01
 ## Import a GSHHG binary file provided by Paul Wessel.
 ## The C call on gshhs using x-limits (0,360) is the only
 ## limit that ties the polygons near the Greenwhich meridian together.
@@ -2450,15 +2450,15 @@ importEvents <- function(EventData, projection=NULL, zone=NULL)
 importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 {
 	## Transform all X-coordinates to lie between 0 and 360
-	normAngle=function(x){(x + 360.)%%360.}
+	normAngle = function(x){(x + 360.)%%360.}
 
 	## Determine if the specified limits lie in the western hemisphere
-	isitWest =function(lim){
-		world=1:360
-		if (diff(lim)>0) span=lim[1]:lim[2]
-		else span=setdiff(world,lim[2]:lim[1])
-		sum(span>180) > sum(span<=180) }
-
+	isitWest  = function(lim){
+		world = 1:360
+		if (diff(lim)>0) span = lim[1]:lim[2]
+		else span = setdiff(world,lim[2]:lim[1])
+		sum(span>180) > sum(span<=180)
+	}
 	## Get gshhsDB filename (with and without path information)
 	if (missing(gshhsDB))
 		gshhsDB <- paste(system.file(package="PBSmapping"), "gshhs_f.b", sep="/")
@@ -2466,8 +2466,8 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 		gshhsDB <- path.expand(gshhsDB)
 	if (!file.exists(gshhsDB))
 		stop("Unable to find gshhsDB \"", gshhsDB, "\"")
-	gshhsDB.name=basename(substitute(gshhsDB))
-	isBorder=grepl("borders",gshhsDB.name)
+	gshhsDB.name = basename(substitute(gshhsDB))
+	isBorder = grepl("borders",gshhsDB.name)
 
 	##-----FORMAT-BORDERS-CHANGES-------------------
 	## Sometimes border longitudes lie between (-180,180) or (0,360).
@@ -2475,18 +2475,18 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 	##----------------------------------------------
 	if (isBorder) {
 		.checkClipLimits(c(xlim, ylim))
-		#DBdir =dirname(substitute(gshhsDB))
-		#DBinfo=readLines(paste0(DBdir,"/README.TXT"))
-		#DBver =strsplit(sub("^[[:space:]]+","",DBinfo[grep("Version",DBinfo)[1]]),split=" ")[[1]][2]
+		#DBdir  = dirname(substitute(gshhsDB))
+		#DBinfo = readLines(paste0(DBdir,"/README.TXT"))
+		#DBver  = strsplit(sub("^[[:space:]]+","",DBinfo[grep("Version",DBinfo)[1]]),split=" ")[[1]][2]
 		xres <- .Call("importGSHHS", as.character(gshhsDB), as.numeric(c(0,360,-90,90)), 
-			as.integer(maxLevel), as.integer(n), PACKAGE="PBSmapping")
-		xPS =refocusWorld(as.PolySet(as.data.frame(xres),projection="LL"),xlim=xlim,ylim=ylim)
+			as.integer(maxLevel), as.integer(n), PACKAGE = "PBSmapping")
+		xPS  = refocusWorld(as.PolySet(as.data.frame(xres),projection="LL"),xlim=xlim,ylim=ylim)
 		if (is.null(xPS) || !length(xPS$PID)) return(NULL)
 		attr(xPS, "PolyData") <- attr(xres, "PolyData")
 		if (useWest) xlim <- xlim - 360.
-		if (!all(xlim==attributes(xPS)$rf.xlim)) {	## refocusWorld adjusts xlims
-			xadj=(xlim-attributes(xPS)$rf.xlim)[1]
-			xPS$X=xPS$X + xadj
+		if (!all(xlim==attributes(xPS)$rf.xlim)) {  ## refocusWorld adjusts xlims
+			xadj = (xlim-attributes(xPS)$rf.xlim)[1]
+			xPS$X = xPS$X + xadj
 		}
 		return(xPS)
 	}
@@ -2499,15 +2499,15 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 	if (abs(diff(xlim)) >= 360) {
 		xlim.orig <- xlim
 		xres <- .Call("importGSHHS", as.character(gshhsDB), as.numeric(c(0,360,ylim)), 
-			as.integer(maxLevel), as.integer(n), PACKAGE="PBSmapping")
-		xPS =refocusWorld(as.PolySet(as.data.frame(xres),projection="LL"),xlim=xlim,ylim=ylim)
+			as.integer(maxLevel), as.integer(n), PACKAGE = "PBSmapping")
+		xPS  = refocusWorld(as.PolySet(as.data.frame(xres),projection="LL"),xlim=xlim,ylim=ylim)
 		if (is.null(xPS) || !length(xPS$PID)) return(NULL)
-		PolyData		<- attr(xres, "PolyData")
+		PolyData    <- attr(xres, "PolyData")
 		clipAsPolys <- attr(xres, "clipAsPolys")
 		if (useWest) xlim <- xlim - 360.
-		if (!all(xlim==attributes(xPS)$rf.xlim)) {	## refocusWorld adjusts xlims
-			xadj=(xlim-attributes(xPS)$rf.xlim)[1]
-			xPS$X=xPS$X + xadj
+		if (!all(xlim==attributes(xPS)$rf.xlim)) {  ## refocusWorld adjusts xlims
+			xadj = (xlim-attributes(xPS)$rf.xlim)[1]
+			xPS$X = xPS$X + xadj
 		}
 	}
 	else {
@@ -2517,93 +2517,107 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 		## ----------------------------------------------
 		limits <- list(c(xlim, ylim))
 		.checkClipLimits(limits[[1]])
-		overlap=ifelse(grepl("gshhs",gshhsDB.name),-20.,0.)
-		nxlim	=normAngle(xlim)
+		overlap = ifelse(grepl("gshhs",gshhsDB.name),-20.,0.)
+		nxlim   = normAngle(xlim)
 
 		## Check if xlim spans the Greenwich meridian
 		## ----------------------------------------------
-		green0=(nxlim[1] >= nxlim[2]) | nxlim[2] > 340.
-		green1=nxlim[1]==0	&& grepl("gshhs",gshhsDB.name)
-		green2=nxlim[2]==0	&& grepl("gshhs",gshhsDB.name)
-		green =green0 | green1 | green2
+		green0 = (nxlim[1] >= nxlim[2]) | nxlim[2] > 340.
+		green1 = nxlim[1]==0  && grepl("gshhs",gshhsDB.name)
+		green2 = nxlim[2]==0  && grepl("gshhs",gshhsDB.name)
+		green  = green0 | green1 | green2
 		if (green) {
 			if (green1) {
-				limits[[1]]=c(0.,normAngle(xlim[2]),ylim)
-				#limits[[2]]=c(340.,360.,ylim) # maybe not necessary
-				bighalf="R"
+				limits[[1]] = c(0.,normAngle(xlim[2]),ylim)
+				#limits[[2]] = c(340.,360.,ylim) # maybe not necessary
+				bighalf = "R"
 			} else if (green2) {
-				limits[[1]]=c(normAngle(xlim[1]),360.,ylim)
-				limits[[2]]=c(-20.,0.,ylim)
-				bighalf="L"
+				limits[[1]] = c(normAngle(xlim[1]),360.,ylim)
+				limits[[2]] = c(-20.,0.,ylim)
+				bighalf = "L"
 			} else {
 				if ( (360-nxlim[1]) >= nxlim[2] ) {
-					limits[[1]]=c(nxlim[1],360.,ylim)
-					limits[[2]]=c(overlap,nxlim[2],ylim)
-					bighalf="L"
+					limits[[1]] = c(nxlim[1],360.,ylim)
+					limits[[2]] = c(overlap,nxlim[2],ylim)
+					bighalf = "L"
 				}
 				else {
-					limits[[1]]=c(overlap,xlim[2],ylim)
-					limits[[2]]=c(nxlim[1],360.,ylim)
-					bighalf="R"
+					limits[[1]] = c(overlap,xlim[2],ylim)
+					limits[[2]] = c(nxlim[1],360.,ylim)
+					bighalf = "R"
 				}
 			}
 		}
-		isWest=isitWest(limits[[1]][1:2]) # defined solely by user's xlim
+		isWest = isitWest(limits[[1]][1:2]) # defined solely by user's xlim
 
 		## Initilialize
-		x=xbit=list()
-		pidlen=0
-		clipAsPolys=logical()
-		PolyData=data.frame()
+		x = xbit = list()
+		pidlen = 0
+		clipAsPolys = logical()
+		PolyData = data.frame()
 
 		## Go through 1 or 2 limits, depending on whether `xlim' includes 0 degrees
 		## ----------------------------------------------
 		for (i in 1:length(limits)) {
 			.checkClipLimits(limits[[i]])
 			## return an R object -- C call unfortunately converts western hemisphere to negative
-			#xres <- .Call("importGSHHS", as.character(gshhsDB), as.numeric(c(0,360,0,90)), as.integer(maxLevel), as.integer(n), PACKAGE="PBSmapping") # debug only
+			#xres <- .Call("importGSHHS", as.character(gshhsDB), as.numeric(c(0,360,0,90)), as.integer(maxLevel), as.integer(n), PACKAGE = "PBSmapping") # debug only
 			xres <- .Call("importGSHHS", as.character(gshhsDB), as.numeric(limits[[i]]),
-				as.integer(maxLevel), as.integer(n), PACKAGE="PBSmapping")
+				as.integer(maxLevel), as.integer(n), PACKAGE = "PBSmapping")
 			if (is.null(xres) || !length(xres$PID)) next
+
+			## Documentation states that levels are ignored for lines
+			## Check that user-specified levels are honoured (RH 230601)
+			if (any(attributes(xres)$PolyData$Level > maxLevel)) {
+				pdata = attributes(xres)$PolyData
+				keep  = pdata$Level <= maxLevel
+				kpid  = pdata$PID[keep]
+				pdata = lapply(pdata,function(x){x[keep]})  ## because pdata is a list at this point
+				xpid  = is.element(xres[["PID"]], pdata[["PID"]])
+				xres  = lapply(xres,function(x){x[xpid]})  ## because xres is a list at this point
+				attr(xres, "PolyData") = pdata
+			}
 
 			## Attempt to reverse the mess created by the C-code.
 			## If xlim spans the Internation Date Line but not Greenwich
 			## ----------------------------------------------
-			dateline=(normAngle(xlim[1]) >= 45. & normAngle(xlim[2]) <= 315.) & !green
+			dateline = (normAngle(xlim[1]) >= 45. & normAngle(xlim[2]) <= 315.) & !green
 			#if ( any(is.element(c(180,-180),floor(limits[[i]][1]):ceiling(limits[[i]][2]))) & !green ) {
 			if (dateline) {
-				xneg =sapply(split(xres[["X"]],xres[["PID"]]),function(x){all(x<0)})
-				pneg =names(xneg[xneg])	## PIDs with all-negative coordinates
-				xmove=is.element(xres[["PID"]],pneg)
-				xres[["X"]][xmove]=normAngle(xres[["X"]][xmove])
+				xneg  = sapply(split(xres[["X"]],xres[["PID"]]),function(x){all(x<0)})
+				pneg  = names(xneg[xneg])  ## PIDs with all-negative coordinates
+				xmove = is.element(xres[["PID"]],pneg)
+				xres[["X"]][xmove] = normAngle(xres[["X"]][xmove])
 			}
-			#isWestMess=median(xres[["X"]]) < 0	## `isWestMess' can be different than `isWest'
+			#isWestMess = median(xres[["X"]]) < 0  ## `isWestMess' can be different than `isWest'
 
 			## Collect attributes also from each C call
 			pdata <- as.data.frame(attr(xres, "PolyData"))
 			clipAsPolys <- c(clipAsPolys, attr(xres, "clipAsPolys"))
 
 			## Renumber the PIDs to accommodate a possible second set
-			pidnam=unique(xres$PID)
-			pid	 =(pidlen+1):(pidlen+length(pidnam))
-			names(pid)=pidnam
-			xres[["oldPID"]]=xres[["PID"]]
-			xres[["PID"]]=as.vector(pid[as.character(xres[["PID"]])])
-			pdata$oldPID=pdata$PID
-			pdata$PID=as.vector(pid[as.character(pdata$PID)])
-			pidlen=rev(pid)[1]
+			pidnam = unique(xres$PID)
+			pid    = (pidlen+1):(pidlen+length(pidnam))
+			names(pid) = pidnam
+			xres[["oldPID"]] = xres[["PID"]]
+			xres[["PID"]] = as.vector(pid[as.character(xres[["PID"]])])
+			pdata$oldPID = pdata$PID
+			pdata$PID = as.vector(pid[as.character(pdata$PID)])
+			pidlen = rev(pid)[1]
 			for (j in names(xres)){
-				if (length(x)==0) x[[j]]=xres[[j]]
-				else							x[[j]]=c(x[[j]],xres[[j]]) # add on results from second limit
+				if (length(x)==0) x[[j]] = xres[[j]]
+				else              x[[j]] = c(x[[j]],xres[[j]]) # add on results from second limit
 			}
-			PolyData=rbind(PolyData,pdata)
-			xbit[[i]]=xres	## collect the separate results for debugging only
-		}
+			PolyData = rbind(PolyData,pdata)
+			xbit[[i]] = xres  ## collect the separate results for debugging only
+		} ## end limits loop
+#browser();return()
+
 		## Code to activate when debugging
 		#if ( "PBSmodelling" %in% rownames(installed.packages()) ) {
 		#	if ( exists("XBIT",envir=.PBSmapEnv) )
-		#		PBSmodelling::tget(XBIT, tenv=.PBSmapEnv) else XBIT=list()
-		#	XBIT[[gshhsDB.name]]=xbit
+		#		PBSmodelling::tget(XBIT, tenv=.PBSmapEnv) else XBIT = list()
+		#	XBIT[[gshhsDB.name]] = xbit
 		#	PBSmodelling::tput(XBIT, tenv=.PBSmapEnv)
 		#	PBSmodelling::tput(isWest, tenv=.PBSmapEnv)
 		#}
@@ -2612,22 +2626,22 @@ importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 
 		## Headers in the GSHHS database range from 0 to 360 while the underlying
 		## data ranges from -180 to 180; if our xlim > 180, shift it
-		xoff=0.
+		xoff = 0.
 		#else if (max(xlim) > 180) { ## too harsh for places like NZ
 		if (median(xlim) > 180) {
 			xlim.orig <- xlim
 			if (useWest) {
 				xlim <- xlim - 360.
-				xoff=360.
-				if (median(x[["X"]])>0) x[["X"]]=x[["X"]] - 360.
+				xoff = 360.
+				if (median(x[["X"]])>0) x[["X"]] = x[["X"]] - 360.
 			} else {
-				if (median(x[["X"]])<0) x[["X"]]=x[["X"]] + 360.	## adjust for .Call("importGSHHS")
+				if (median(x[["X"]])<0) x[["X"]] = x[["X"]] + 360.  ## adjust for .Call("importGSHHS")
 			}
 		}
-		XLIM=range(x[["X"]]) # imported data from C-function
+		XLIM = range(x[["X"]]) # imported data from C-function
 
 		## Convert the list to a PolySet
-		xPS <- as.PolySet(as.data.frame(x), projection="LL")
+		xPS <- as.PolySet(as.data.frame(x), projection = "LL")
 	} ##----- end else 
 
 	## Clip the PolySet
@@ -2673,177 +2687,177 @@ importPolys <- function(PolySet, PolyData=NULL, projection=NULL, zone=NULL)
 }
 
 
-## importShapefile----------------------2018-09-06
-## This function has several slow parts:
-## 1) conversion of the matrix (verts) to X and Y columns in a data frame
-## 2) 'lapply's to create POS columns
-## Changes 2008-07-15:
-##	 Nick's loop to extract data from 'shapeList' has been replaced
-##		 by Rowan's series of 'sapply' calls.
-##	 Rowan added check for polygons with 0 vertices.
-## 2012-04-04: Rowan created function 'placeHoles' 
-##	 to place holes under correct solids.
-## 2018-09-06: RH modified 'placeHoles' to better deal with orphans,
-##	 but can be slow if imported file has many solids|holes|vertices.
-## ------------------------------------------NB|RH
-importShapefile <- function (fn, readDBF=TRUE, projection=NULL, zone=NULL, 
-	 minverts=3, placeholes=FALSE, show.progress=FALSE)
-{
-	## initialization
-	.checkRDeps("importShapefile", c("maptools", "foreign"))
-	## call to normalizePath added to perform ~ expansion; otherwise,
-	## pathnames beginning with a ~ fail in the later call to
-	## Rshapeget
-	fn <- normalizePath(fn, mustWork=FALSE)
-	fn <- .getBasename(fn, "shp")
-
-	## test for the required '.shx' file
-	shxFile <- paste(fn, ".shx", sep="")
-	if (!file.exists(shxFile))
-		stop(paste(
-		"Cannot find the index file (\"", shxFile, "\") required to import\n",
-		"the shapefile.\n", sep=""))
-
-	## read shapefile
-	eval(parse(text="shapeList <- .Call(\"Rshapeget\",as.character(fn),as.logical(FALSE),PACKAGE=\"maptools\")"))
-	if (length(shapeList) < 1)
-		stop("The shapefile is empty or an error occurred while importing.\n")
-	shpType=unique(sapply(shapeList,function(x){x$shp.type}))
-	if (length(shpType) != 1)
-		stop ("Supports only a single shape type per shapefile.\n")
-	nVerts=sapply(shapeList,function(x){x$nVerts})
-	v0=is.element(nVerts,0) # any shapefiles with 0 vertices?
-	if (any(v0==TRUE)) {
-		nVerts=nVerts[!v0]; shapeList=shapeList[!v0] }
-	shpID=sapply(shapeList,function(x){x$shpID})
-	nParts=sapply(shapeList,function(x){x$nParts})
-	pStarts=sapply(shapeList,function(x){x$Pstart},simplify=FALSE)
-	if (length(pStarts)!=length(nParts) && all((nParts==sapply(pStarts,length))!=TRUE))
-		stop ("Mismatch in 'nParts' and 'pStarts'.\n")
-	pStarts=unlist(pStarts)
-	v1=unlist(sapply(shapeList,function(x){x$verts[,1]},simplify=FALSE))
-	v2=unlist(sapply(shapeList,function(x){x$verts[,2]},simplify=FALSE))
-	verts=cbind(v1,v2)
-
-	## Keep track of parents and children
-	PC=pStarts
-	zP=is.element(PC,0); PC[zP]=1; PC[!zP]=0
-
-	## reformat results
-	#if (shpType == 3 || shpType == 5) {	## PolySet
-	if (shpType %in% c(3,13,23, 5,15,25)) {	## PolyLine, PolyLineZ, PolyLineM, Polygon, PolygonZ, PolygonM
-		## create preliminary PID/SID columns
-		PID <- rep(1:(length(unique(shpID))), times=nParts)
-		SID <- unlist(lapply(split(nParts, 1:(length(nParts))), "seq"))
-
-		## to determine the number of vertices in each part, we divide the problem
-		## into two cases:
-		## 1) last component/hole of each polygon: the total vertices in the polygon
-		##		less the starting POS of that last component/hole
-		## 2) otherwise: use a "diff" on the starting POS's of each part
-		lastComp <- rev(!duplicated(rev(PID)))
-		nv <- vector()
-		nv[lastComp] <- rep(nVerts, times=nParts)[lastComp] - pStarts[lastComp]
-		nv[!lastComp] <- diff(pStarts)[diff(pStarts) > 0]
-
-		## create PID/SID columns
-		PID <- rep(PID, times=nv)
-		SID <- rep(SID, times=nv)
-		## create POS column; we'll fix the ordering for holes later
-		POS <- unlist(lapply(split(nv, 1:(length(nv))), "seq"))
-		## build the data frame
-		df <- data.frame(PID=PID, SID=SID, POS=POS, X=verts[, 1], Y=verts[, 2])
-
-		#if (shpType == 5) {
-		if (shpType %in% c(5,15,25)) {
-			## PolySet: polygons: reorder vertices for holes
-			or <- .calcOrientation (df)
-			## where "orientation" == -1, we need to reverse the POS
-			or$solid <- is.element(or$orientation,1); or$hole <- !or$solid
-			if (any(or$hole)) {
-				or$nv <- nv
-				toFix <- rep(or$hole, times=or$nv)
-				o <- or$nv[or$hole]
-				newPOS <- unlist(lapply(lapply(split(o, 1:length(o)), "seq"), "rev"))
-				df[toFix, "POS"] <- newPOS	}
-			
-			if (placeholes) {
-				## Fix to the problem where ArcPew does not put solid shapes before holes
-				class(df) <- c("PolySet", setdiff(class(df),"PolySet"))
-				df=placeHoles(df, minVerts=minverts, orient=TRUE, show.progress=show.progress)
-			}
-		}
-		class(df) <- c("PolySet", class(df))
-	#} else if (shpType == 1) {	## EventData
-	} else if (shpType %in% c(1,11,21)) {	## Point, PointZ, PointM
-		EID <- 1:(length(unique(shpID)))
-		df <- data.frame(EID=EID, X=verts[, 1], Y=verts[, 2])
-		class(df) <- c("EventData", class(df))
-	} else {
-		stop ("Shape type not supported.\n");
-	}
-
-	## "cbind" the DBF for EventData or attach as an attribute for PolySets:
-	## According to the "ESRI Shapefile Technical Description", any set of fields
-	## may be present in the DBF file.
-	## The (relevant) requirements are:
-	##	 (1) one record per shape feature (i.e., per PID or EID), and
-	##	 (2) same order as in shape (*.shp) file.
-	dbfFile <- paste(fn, ".dbf", sep="")
-	if (readDBF && !file.exists(dbfFile)) {
-		warning(paste(
-		"The argument 'readDBF' is true but the attribute database\n",
-		"(\"", dbfFile, "\") does not exist.\n", sep=""))
-	} else if (readDBF) {
-		dbf <- foreign::read.dbf (dbfFile)
-		if (shpType == 1) {	## EventData
-			if (nrow(df) != nrow(dbf)) {
-				warning(paste(
-				"The shapefile and its associated DBF do not contain the",
-				"same number of records. DBF ignored.\n", sep="\n"))
-				return (df)
-			}
-			df.class=class(df)
-			df <- cbind(df, dbf)
-			class(df) <- df.class
-		} else if (shpType == 3 || shpType == 5) {
-			## add index to result
-			dbf <- cbind(1:nrow(dbf), dbf)
-			names(dbf)[1] <- "PID"
-			class(dbf) <- c("PolyData", class(dbf))
-			attr(df, "PolyData") <- dbf
-		}
-	## At this point, shpTypes != 1, 3, 5 caused the "stop" above; we do not
-	## need an "else" to check here
-	}
-	attr(df,"parent.child")=PC
-	attr(df,"shpType")=shpType
-	prjFile <- paste(fn, ".prj", sep="")
-	if (file.exists(prjFile)) {
-		prj=scan(prjFile, what="character", quiet=TRUE, skipNul=TRUE)
-#browser();return()
-		prj=prj[!is.element(prj,"")][1]
-		if (length(prj)==0 || is.na(prj) || is.null(prj)) prj="Unknown" }
-	else prj="Unknown"
-	attr(df,"prj")=prj
-	xmlFile <- paste(fn, ".shp.xml", sep="")
-	if (file.exists(xmlFile)) {
-		xml=readLines(xmlFile); attr(df,"xml")=xml }
-
-	if (regexpr("GEO",prj)>0 | regexpr("Degree",prj)>0) proj="LL"
-	else if (regexpr("PROJ",prj)>0 && regexpr("UTM",prj)>0) proj="UTM"
-	else proj=1
-	attr(df,"projection")=proj
-
-	if (proj=="UTM" && any(df$X>500))
-		{df$X=df$X/1000; df$Y=df$Y/1000}
-	if (!is.null(zone))
-		attr(df, "zone") <- zone
-	if (!is.null(projection))
-		attr(df,"projection")=projection
-#browser();return()
-	return (df) }
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~importShapefile
+### importShapefile----------------------2018-09-06
+### This function has several slow parts:
+### 1) conversion of the matrix (verts) to X and Y columns in a data frame
+### 2) 'lapply's to create POS columns
+### Changes 2008-07-15:
+###	 Nick's loop to extract data from 'shapeList' has been replaced
+###		 by Rowan's series of 'sapply' calls.
+###	 Rowan added check for polygons with 0 vertices.
+### 2012-04-04: Rowan created function 'placeHoles' 
+###	 to place holes under correct solids.
+### 2018-09-06: RH modified 'placeHoles' to better deal with orphans,
+###	 but can be slow if imported file has many solids|holes|vertices.
+### ------------------------------------------NB|RH
+#importShapefile <- function (fn, readDBF=TRUE, projection=NULL, zone=NULL, 
+#	 minverts=3, placeholes=FALSE, show.progress=FALSE)
+#{
+#	## initialization
+#	.checkRDeps("importShapefile", c("maptools", "foreign"))
+#	## call to normalizePath added to perform ~ expansion; otherwise,
+#	## pathnames beginning with a ~ fail in the later call to
+#	## Rshapeget
+#	fn <- normalizePath(fn, mustWork=FALSE)
+#	fn <- .getBasename(fn, "shp")
+#
+#	## test for the required '.shx' file
+#	shxFile <- paste(fn, ".shx", sep="")
+#	if (!file.exists(shxFile))
+#		stop(paste(
+#		"Cannot find the index file (\"", shxFile, "\") required to import\n",
+#		"the shapefile.\n", sep=""))
+#
+#	## read shapefile
+#	eval(parse(text="shapeList <- .Call(\"Rshapeget\",as.character(fn),as.logical(FALSE),PACKAGE=\"maptools\")"))
+#	if (length(shapeList) < 1)
+#		stop("The shapefile is empty or an error occurred while importing.\n")
+#	shpType=unique(sapply(shapeList,function(x){x$shp.type}))
+#	if (length(shpType) != 1)
+#		stop ("Supports only a single shape type per shapefile.\n")
+#	nVerts=sapply(shapeList,function(x){x$nVerts})
+#	v0=is.element(nVerts,0) # any shapefiles with 0 vertices?
+#	if (any(v0==TRUE)) {
+#		nVerts=nVerts[!v0]; shapeList=shapeList[!v0] }
+#	shpID=sapply(shapeList,function(x){x$shpID})
+#	nParts=sapply(shapeList,function(x){x$nParts})
+#	pStarts=sapply(shapeList,function(x){x$Pstart},simplify=FALSE)
+#	if (length(pStarts)!=length(nParts) && all((nParts==sapply(pStarts,length))!=TRUE))
+#		stop ("Mismatch in 'nParts' and 'pStarts'.\n")
+#	pStarts=unlist(pStarts)
+#	v1=unlist(sapply(shapeList,function(x){x$verts[,1]},simplify=FALSE))
+#	v2=unlist(sapply(shapeList,function(x){x$verts[,2]},simplify=FALSE))
+#	verts=cbind(v1,v2)
+#
+#	## Keep track of parents and children
+#	PC=pStarts
+#	zP=is.element(PC,0); PC[zP]=1; PC[!zP]=0
+#
+#	## reformat results
+#	#if (shpType == 3 || shpType == 5) {	## PolySet
+#	if (shpType %in% c(3,13,23, 5,15,25)) {	## PolyLine, PolyLineZ, PolyLineM, Polygon, PolygonZ, PolygonM
+#		## create preliminary PID/SID columns
+#		PID <- rep(1:(length(unique(shpID))), times=nParts)
+#		SID <- unlist(lapply(split(nParts, 1:(length(nParts))), "seq"))
+#
+#		## to determine the number of vertices in each part, we divide the problem
+#		## into two cases:
+#		## 1) last component/hole of each polygon: the total vertices in the polygon
+#		##		less the starting POS of that last component/hole
+#		## 2) otherwise: use a "diff" on the starting POS's of each part
+#		lastComp <- rev(!duplicated(rev(PID)))
+#		nv <- vector()
+#		nv[lastComp] <- rep(nVerts, times=nParts)[lastComp] - pStarts[lastComp]
+#		nv[!lastComp] <- diff(pStarts)[diff(pStarts) > 0]
+#
+#		## create PID/SID columns
+#		PID <- rep(PID, times=nv)
+#		SID <- rep(SID, times=nv)
+#		## create POS column; we'll fix the ordering for holes later
+#		POS <- unlist(lapply(split(nv, 1:(length(nv))), "seq"))
+#		## build the data frame
+#		df <- data.frame(PID=PID, SID=SID, POS=POS, X=verts[, 1], Y=verts[, 2])
+#
+#		#if (shpType == 5) {
+#		if (shpType %in% c(5,15,25)) {
+#			## PolySet: polygons: reorder vertices for holes
+#			or <- .calcOrientation (df)
+#			## where "orientation" == -1, we need to reverse the POS
+#			or$solid <- is.element(or$orientation,1); or$hole <- !or$solid
+#			if (any(or$hole)) {
+#				or$nv <- nv
+#				toFix <- rep(or$hole, times=or$nv)
+#				o <- or$nv[or$hole]
+#				newPOS <- unlist(lapply(lapply(split(o, 1:length(o)), "seq"), "rev"))
+#				df[toFix, "POS"] <- newPOS	}
+#			
+#			if (placeholes) {
+#				## Fix to the problem where ArcPew does not put solid shapes before holes
+#				class(df) <- c("PolySet", setdiff(class(df),"PolySet"))
+#				df=placeHoles(df, minVerts=minverts, orient=TRUE, show.progress=show.progress)
+#			}
+#		}
+#		class(df) <- c("PolySet", class(df))
+#	#} else if (shpType == 1) {	## EventData
+#	} else if (shpType %in% c(1,11,21)) {	## Point, PointZ, PointM
+#		EID <- 1:(length(unique(shpID)))
+#		df <- data.frame(EID=EID, X=verts[, 1], Y=verts[, 2])
+#		class(df) <- c("EventData", class(df))
+#	} else {
+#		stop ("Shape type not supported.\n");
+#	}
+#
+#	## "cbind" the DBF for EventData or attach as an attribute for PolySets:
+#	## According to the "ESRI Shapefile Technical Description", any set of fields
+#	## may be present in the DBF file.
+#	## The (relevant) requirements are:
+#	##	 (1) one record per shape feature (i.e., per PID or EID), and
+#	##	 (2) same order as in shape (*.shp) file.
+#	dbfFile <- paste(fn, ".dbf", sep="")
+#	if (readDBF && !file.exists(dbfFile)) {
+#		warning(paste(
+#		"The argument 'readDBF' is true but the attribute database\n",
+#		"(\"", dbfFile, "\") does not exist.\n", sep=""))
+#	} else if (readDBF) {
+#		dbf <- foreign::read.dbf (dbfFile)
+#		if (shpType == 1) {	## EventData
+#			if (nrow(df) != nrow(dbf)) {
+#				warning(paste(
+#				"The shapefile and its associated DBF do not contain the",
+#				"same number of records. DBF ignored.\n", sep="\n"))
+#				return (df)
+#			}
+#			df.class=class(df)
+#			df <- cbind(df, dbf)
+#			class(df) <- df.class
+#		} else if (shpType == 3 || shpType == 5) {
+#			## add index to result
+#			dbf <- cbind(1:nrow(dbf), dbf)
+#			names(dbf)[1] <- "PID"
+#			class(dbf) <- c("PolyData", class(dbf))
+#			attr(df, "PolyData") <- dbf
+#		}
+#	## At this point, shpTypes != 1, 3, 5 caused the "stop" above; we do not
+#	## need an "else" to check here
+#	}
+#	attr(df,"parent.child")=PC
+#	attr(df,"shpType")=shpType
+#	prjFile <- paste(fn, ".prj", sep="")
+#	if (file.exists(prjFile)) {
+#		prj=scan(prjFile, what="character", quiet=TRUE, skipNul=TRUE)
+##browser();return()
+#		prj=prj[!is.element(prj,"")][1]
+#		if (length(prj)==0 || is.na(prj) || is.null(prj)) prj="Unknown" }
+#	else prj="Unknown"
+#	attr(df,"prj")=prj
+#	xmlFile <- paste(fn, ".shp.xml", sep="")
+#	if (file.exists(xmlFile)) {
+#		xml=readLines(xmlFile); attr(df,"xml")=xml }
+#
+#	if (regexpr("GEO",prj)>0 | regexpr("Degree",prj)>0) proj="LL"
+#	else if (regexpr("PROJ",prj)>0 && regexpr("UTM",prj)>0) proj="UTM"
+#	else proj=1
+#	attr(df,"projection")=proj
+#
+#	if (proj=="UTM" && any(df$X>500))
+#		{df$X=df$X/1000; df$Y=df$Y/1000}
+#	if (!is.null(zone))
+#		attr(df, "zone") <- zone
+#	if (!is.null(projection))
+#		attr(df,"projection")=projection
+##browser();return()
+#	return (df) }
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~importShapefile
 
 
 ##==============================================================================

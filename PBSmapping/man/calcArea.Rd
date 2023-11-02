@@ -30,7 +30,7 @@ calcArea (polys, rollup = 3)
   If the \link{PolySet}'s \code{zone} attribute exists, it uses it for
   the conversion.  Otherwise, it computes the mean longitude and uses
   that value to determine the zone.  The longitude range of zone
-  \emph{i} is \eqn{-186 + 6\emph{i}^\circ < x \le -180 + 6\emph{i}^\circ}{-186 + 6i < x <= -180 + 6i degrees}.
+  \eqn{i} is \eqn{-186 + 6 i^\circ < x \le -180 + 6 i^\circ}{-186 + 6i < x <= -180 + 6i degrees}.
 }
 \value{
   \link{PolyData} with columns \code{PID}, \code{SID} (\emph{may be
@@ -38,9 +38,9 @@ calcArea (polys, rollup = 3)
   \code{"UTM"}, the units of area are square kilometres.
 }
 \author{
-  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
-  MacEwan University, Edmonton AB\cr
-  Last modified \code{Rd: 2013-04-10}
+  \href{https://github.com/boersn/}{Nicholas M. Boers}, Staff Software Engineer\cr
+  Jobber, Edmonton AB\cr
+  Last modified \code{Rd: 2022-09-06}
 }
 \seealso{
   \code{\link{calcCentroid}},

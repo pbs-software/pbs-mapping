@@ -11,23 +11,24 @@
 importGSHHS(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 }
 \arguments{
-  \item{gshhsDB}{path name to binary GSHHS database. If unspecified,
+  \item{gshhsDB}{\code{character} -- path name to binary GSHHS database. If unspecified,
     looks for \code{gshhs_f.b} in the root of the \pkg{PBSmapping} library
     directory.}
-  \item{xlim}{range of X-coordinates (for clipping).
+  \item{xlim}{\code{numeric} -- range of X-coordinates (for clipping).
     The range should be between 0 and 360, starting at the Greenwich meridian and wrapping eastward around the globe.}
-  \item{ylim}{range of Y-coordinates (for clipping).}
-  \item{maxLevel}{maximum level of polygons to import:
+  \item{ylim}{\code{numeric} -- range of Y-coordinates (for clipping).}
+  \item{maxLevel}{\code{numeric} -- maximum level of polygons to import:
     1 (land), 2 (lakes on land), 3 (islands in lakes), or 4 (ponds on
     islands); ignored when importing lines.}
-  \item{n}{minimum number of vertices that must exist in a line/polygon
+  \item{n}{\code{numeric} -- minimum number of vertices that must exist in a line/polygon
     in order for it to be imported.}
-  \item{useWest}{logical: if \code{TRUE}, convert the X-coordinates (longitude)
+  \item{useWest}{\code{logical} -- if \code{TRUE}, convert the X-coordinates (longitude)
     to \eqn{^\circ}{deg}W (western hemisphere -180 to 0, i.e., west of the Greenwich meridian).}
 }
 \details{
   This routine requires a binary GSHHG (Global Self-consistent, Hierarchical,
-  High-resolution Geography) database file. The \href{http://www.soest.hawaii.edu/pwessel/gshhg/}{GSHHG database} has been released
+  High-resolution Geography) database file. 
+  The \href{http://www.soest.hawaii.edu/pwessel/gshhg/}{GSHHG database} has been released
   in the public domain.
   At the time of writing, the most recent binary database was the archive
   file called \code{gshhg-bin-2.3.7.zip}.
@@ -56,20 +57,19 @@ Wessel, P., and Smith, W.H.F. (1996)
 \emph{J. Geophys. Res.} \bold{101} 8741-8743.
 }
 \author{
-  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
-  MacEwan University, Edmonton AB
+  \href{https://github.com/boersn/}{Nicholas M. Boers}, Staff Software Engineer\cr
+  Jobber, Edmonton AB
 
   Maintainer: \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
   Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
-  \emph{locus opus}: Institute of Ocean Sciences (IOS), Sidney BC\cr
-  Last modified \code{Rd: 2021-01-11}
+  \emph{locus opus}: Offsite, Vancouver BC\cr
+  Last modified \code{Rd: 2023-10-30}
 }
 \seealso{
 In package \pkg{PBSmapping}:\cr
   \code{\link[PBSmapping]{importEvents}},
   \code{\link[PBSmapping]{importLocs}}, 
-  \code{\link[PBSmapping]{importPolys}},
-  \code{\link[PBSmapping]{importShapefile}}
+  \code{\link[PBSmapping]{importPolys}}
 }
 \note{
   The function calls a C routine, also called \code{importGSHHS}, which returns

@@ -33,8 +33,8 @@ calcSummary (polys, rollup = 3, FUN, \dots)
   ..., \code{X}\emph{n} and \code{Y1}, \code{Y2}, ..., \code{Y}\emph{n}.
 }
 \author{
-  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
-  MacEwan University, Edmonton AB\cr
+  \href{https://github.com/boersn/}{Nicholas M. Boers}, Staff Software Engineer\cr
+  Jobber, Edmonton AB\cr
   Last modified \code{Rd: 2013-04-10}
 }
 \seealso{

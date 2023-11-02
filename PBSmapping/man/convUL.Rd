@@ -24,9 +24,8 @@ convUL (xydata, km=TRUE, southern=NULL)
   number between 1 and 60 (inclusive).  If it contains
   geographic (longitude/latitude) coordinates and the \code{zone} attribute is
   missing, the function computes the mean longitude and uses that value
-  to determine the zone.  The longitude range of zone \emph{i} is
-  \eqn{-186 + 6\emph{i}^\circ < x \le -180 + 6\emph{i}^\circ}{-186 + 
-  6i < x <= -180 + 6i degrees}.
+  to determine the zone.  The longitude range of zone \eqn{i} is
+  \eqn{-186 + 6 i^\circ < x \le -180 + 6 i^\circ}{-186 +  6i < x <= -180 + 6i degrees}.
   
   This function converts the \code{X} and \code{Y} columns of
   \code{xydata} from \code{"LL"} to \code{"UTM"} or vice-versa.  If the
@@ -48,11 +47,11 @@ convUL (xydata, km=TRUE, southern=NULL)
   Copyright Ordnance Survey 2018 \bold{(v3.6)}. Southampton, UK.
 }
 \author{
-  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor, MacEwan University, Edmonton AB\cr
+  \href{https://github.com/boersn/}{Nicholas M. Boers}, Software Engineer, Jobber, Edmonton AB\cr
   Maintainer: \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
   Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
   \emph{locus opus}: Regional Headquarters, Vancouver BC\cr
-  Last modified \code{Rd: 2022-07-06}
+  Last modified \code{Rd: 2022-09-06}
 }
 \seealso{
   \code{\link[PBSmapping]{closePolys}},

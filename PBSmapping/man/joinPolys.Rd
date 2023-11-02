@@ -15,7 +15,7 @@ joinPolys(polysA, polysB=NULL, operation="INT")
     exclusive-or, respectively.}
 }
 \details{
-  This function interfaces with the \href{http://www.angusj.com/delphi/clipper.php}{Clipper library},
+  This function interfaces with the \href{https://www.angusj.com/delphi/clipper.php}{Clipper library},
   specifically version 6.2.1 released 2014-10-31, developed by Angus Johnson.
   Prior to 2013-03-23, \code{'joinPolys'} used the General Polygon Clipper library
   by Alan Murta at the University of Manchester.
@@ -64,15 +64,15 @@ joinPolys(polysA, polysB=NULL, operation="INT")
   it may recalculate the \code{PID} column.
 }
 \author{
-  C code: \href{http://www.angusj.com/delphi/clipper.php}{Angus Johnson}, Computer Programmer
+  C code: \href{https://www.angusj.com/delphi/clipper.php}{Angus Johnson}, Computer Programmer
 
-  Implementation: \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
-  MacEwan University, Edmonton AB
+  Implementation: \href{https://github.com/boersn/}{Nicholas M. Boers}, Staff Software Engineer\cr
+  Jobber, Edmonton AB
 
   Maintainer: \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
   Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
-  \emph{locus opus}: Institute of Ocean Sciences (IOS), Sidney BC\cr
-  Last modified \code{Rd: 2021-01-11}
+  \emph{locus opus}: Offsite, Vancouver BC\cr
+  Last modified \code{Rd: 2023-10-30}
 }
 \seealso{
 In package \pkg{PBSmapping}:\cr

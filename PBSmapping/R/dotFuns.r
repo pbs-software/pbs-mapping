@@ -1375,7 +1375,7 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
 ## Check to see if a set of vertices occurs in a
 ## polygon (based on sp::point.in.polygon C code)
 ## ------------------------------------------NB|RH
-.is.in =function(events, polys, use.names=TRUE)
+.is.in <- function(events, polys, use.names=TRUE)
 {
 	if (!is.PolySet(polys))
 		stop("Supply a PolySet to argument 'polys'")
@@ -1448,27 +1448,27 @@ The function '", caller, "' requires the package(s) '", err, "'.\n",
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.is.in
 
 
-## .is.in.defunct-------------------------------2018-08-24
-## Check to see if a set of vertices occurs in a
-## polygon (based on sp::point.in.polygon C code)
-.is.in.defunct =function(events, polys, use.names=TRUE) {
-	if (!all(c(is.element(c("X","Y"),colnames(events)),is.element(c("X","Y"),colnames(polys)))))
-		stop("Objects 'events' and 'polys' must have column names 'X' and 'Y'")
-	.checkRDeps(".is.in", c("sp"))
-	eval(parse(text="in.out = .Call(\"R_point_in_polygon_sp\", as.numeric(events[,\"X\"]), as.numeric(events[,\"Y\"]), as.numeric(polys[,\"X\"]), as.numeric(polys[,\"Y\"]), PACKAGE = \"sp\")"))
-	if (use.names) {
-		if(is.PolySet(events) || is.PolyData(events))
-			names(in.out) = .createIDs(events, intersect(c("PID","SID"), colnames(events)))
-		if(is.EventData(events))
-			names(in.out) = events[,"EID"]
-	}
-	out = list()
-	out[["in.out"]] = in.out
-	out[["all.in"]] = all(as.logical(in.out))
-	return(out)
-#browser();return()
-}
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.is.in.defunct
+### .is.in.defunct-------------------------------2018-08-24
+### Check to see if a set of vertices occurs in a
+### polygon (based on sp::point.in.polygon C code)
+#.is.in.defunct =function(events, polys, use.names=TRUE) {
+#	if (!all(c(is.element(c("X","Y"),colnames(events)),is.element(c("X","Y"),colnames(polys)))))
+#		stop("Objects 'events' and 'polys' must have column names 'X' and 'Y'")
+#	.checkRDeps(".is.in", c("sp"))
+#	eval(parse(text="in.out = .Call(\"R_point_in_polygon_sp\", as.numeric(events[,\"X\"]), as.numeric(events[,\"Y\"]), as.numeric(polys[,\"X\"]), as.numeric(polys[,\"Y\"]), PACKAGE = \"sp\")"))
+#	if (use.names) {
+#		if(is.PolySet(events) || is.PolyData(events))
+#			names(in.out) = .createIDs(events, intersect(c("PID","SID"), colnames(events)))
+#		if(is.EventData(events))
+#			names(in.out) = events[,"EID"]
+#	}
+#	out = list()
+#	out[["in.out"]] = in.out
+#	out[["all.in"]] = all(as.logical(in.out))
+#	return(out)
+##browser();return()
+#}
+###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.is.in.defunct
 
 #==============================================================================
 .mat2df <- function(data) {

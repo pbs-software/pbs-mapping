@@ -1,4 +1,4 @@
-\documentclass[letter]{article}
+\documentclass[letterpaper,11pt]{article}
 %\VignetteIndexEntry{Introduction to PBSmapping}
 %\VignettePackage{PBSmapping}
 \usepackage{Sweave}

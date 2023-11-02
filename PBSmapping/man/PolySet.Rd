@@ -47,13 +47,13 @@ corresponds to a different contour. By analogy with a child's
 \dQuote{follow the dots} game, the \code{POS} field enumerates the
 vertices to be connected by straight lines. Coordinates (\code{X},
 \code{Y}) specify the location of each vertex. Thus, in familiar
-mathematical notation, a contour consists of \emph{n} points (\eqn{x_i,
-y_i}) with \eqn{i = 1, ..., n}, where \emph{i} corresponds to the
+mathematical notation, a contour consists of \eqn{n} points 
+(\eqn{x_{i}, y_{i}}{x_i, y_i}) with \eqn{i = 1, ..., n}, where \eqn{i} corresponds to the
 \code{POS} index. A PolySet has two potential interpretations. The first
 associates a line segment with each successive pair of points from 1 to
-\emph{n}, giving a \emph{polyline} (in GIS terminology) composed of the
+\eqn{n}, giving a \emph{polyline} (in GIS terminology) composed of the
 sequential segments. The second includes a final line segment joining
-points \emph{n} and 1, thus giving a \emph{polygon}.
+points \eqn{n} and 1, thus giving a \emph{polygon}.
 
 The secondary ID field allows us to define regions as composites of
 polygons. From this point of view, each primary ID identifies a
@@ -61,8 +61,8 @@ collection of polygons distinguished by secondary IDs. For example, a
 single management area (\code{PID}) might consist of two fishing areas,
 each defined by a unique \code{SID}. A secondary polygon can also
 correspond to an inner boundary, like the hole in a doughnut. We adopt
-the convention that \code{POS} goes from 1 to \emph{n} along an outer
-boundary, but from \emph{n} to 1 along an inner boundary, regardless of
+the convention that \code{POS} goes from 1 to \eqn{n} along an outer
+boundary, but from \eqn{n} to 1 along an inner boundary, regardless of
 rotational direction. This contrasts with other GIS software, such as
 ArcView (ESRI 1996), in which outer and inner boundaries correspond to
 clockwise and counter-clockwise directions, respectively.
@@ -82,10 +82,10 @@ that specifies a map projection. In the current version of PBS Mapping,
 projection can have character values \code{"LL"} or \code{"UTM"},
 referring to \dQuote{Longitude-Latitude} and \dQuote{Universal
 Transverse Mercator}. We explain these projections more completely
-below. If projection is numeric, it specifies the aspect ratio \emph{r},
-the number of \emph{x} units per \emph{y} unit. Thus, \emph{r} units of
-\emph{x} on the graph occupy the same distance as one unit of
-\emph{y}. Another optional attribute \code{zone} specifies the UTM zone
+below. If projection is numeric, it specifies the aspect ratio \eqn{r},
+the number of \eqn{x} units per \eqn{y} unit. Thus, \eqn{r} units of
+\eqn{x} on the graph occupy the same distance as one unit of
+\eqn{y}. Another optional attribute \code{zone} specifies the UTM zone
 (if \code{projection="UTM"}) or the preferred zone for conversion from
 Longitude-Latitude (if \code{projection="LL"}).
 
@@ -107,9 +107,9 @@ of the data frame.
   California. 340 pp.
 }
 \author{
-  \href{https://academic.macewan.ca/boersn/}{Nicholas M. Boers}, Associate Professor -- Computer Science\cr
-  MacEwan University, Edmonton AB\cr
-  Last modified \code{Rd: 2015-04-23}
+  \href{https://github.com/boersn/}{Nicholas M. Boers}, Staff Software Engineer\cr
+  Jobber, Edmonton AB\cr
+  Last modified \code{Rd: 2022-09-06}
 }
 \seealso{
   \link[PBSmapping]{PolyData},
