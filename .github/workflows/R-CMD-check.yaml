@@ -8,6 +8,9 @@ on:
 
 name: R-CMD-check
 
+env:
+  DISPLAY: 0.0
+
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
@@ -39,11 +42,20 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
+      - name: Install XQuartz on macOS
+        if: runner.os == 'macOS'
+        run: brew install xquartz --cask
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
           needs: check
+          working-directory: ./PBSmapping
 
       - uses: r-lib/actions/check-r-package@v2
         with:
+          args: 'c("--no-manual", "--as-cran", "--ignore-vignettes", "--no-build-vignettes")'
+          build_args: 'c("--no-manual", "--no-build-vignettes")'
+          error-on: '"warning"'
           upload-snapshots: true
+          working-directory: ./PBSmapping
