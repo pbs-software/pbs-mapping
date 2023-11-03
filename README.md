@@ -2,7 +2,7 @@
 &copy; Fisheries and Oceans Canada (2003-2023)
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/seananderson/pbs-mapping/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/seananderson/pbs-mapping/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/pbs-software/pbs-mapping/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pbs-software/pbs-mapping/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 This software has evolved from fisheries research conducted at the Pacific Biological Station (PBS) in Nanaimo, British Columbia, Canada. It extends the R language to include two-dimensional plotting features similar to those commonly available in a Geographic Information System (GIS). Embedded C code speeds algorithms from computational geometry, such as finding polygons that contain specified point events or converting between longitude-latitude and Universal Transverse Mercator (UTM) coordinates. Additionally, we include C++ code developed by Angus Johnson for the Clipper library, data for a global shoreline, and other data sets in the public domain.
