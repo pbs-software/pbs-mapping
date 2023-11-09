@@ -38,6 +38,7 @@ All available PBS packages can be found at
 https://github.com/pbs-software
 
 To see demos, type '.PBSfigs()'.
+Note: function 'importShapefile()' is temporarily unavailable.
 -----------------------------------------------------------
 
 ")

@@ -13,11 +13,11 @@ calcGCdist(lon1, lat1, lon2, lat2, R=6371.2)
 }
 
 \arguments{
-  \item{lon1}{Longitude coordinate (degrees) of the start point.}
-  \item{lat1}{Latitude coordinate(degrees) of the start point.}
-  \item{lon2}{Longitude coordinate(degrees) of the end point.}
-  \item{lat2}{Latitude coordinate(degrees) of the end point.}
-  \item{R}{Mean radius (km) of the Earth.}
+  \item{lon1}{\code{numeric} -- Longitude coordinate (degrees) of the start point.}
+  \item{lat1}{\code{numeric} -- Latitude coordinate(degrees) of the start point.}
+  \item{lon2}{\code{numeric} -- Longitude coordinate(degrees) of the end point.}
+  \item{lat2}{\code{numeric} -- Latitude coordinate(degrees) of the end point.}
+  \item{R}{\code{numeric} -- Mean radius (km) of the Earth.}
 }
 \details{
   The great-circle distance is calculated between two points along a
@@ -57,19 +57,21 @@ calcGCdist(lon1, lat1, lon2, lat2, R=6371.2)
   \code{theta} -- Initial bearing \eqn{\theta}{theta} (degrees) for the start point.
 }
 \references{
-  \url{http://www.movable-type.co.uk/scripts/latlong.html}
+  Movable Type Scripts --
+  \href{https://www.movable-type.co.uk/scripts/latlong.html}{Calculate distance, bearing and more between Latitude/Longitude points}
 }
 \author{
   \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
   Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
-  \emph{opus locus}: Institute of Ocean Sciences (IOS), Sidney BC\cr
-  Last modified \code{Rd: 2017-06-22}
+  \emph{locus opus}: Offsite, Vancouver BC\cr
+  Last modified \code{Rd: 2023-11-03}
 }
 \note{
   If one uses the north geomagnetic pole as an end point, 
   \eqn{\theta}{theta} crudely approximates the magnetic declination.
 }
 \seealso{
+In package \pkg{PBSmapping}:\cr
   \code{\link[PBSmapping]{addCompass}},
   \code{\link[PBSmapping]{calcArea}},
   \code{\link[PBSmapping]{calcCentroid}},
