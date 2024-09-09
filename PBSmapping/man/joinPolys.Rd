@@ -1,6 +1,8 @@
 \name{joinPolys}
 \alias{joinPolys}
-\title{Join One or Two PolySets using a Logic Operation}
+\title{
+  Join One or Two PolySets using a Logic Operation
+}
 \description{
   Join one or two PolySets using a logic operation.
 }
@@ -15,8 +17,9 @@ joinPolys(polysA, polysB=NULL, operation="INT")
     exclusive-or, respectively.}
 }
 \details{
-  This function interfaces with the \href{https://www.angusj.com/delphi/clipper.php}{Clipper library},
+  This function interfaces with the first version of the Clipper Library, 
   specifically version 6.2.1 released 2014-10-31, developed by Angus Johnson.
+  Angus now offers \href{https://www.angusj.com/clipper2/Docs/Overview.htm}{Clipper 2 Library}.
   Prior to 2013-03-23, \code{'joinPolys'} used the General Polygon Clipper library
   by Alan Murta at the University of Manchester.
   We keep this historic reference to GPC because \code{'joinPolys'} remains faithful
@@ -36,7 +39,7 @@ joinPolys(polysA, polysB=NULL, operation="INT")
   the logic \code{'operation'} between the generic polygons in \code{'polysA'}.
   For example, suppose \code{'polysA'} contains three generic polygons (A, B, C).
   The function outputs the PolySet containing ((A \emph{op} B) \emph{op} C).
-  
+
   If \code{'polysB'} is not \code{NULL}, this function applies the logic \code{'operation'}
   between each generic polygon in \code{'polysA'} and each one in \code{'polysB'}.
   For example, suppose \code{'polysA'} contains two generic polygons \code{(A, B)}
@@ -64,15 +67,15 @@ joinPolys(polysA, polysB=NULL, operation="INT")
   it may recalculate the \code{PID} column.
 }
 \author{
-  C code: \href{https://www.angusj.com/delphi/clipper.php}{Angus Johnson}, Computer Programmer
+  C code: \href{https://www.angusj.com/clipper2/Docs/Overview.htm}{Angus Johnson}, Computer Programmer
 
   Implementation: \href{https://github.com/boersn/}{Nicholas M. Boers}, Staff Software Engineer\cr
   Jobber, Edmonton AB
 
   Maintainer: \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
   Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
-  \emph{locus opus}: Offsite, Vancouver BC\cr
-  Last modified \code{Rd: 2023-10-30}
+  \emph{locus opus}: Remote office, Vancouver BC\cr
+  Last modified \code{Rd: 2024-09-03}
 }
 \seealso{
 In package \pkg{PBSmapping}:\cr
@@ -141,4 +144,5 @@ local(envir=.PBSmapEnv,expr={
 }
 \keyword{manip} % multiple keywords allowed, one per line (this is correct)
 \keyword{logic}
+\concept{PBSmapping.r}
 

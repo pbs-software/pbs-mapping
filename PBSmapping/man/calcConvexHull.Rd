@@ -1,34 +1,47 @@
 \name{calcConvexHull}
 \alias{calcConvexHull}
-\title{Calculate the Convex Hull for a Set of Points}
+\alias{.closestPoint}
+\title{Calculate Convex Hull for a Set of Points}
 \description{
   Calculate the convex hull for a set of points.
 }
 \usage{
-calcConvexHull (xydata, keepExtra=FALSE)
+calcConvexHull(xydata, keepExtra=FALSE)
+.closestPoint(pts, pt)
 }
 \arguments{
-  \item{xydata}{a data frame with columns \code{X} and \code{Y}
-    containing spatial coordinates.}
-  \item{keepExtra}{logical: if \code{TRUE}, retain any additional columns
-    from the input data frame \code{xydata}.}
+  \item{xydata}{\code{numeric} -- data frame with columns \code{'X'} and \code{'Y'}
+    containing spatial coordinates}
+  \item{keepExtra}{\code{logical} -- if \code{TRUE}, retain any additional columns
+    from the input data frame \code{'xydata'}.}
+  \item{pts}{\code{numeric} -- data frame with columns \code{'X'} and \code{'Y'}}
+  \item{pt}{\code{numeric} -- data frame with columns \code{'X'} and \code{'Y'} and ONE row}
 }
 \details{
-  This routine uses the function \code{chull()} in the package grDevices.
+  Uses the function \code{chull()} in the package grDevices.
   By default, it ignores all columns other than \code{X} and \code{Y};
   however, the user can choose to retain additional columns in \code{xydata}
-  by specifying \code{keepExtra=TRUE}. 
+  by specifying \code{keepExtra=TRUE}.
 }
 \value{
   \link{PolySet} with columns \code{PID}, \code{POS}, \code{X}, \code{Y},
   and additional columns in \code{xydata} if \code{keepExtra=TRUE}.
+
+  Auxiliary dot function \code{'.closestPoint'} returns a vector of length
+  \code{'pts'} where \code{TRUE} indicates that the point is closest to \code{'pt'}.
+  Returns several \code{TRUE} values when several points are equidistant.
 }
 \author{
-  \href{https://github.com/boersn/}{Nicholas M. Boers}, Staff Software Engineer\cr
-  Jobber, Edmonton AB\cr
-  Last modified \code{Rd: 2013-04-10}
+  \href{https://github.com/boersn/}{Nicholas M. Boers},
+  Software Engineer, Jobber, Edmonton AB
+
+  Maintainer: \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
+  Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
+  \emph{locus opus}: Remote office, Vancouver BC\cr
+  Last modified \code{Rd: 2024-09-03}
 }
 \seealso{
+In package \pkg{PBSmapping}:\cr
   \code{\link{addPoints}},
   \code{\link{addPolys}},
   \code{\link{calcArea}},
@@ -51,4 +64,5 @@ local(envir=.PBSmapEnv,expr={
 })
 }
 \keyword{manip}
-
+\concept{PBSmapping.r}
+\concept{dotFuns.r}

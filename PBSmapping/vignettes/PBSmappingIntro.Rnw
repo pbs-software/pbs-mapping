@@ -42,11 +42,11 @@
 
 \section{What is PBSmapping?}
 
-\pbsm{} contains software designed to facilitate the compilation and analysis of fishery data, particularly data referenced by spatial coordinates. Our research stems from experiences with information on Canada's Pacific groundfish fisheries compiled at the Pacific Biological Station (PBS). Despite its origins in fishery data analysis, our software has broad applicability. The package \pbsm{} extends the R language to include two-dimensional plotting features similar to those commonly available in a Geographic Information System (GIS). Embedded C code speeds algorithms from computational geometry, such as finding polygons that contain specified point events or converting between longitude-latitude and Universal Transverse Mercator (UTM) coordinates. Recent versions of \pbsm{} take advantage of features in other R packages, such as \texttt{maptools} and \texttt{deldir}.
+\pbsm{} contains software designed to facilitate the compilation and analysis of fishery data, particularly data referenced by spatial coordinates. Our research stems from experiences with information on Canada's Pacific groundfish fisheries compiled at the Pacific Biological Station (PBS). Despite its origins in fishery data analysis, our software has broad applicability. The package \pbsm{} extends the R language to include two-dimensional plotting features similar to those commonly available in a Geographic Information System (GIS). Embedded C code speeds algorithms from computational geometry, such as finding polygons that contain specified point events or converting between longitude-latitude and Universal Transverse Mercator (UTM) coordinates.
 
 \section{What is PBS?}
 
-The initials \bold{PBS} refer to the \href{http://www.pac.dfo-mpo.gc.ca/science/facilities-installations/pbs-sbp/index-eng.html}{Pacific Biological Station}, a major fisheries laboratory operated by by Fisheries and Oceans Canada on the Pacific coast in Nanaimo, British Columbia, Canada.
+The initials \bold{PBS} refer to the \href{https://www.pac.dfo-mpo.gc.ca/science/facilities-installations/index-eng.html#pbs}{Pacific Biological Station}, a major fisheries laboratory operated by by Fisheries and Oceans Canada on the Pacific coast in Nanaimo, British Columbia, Canada.
 
 \section{Where is the User's Guide?}
 
@@ -58,6 +58,6 @@ The user's R library directory \code{./library/PBSmapping/doc} includes a comple
 
 \vspace*{4ex} \noindent \textbf{\Large Reference}
 
-\vspace*{2ex} \noindent Schnute, J.T., Boers, N.M., Haigh, R., and Couture-Beil, A. 2013. PBSmapping 2.66: User's Guide. Revised from \emph{Canadian Technical Report of Fisheries and Aquatic Sciences} \bold{2549}: vi + 115 p. Last updated May 3, 2013.
+\vspace*{2ex} \noindent Schnute, J.T., Boers, N.M., Haigh, R., and Couture-Beil, A. 2017. PBSmapping 2.70.3: user's guide revised from \emph{Canadian Technical Report of Fisheries and Aquatic Sciences} \bold{2549}: vi + 43 p. Last updated Jun 22, 2017.
 
 \end{document}

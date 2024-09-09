@@ -14,6 +14,46 @@ CRAN:
     UL = Uwe Ligges
 --------------------------------------------------
 
+2.73.7 (2024-09-05) [Rcheck=T, Rbuild=F]
+  * C code
+    + Managed to see the PBR error message running the R-devel check on Linux with the help of CG (RH 240905)
+      - CG update the Linux C-compiler : upgraded gcc and g++ from 11.4.0 to version 14.1.0
+      - CG had to build it from source to do so on this OS : compiler compiled using flex and yacc (bison)
+    + Changed `clipperWrapper' code
+      - changing `#include <Rdefines.h>' to `#include <Rinternals.h>' did not work
+      - adding `#include <Rinternals.h>' before `#include <Rdefines.h>' did not work
+      - changed `mkChar' to `Rf_mkChar', `classgets' to `RF_classgets', and `error' to `perror' as per suggestions in `00install.out' report.
+
+2.73.6 (2024-09-03) [Rcheck=T, Rbuild=F]
+  * C code
+    + Issue from CRAN is causing problems (but of course it does not show up in local checks)
+      - Compilation fails when using _R_CXX_USE_NO_REMAP_=true, which compiles C++ code with R_NO_REMAP defined;
+      - See chapter `The R API: entry points for C code' in `Writing R Extensions' for more information.
+    + Tried various tweaks to see the issue that PBR sees:
+      - set environmental variable _R_CXX_USE_NO_REMAP_=true globally and in RdevCheck.bat : no change
+      - set R_Tools=%R_Base%\Rtools44 in RdevCheck.bat (had been demoted to Rtools42 for rstan conniptions a while back) : no change
+  * Documentation
+    + Fixed a number of Rd issues seen by Rdevcheck (RH 240903)
+    + Updated short vignette to fix a broken hyperlink (RH 240904)
+
+2.73.5 (2024-04-11) [Rcheck=F, Rbuild=F]
+  * Documentation
+    + Repatriated dot functions (no longer banished to the namespace nether region); new documentation files:
+      - `dot-validate.Rd' for `.validate' auxiliary functions (RH 240311)
+      - `dot-add.Rd' for `.add' auxiliary functions (RH 240311)
+      - `dot-fix.Rd' for `.fix' auxiliary functions (RH 240321)
+      - `dot-calc.Rd' for `.calc' auxiliary functions (RH 240321)
+      - `dot-get.Rd' for `.get' auxiliary functions (RH 240325)
+      - `dot-mat2df.Rd' for `.fix' auxiliary function (RH 240326)
+      - `dot-check.Rd for `.check' auxiliary functions (RH 240326)
+    + Inserted auxiliary (dot) functions as aliases in existing Rd file: 
+      - amalgamated `clipPolys', `clipLines', and `.clip' in `clipPolys.Rd' (RH 240321)
+      - added `.closestPoint' to `calcConvexHull.Rd' (RH 240325)
+      - added `.expandEdges' to `calcVoronoi.Rd' (RH 240325)
+      - added `.plotMaps' and `.initPlotRegion' to `plotMap.Rd' (RH 240325)
+      - added `.insertNAs' and `.rollupPolys' to `addPolys.Rd' (RH 240326)
+      - added `.insertNAs', `.preparePolyProps', and `.rollupPolys' to `addPolys.Rd' (RH 240326)
+
 2.73.4 (2023-11-03) [Rcheck=T, Rbuild=T, CRAN version]
   * Documentation
     + Fixed broken URL in `addBubbles.Rd' (thanks UW)

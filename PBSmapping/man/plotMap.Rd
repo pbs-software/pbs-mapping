@@ -1,65 +1,74 @@
 \name{plotMap}
 \alias{plotMap}
+\alias{.plotMaps}
+\alias{.initPlotRegion}
 \title{Plot a PolySet as a Map}
 \description{
   Plot a \link[PBSmapping]{PolySet} as a map, using the correct aspect ratio.
 }
 \usage{
-plotMap (polys, xlim = NULL, ylim = NULL, projection = TRUE,
-         plt = c(0.11, 0.98, 0.12, 0.88), polyProps = NULL,
-         border = NULL, lty = NULL, col = NULL, colHoles = NULL,
-         density = NA, angle = NULL, bg = 0, axes = TRUE,
-         tckLab = TRUE, tck = 0.014, tckMinor = 0.5 * tck, \dots)
+plotMap(polys, xlim = NULL, ylim = NULL, projection = TRUE,
+        plt = c(0.11, 0.98, 0.12, 0.88), polyProps = NULL,
+        border = NULL, lty = NULL, col = NULL, colHoles = NULL,
+        density = NA, angle = NULL, bg = 0, axes = TRUE,
+        tckLab = TRUE, tck = 0.014, tckMinor = 0.5 * tck, ...)
+
+.plotMaps(polys, xlim, ylim, projection, plt, polyProps,
+          border, lty, col, colHoles, density, angle, bg,
+          axes, tckLab, tck, tckMinor, isType, ...)
+
+.initPlotRegion(projection, xlim, ylim, plt)
 }
 \arguments{
-  \item{polys}{\link[PBSmapping]{PolySet} to plot (\emph{required}).}
-  \item{xlim}{range of X-coordinates.}
-  \item{ylim}{range of Y-coordinates.}
-  \item{projection}{desired projection when \link[PBSmapping]{PolySet} lacks a
-    \code{projection} attribute; one of \code{"LL"}, \code{"UTM"},
+  \item{polys}{\code{data.frame} -- \link[PBSmapping]{PolySet} to plot (\emph{required}).}
+  \item{xlim}{\code{numeric} -- range of X-coordinates.}
+  \item{ylim}{\code{numeric} -- range of Y-coordinates.}
+  \item{projection}{\code{character|logical} -- desired projection when \link[PBSmapping]{PolySet}
+    lacks a \code{projection} attribute; one of \code{"LL"}, \code{"UTM"},
     or a numeric value.  If Boolean, specifies whether to check
     \code{polys} for a \code{projection} attribute.}
-  \item{plt}{four element numeric vector \code{(x1, x2, y1, y2)} giving
+  \item{plt}{\code{numeric} -- four element vector \code{(x1, x2, y1, y2)} giving
     the coordinates of the plot region measured as a fraction of the
     figure region. Set to \code{NULL} if \code{mai} in \code{par} is
     desired.}
-  \item{polyProps}{\link[PBSmapping]{PolyData} specifying which polygons to plot and their
+  \item{polyProps}{\code{data.frame} -- \link[PBSmapping]{PolyData} specifying which polygons to plot and their
     properties.  \code{\link[graphics]{par}} parameters passed as direct arguments
     supersede these data.}
-  \item{border}{vector describing edge colours (cycled by \code{PID}).}
-  \item{lty}{vector describing line types (cycled by \code{PID}).}
-  \item{col}{vector describing fill colours (cycled by \code{PID}).}
-  \item{colHoles}{vector describing hole colours (cycled by \code{PID}).
+  \item{border}{\code{numeric|character} -- vector describing edge colours (cycled by \code{PID}).}
+  \item{lty}{\code{numeric|character} -- vector describing line types (cycled by \code{PID}).}
+  \item{col}{\code{numeric|character} -- vector describing fill colours (cycled by \code{PID}).}
+  \item{colHoles}{\code{numeric|character} -- vector describing hole colours (cycled by \code{PID}).
     The default, \code{NULL}, should be used in most cases as it renders
     holes transparent. \code{colHoles} is designed solely to eliminate
     retrace lines when images are converted to PDF format. If
     \code{colHoles} is specified, underlying information (i.e., previously
     plotted shapes) will be obliterated.  If \code{NA} is specified, only
     outer polygons are drawn, consequently filling holes.}
-  \item{density}{vector describing shading line densities (lines per
+  \item{density}{\code{numeric} -- vector describing shading line densities (lines per
     inch, cycled by \code{PID}).}
-  \item{angle}{vector describing shading line angles (degrees, cycled by
+  \item{angle}{\code{numeric} -- vector describing shading line angles (degrees, cycled by
     \code{PID}).}
-  \item{bg}{background colour of the plot.}
-  \item{axes}{Boolean value; if \code{TRUE}, plot axes.}
-  \item{tckLab}{Boolean vector (length 1 or 2); if \code{TRUE},
+  \item{bg}{\code{numeric|character} -- background colour of the plot}
+  \item{axes}{\code{logical} -- if \code{TRUE}, plot axes}
+  \item{tckLab}{\code{logical} -- vector (length 1 or 2); if \code{TRUE},
     label the major tick marks.  If given a two-element
     vector, the first element describes the tick marks on the
     x-axis and the second element describes those on the y-axis.}
-  \item{tck}{numeric vector (length 1 or 2) describing the length
+  \item{tck}{\code{numeric} -- vector (length 1 or 2) describing the length
     of tick marks as a fraction of the smallest dimension. If
     \code{tckLab = TRUE}, these tick marks will be automatically
     labelled.  If given a two-element vector, the first element
     describes the tick marks on the x-axis and the second element
     describes those on the y-axis.}
-  \item{tckMinor}{numeric vector (length 1 or 2) describing the length
+  \item{tckMinor}{\code{numeric} -- vector (length 1 or 2) describing the length
     of tick marks as a fraction of the smallest dimension.  These tick
     marks can not be automatically labelled.  If given a two-element vector,
     the first element describes the tick marks on the x-axis and
     the second element describes those on the y-axis.}
-  \item{\dots}{additional \code{\link[graphics]{par}} parameters, or the arguments
+  \item{\dots}{\code{dots} -- additional \code{\link[graphics]{par}} parameters, or the arguments
     \code{main}, \code{sub}, \code{xlab}, or \code{ylab} for the
     \code{\link[graphics]{title}} function.}
+  \item{isType}{\code{character} -- one of \code{'points'}, \code{'polygons'}, or \code{'lines'}}
 }
 \details{
   This function plots a \link[PBSmapping]{PolySet}, where each unique (\code{PID},
@@ -95,13 +104,21 @@ plotMap (polys, xlim = NULL, ylim = NULL, projection = TRUE,
   region.  Consequently, \code{\link[graphics]{par}} parameters such as
   \code{plt}, \code{mai}, and \code{mar} will change.  When the function
   terminates, these changes persist to allow for additions to the plot.
+  
+  Auxiliary dot function \code{'.initPlotRegion'} initialises the plot region,
+  accounting for the aspect ratio.
 }
 \author{
-  \href{https://github.com/boersn/}{Nicholas M. Boers}, Staff Software Engineer\cr
-  Jobber, Edmonton AB\cr
-  Last modified \code{Rd: 2013-04-10}
+  \href{https://github.com/boersn/}{Nicholas M. Boers},
+  Software Engineer, Jobber, Edmonton AB
+
+  Maintainer: \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
+  Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
+  \emph{locus opus}: Remote office, Vancouver BC\cr
+  Last modified \code{Rd: 2024-09-03}
 }
 \seealso{
+In package \pkg{PBSmapping}:\cr
   \code{\link[PBSmapping]{addLabels}},
   \code{\link[PBSmapping]{addPolys}},
   \code{\link[PBSmapping]{addStipples}},
@@ -126,4 +143,5 @@ local(envir=.PBSmapEnv,expr={
 })
 }
 \keyword{hplot}
-
+\concept{PBSmapping.r}
+\concept{dotFuns.r}

@@ -1,58 +1,73 @@
 \name{calcVoronoi}
 \alias{calcVoronoi}
-\title{Calculate the Voronoi (Dirichlet) Tesselation for a Set of Points}
+\alias{.expandEdges}
+\title{
+  Calculate Voronoi Tesselation
+}
 \description{
   Calculate the Voronoi (Dirichlet) tesselation for a set of points.
 }
 \usage{
-calcVoronoi (xydata, xlim = NULL, ylim = NULL, eps = 1e-09, frac = 0.0001)
+calcVoronoi(xydata, xlim=NULL, ylim=NULL, eps=1e-09, frac=0.0001)
+
+.expandEdges(polys, pts, xlim, ylim)
 }
 \arguments{
-  \item{xydata}{a data frame with columns \code{X} and \code{Y}
+  \item{xydata}{\code{numeric} -- data frame with columns \code{X} and \code{Y}
     containing the points.}
-  \item{xlim}{range of X-coordinates; a bounding box for the
+  \item{xlim}{\code{numeric} -- range of X-coordinates; a bounding box for the
     coordinates.}
-  \item{ylim}{range of Y-coordinates; a bounding box for the
+  \item{ylim}{\code{numeric} -- range of Y-coordinates; a bounding box for the
     coordinates.}
-  \item{eps}{the value of epsilon used in testing whether a quantity is
+  \item{eps}{\code{numeric} -- the value of epsilon used in testing whether a quantity is
     zero.}
-  \item{frac}{used to detect duplicate input points, which meet the
+  \item{frac}{\code{numeric} -- used to detect duplicate input points, which meet the
     condition \eqn{\left | x1 - x2 \right | < \mbox{frac} \times
     (\mbox{xmax} - \mbox{xmin}) \mbox{and} \left | y1 - y2 \right | <
     \mbox{frac} \times (\mbox{ymax} - \mbox{ymin})}{abs(x1-x2) <
-    frac*(xmax-xmin) and abs(y1-y2) < frac*(ymax-ymin)}.}
+    frac*(xmax-xmin) and abs(y1-y2) < frac*(ymax-ymin)}}
+  \item{polys}{\code{numeric} -- valid \code{PolySet} data frame}
+  \item{pts}{\code{numeric} -- data.frame with \code{'X'} and \code{'Y'} columns}
 }
 \details{
-  This routine ignores all columns other than \code{X} and \code{Y}.
+  This routine ignores all columns other than \code{'X'} and \code{'Y'}.
 
-  If the user leaves \code{xlim} and \code{ylim} unspecified, the
+  If the user leaves \code{'xlim'} and \code{'ylim'} unspecified, the
   function defaults to the range of the data with each extent expanded
   by ten percent of the range.
   
-  This function sets the attribute \code{projection} to \code{1} and the
-  attribute \code{zone} to \code{NULL} as it assumes this projection in
+  This function sets the attribute \code{'projection'} to \code{1} and the
+  attribute \code{'zone'} to \code{NULL} as it assumes this projection in
   its calculations.
 }
 \value{
-  \link{PolySet} with columns \code{PID}, \code{POS}, \code{X}, and \code{Y}.
+  \code{'PolySet'} with columns \code{'PID'}, \code{'POS'}, \code{'X'}, and \code{'Y'}.
+
+  Auxiliary dot function \code{'.expandEdges'} returns an expanded \code{'PolySet'}.
 }
 \author{
-  \href{https://github.com/boersn/}{Nicholas M. Boers}, Staff Software Engineer\cr
-  Jobber, Edmonton AB\cr
-  Last modified \code{Rd: 2013-04-10}
+  \href{https://github.com/boersn/}{Nicholas M. Boers},
+  Software Engineer, Jobber, Edmonton AB
+
+  Maintainer: \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
+  Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
+  \emph{locus opus}: Remote office, Vancouver BC\cr
+  Last modified \code{Rd: 2024-09-03}
 }
 \seealso{
-  \code{\link{addPoints}},
-  \code{\link{addPolys}},
-  \code{\link{calcArea}},
-  \code{\link{calcCentroid}},
-  \code{\link{calcConvexHull}},
-  \code{\link{calcMidRange}},
-  \code{\link{calcSummary}},
-  \code{\link{locateEvents}},
-  \code{\link{plotMap}},
-  \code{\link{plotPoints}},
-  \code{\link{plotPolys}}.
+In package \pkg{PBSmapping}:\cr
+  \code{\link[PBSmapping]{addPoints}},
+  \code{\link[PBSmapping]{addPolys}},
+  \code{\link[PBSmapping]{calcArea}},
+  \code{\link[PBSmapping]{calcCentroid}},
+  \code{\link[PBSmapping]{calcConvexHull}},
+  \code{\link[PBSmapping]{calcMidRange}},
+  \code{\link[PBSmapping]{calcSummary}},
+  \code{\link[PBSmapping]{locateEvents}},
+  \code{\link[PBSmapping]{plotMap}},
+  \code{\link[PBSmapping]{plotPoints}},
+  \code{\link[PBSmapping]{plotPolys}},
+  \code{\link[PBSmapping]{PolySet}}
 }
 \examples{
 local(envir=.PBSmapEnv,expr={
@@ -77,4 +92,6 @@ local(envir=.PBSmapEnv,expr={
 })
 }
 \keyword{manip}
+\concept{PBSmapping.r}
+\concept{dotFuns.r}
 

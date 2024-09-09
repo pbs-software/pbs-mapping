@@ -28,7 +28,7 @@ importGSHHS(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 \details{
   This routine requires a binary GSHHG (Global Self-consistent, Hierarchical,
   High-resolution Geography) database file. 
-  The \href{http://www.soest.hawaii.edu/pwessel/gshhg/}{GSHHG database} has been released
+  The \href{https://www.soest.hawaii.edu/pwessel/gshhg/}{GSHHG database} has been released
   in the public domain.
   At the time of writing, the most recent binary database was the archive
   file called \code{gshhg-bin-2.3.7.zip}.
@@ -53,17 +53,18 @@ importGSHHS(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 }
 \references{
 Wessel, P., and Smith, W.H.F. (1996)
-\href{http://www.soest.hawaii.edu/pwessel/gshhg/Wessel+Smith_1996_JGR.pdf}{A Global Self-consistent, Hierarchical, High-resolution Shoreline Database}.
+\href{https://www.soest.hawaii.edu/pwessel/gshhg/Wessel+Smith_1996_JGR.pdf}{%
+A Global Self-consistent, Hierarchical, High-resolution Shoreline Database}.
 \emph{J. Geophys. Res.} \bold{101} 8741-8743.
 }
 \author{
-  \href{https://github.com/boersn/}{Nicholas M. Boers}, Staff Software Engineer\cr
+  \href{https://github.com/boersn/}{Nicholas M. Boers}, Senior Software Engineer\cr
   Jobber, Edmonton AB
 
   Maintainer: \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
   Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
   \emph{locus opus}: Offsite, Vancouver BC\cr
-  Last modified \code{Rd: 2023-10-30}
+  Last modified \code{Rd: 2024-09-03}
 }
 \seealso{
 In package \pkg{PBSmapping}:\cr

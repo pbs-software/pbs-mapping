@@ -1,39 +1,57 @@
 \name{clipPolys}
 \alias{clipPolys}
-\title{Clip a PolySet as Polygons}
+\alias{clipLines}
+\alias{.clip}
+\title{
+  Clip a PolySet as Polygons or Polylines
+}
 \description{
-  Clip a \link{PolySet}, where each unique (\code{PID}, \code{SID}) describes
-  a polygon.
+  Clip a \code{'PolySet'}, where each unique (\code{'PID'}, \code{'SID'})
+  describes a polygon or polyline.
 }
 \usage{
 clipPolys (polys, xlim, ylim, keepExtra = FALSE)
+
+clipLines (polys, xlim, ylim, keepExtra = FALSE)
+
+.clip(polys, xlim, ylim, isPolygons, keepExtra)
 }
 \arguments{
-  \item{polys}{\link{PolySet} to clip.}
-  \item{xlim}{range of X-coordinates.}
-  \item{ylim}{range of Y-coordinates.}
-  \item{keepExtra}{Boolean value; if \code{TRUE}, tries to
-    carry forward any non-standard columns into the result.}
+  \item{polys}{\code{data.frame} -- \code{'PolySet'} to clip}
+  \item{xlim}{\code{numeric} -- range of X-coordinates}
+  \item{ylim}{\code{numeric} -- range of Y-coordinates}
+  \item{keepExtra}{\code{logical} -- if \code{TRUE}, try to
+    carry forward any non-standard columns into the result}
+  \item{isPolygons}{\code{logical} -- if \code{TRUE}, then \code{PolySet} contains
+    polygons, else \code{PolySet} contains polylines}
 }
 \details{
-  For each discrete polygon, the function connects vertices 1 and N.  It
-  recalculates the \code{POS} values for each vertex, saving the old
-  values in a column named \code{oldPOS}.  For new vertices, it sets
-  \code{oldPOS} to \code{NA}.
+  For each discrete polygon, the function connects vertices 1 and N
+  (does not connect vertices 1 and N for discrete polylines).
+  It recalculates the \code{'POS'} values for each vertex, saving the old
+  values in a column named \code{'oldPOS'}.  For new vertices, it sets
+  \code{'oldPOS'} to \code{NA}.
 }
 \value{
-  \link{PolySet} containing the input data, with some points added or
-  removed.  A new column \code{oldPOS} records the original \code{POS}
+  \code{'PolySet'} containing the input data, with some points added or
+  removed.  A new column \code{'oldPOS'} records the original \code{'POS'}
   value for each vertex.
 }
 \author{
-  \href{https://github.com/boersn/}{Nicholas M. Boers}, Staff Software Engineer\cr
-  Jobber, Edmonton AB\cr
-  Last modified \code{Rd: 2013-04-10}
+  \href{https://github.com/boersn/}{Nicholas M. Boers},
+  Software Engineer, Jobber, Edmonton AB
+
+  Maintainer: \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
+  Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
+  \emph{locus opus}: Remote office, Vancouver BC\cr
+  Last modified \code{Rd: 2024-09-03}
 }
 \seealso{
-  \code{\link{clipLines}},
-  \code{\link{fixBound}}.
+In package \pkg{PBSmapping}:\cr
+  \code{\link[PBSmapping]{addLines}},
+  \code{\link[PBSmapping]{addPolys}},
+  \code{\link[PBSmapping]{addStipples}},
+  \code{\link[PBSmapping]{PolySet}}
 }
 \examples{
 local(envir=.PBSmapEnv,expr={
@@ -46,4 +64,6 @@ local(envir=.PBSmapEnv,expr={
 })
 }
 \keyword{manip}
+\concept{PBSmapping.r}
+\concept{dotFuns.r}
 

@@ -1,5 +1,5 @@
 /*=============================================================================
-  Copyright (C) 2003-2022 Fisheries and Oceans Canada
+  Copyright (C) 2003-2024 Fisheries and Oceans Canada
 
   This file is part of PBS Mapping.
 

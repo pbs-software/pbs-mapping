@@ -1,5 +1,5 @@
 /*=============================================================================
-  Copyright (C) 2003-2022 Fisheries and Oceans Canada
+  Copyright (C) 2003-2024 Fisheries and Oceans Canada
 
   This file is part of PBS Mapping.
 
@@ -32,6 +32,7 @@
 
 #include <R.h>
 #include <Rdefines.h>
+/*#include <Rdefines.h> change to Rinternals.h (RH 240902) DOES NOT WORK*/
 
 typedef int Sint;
 typedef double Sfloat;

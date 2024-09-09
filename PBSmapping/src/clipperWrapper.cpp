@@ -1,5 +1,5 @@
 /*=============================================================================
-  Copyright (C) 2003-2022 Fisheries and Oceans Canada
+  Copyright (C) 2003-2024 Fisheries and Oceans Canada
 
   This file is part of PBS Mapping.
 
@@ -47,6 +47,7 @@ typedef double Sfloat; */
 /* compiling for inclusion in an R library */
 #include <R.h>
 #include <Rdefines.h>
+/*#include <Rdefines.h> change to Rinternals.h (RH 240902) DOES NOT WORK*/
 
 #endif /* not defined STANDALONE */
 
@@ -366,19 +367,19 @@ static SEXP PolySetToR (PolySet &pset)
 	/* protectCount += 3; */
 
 	/* initialize attributes */
-	SET_STRING_ELT(attrClass, 0, mkChar("data.frame"));
-	SET_STRING_ELT(attrNames, 0, mkChar("PID"));
-	SET_STRING_ELT(attrNames, 1, mkChar("SID"));
-	SET_STRING_ELT(attrNames, 2, mkChar("POS"));
-	SET_STRING_ELT(attrNames, 3, mkChar("X"));
-	SET_STRING_ELT(attrNames, 4, mkChar("Y"));
+	SET_STRING_ELT(attrClass, 0, Rf_mkChar("data.frame"));
+	SET_STRING_ELT(attrNames, 0, Rf_mkChar("PID"));
+	SET_STRING_ELT(attrNames, 1, Rf_mkChar("SID"));
+	SET_STRING_ELT(attrNames, 2, Rf_mkChar("POS"));
+	SET_STRING_ELT(attrNames, 3, Rf_mkChar("X"));
+	SET_STRING_ELT(attrNames, 4, Rf_mkChar("Y"));
 	for (int i = 0; i < count; i++)
 		INTEGER_POINTER(attrRowNames)[i] = i;
 
 	/* attach the attributes */
 	SET_ATTR(rrr, R_RowNamesSymbol, attrRowNames);
 	SET_NAMES(rrr, attrNames);
-	classgets(rrr, attrClass);
+	Rf_classgets(rrr, attrClass);
 
 	/* set up our pointers for loading the actual data */
 	rPIDptr = INTEGER_POINTER(rPID);
@@ -604,7 +605,7 @@ joinPolys(SEXP operation,
 		case 2: op = ctDifference; break;
 		case 3: op = ctXor; break;
 		default:
-		error("Unrecognized operation.\n");
+		perror("Unrecognized operation.\n");
 		DBG_INDENT(-2);
 		return res;
 	}
@@ -704,7 +705,7 @@ joinPolys(SEXP operation,
 
 	} else {
 		/* unhandled case */
-		error ("Unhandled\n");
+		perror ("Unhandled\n");
 	}
 
 	/* convert our result vectors to an R PolySet */

@@ -1,10 +1,10 @@
 /*-----------------------------------------------------------------------------
   File:   thin.h
-   
+
   Interface for polygon thinning routine(s).
 
   History:
-    ?? ??? ????? [Paul Wessel]
+    dd mmm yyyy [Paul Wessel]
       - original code copied from gshhs_dp.c to thin.h
 
     17 Jun 2004 [Nicholas Boers]
