@@ -45,4 +45,5 @@ importFrom("graphics", "abline", "axis", "box", "frame", "legend",
            "strwidth", "symbols", "text", "title")
 importFrom("stats", "median", "na.omit", "quantile", "runif")
 importFrom("utils", "data", "flush.console", "read.table")
+# importFrom("tools", "texi2dvi", "texi2pdf")
 

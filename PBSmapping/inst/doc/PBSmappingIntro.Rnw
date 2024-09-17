@@ -1,0 +1,125 @@
+\documentclass[letterpaper,11pt]{article}
+%\VignetteIndexEntry{Introduction to PBSmapping}
+%\VignettePackage{PBSmapping}
+%\VignetteEncoding{UTF-8}
+\usepackage{Sweave}
+
+% For colors
+\usepackage{color}
+\definecolor{red}{rgb}{0.8039216,0.2156863,0}
+\definecolor{green}{rgb}{0, 1, 0}
+\definecolor{blue}{rgb}{0, 0, 1}
+
+% Definitions
+\newcommand{\slan}{\texttt{S}}
+\newcommand{\rlan}{\texttt{R}}
+\newcommand{\pbsm}{\texttt{PBSmapping}}
+\newcommand{\pbsmap}{\textit{PBS Mapping}}
+\newcommand{\tcl}{\texttt{Tcl/Tk}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\ital}[1]{\textit{#1}}
+\newcommand{\bold}[1]{\textbf{#1}}
+\newcommand{\under}[1]{{\underline {#1}}}
+\newcommand{\red}[1]{{\textcolor{red} {#1}}}
+
+\usepackage{verbatim}
+\usepackage{hyperref}
+
+% Keep on one page
+\textheight 9.0in \topmargin -1.0in
+
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, plainpages=true, linkcolor=black, citecolor=black, urlcolor=blue}
+
+\renewcommand{\rmdefault}{phv}% Helvetica
+\renewcommand{\sfdefault}{phv}% Helvetica
+%\renewcommand{\ttdefault}{pcr}% Courier
+
+\begin{document}
+
+<<pdflatex, echo=FALSE, results=hide>>= # hide the results 
+## Dummy R code for stupid R check
+os = Sys.info()['sysname']
+pdftex = dirname(Sys.which("pdflatex"))
+## Windows attempt
+if (os %in% c("Windows")) {
+	if (pdftex=="") {
+		pdftex = "C:\\Program Files\\MiKTeX\\miktex\\bin\\x64"
+		found = dir.exists(pdftex)
+		if (found) {
+			onpath = pdftex %in% strsplit(Sys.getenv()[["PATH"]], split=";")[[1]]
+			if (!onpath)
+				Sys.setenv(PATH=paste(Sys.getenv("PATH"), pdftex, sep=";"))
+		} else {
+			stop("Cannot find 'pdflatex' on this system; install 'MiKTex' and try again.")
+		}
+	} else {
+		pdftex = gsub("/","\\\\",pdftex)
+		target = sub("\\\\$", "", strsplit(Sys.getenv()[["PATH"]], split=";")[[1]])  ## this is getting ridiculous
+		onpath = pdftex %in% target
+		if (!onpath)
+			Sys.setenv(PATH=paste(Sys.getenv("PATH"), pdftex, sep=";"))
+	}
+}
+## Linux attempt
+if (os %in% c("Linux")) {
+	if (pdftex=="") {
+		pdftex = "/usr/local/texlive/*/bin/x86_64-linux"
+		found = dir.exists(pdftex)
+		if (found) {
+			onpath = pdftex %in% strsplit(Sys.getenv()[["PATH"]], split=":")[[1]]
+			if (!onpath)
+				Sys.setenv(PATH=paste(Sys.getenv("PATH"), pdftex, sep=":"))
+		} else {
+			stop("Cannot find 'pdflatex' on this system; install 'texlive-latex-base' and try again.")
+		}
+	} else {
+		onpath = pdftex %in% strsplit(Sys.getenv()[["PATH"]], split=":")[[1]]
+		if (!onpath)
+			Sys.setenv(PATH=paste(Sys.getenv("PATH"), pdftex, sep=":"))
+	}
+}
+## MacOS attempt
+if (os %in% c("Darwin")) {
+	if (pdftex=="") {
+		pdftex = "/usr/texbin"
+		found = dir.exists(pdftex)
+		if (found) {
+			onpath = pdftex %in% strsplit(Sys.getenv()[["PATH"]], split=":")[[1]]
+			if (!onpath)
+				Sys.setenv(PATH=paste(Sys.getenv("PATH"), pdftex, sep=":"))
+		} else {
+			stop("Cannot find 'pdflatex' on this system; install 'texlive' and try again.")
+		}
+	} else {
+		onpath = pdftex %in% strsplit(Sys.getenv()[["PATH"]], split=":")[[1]]
+		if (!onpath)
+			Sys.setenv(PATH=paste(Sys.getenv("PATH"), pdftex, sep=";"))
+	}
+}
+@
+\title{Introduction to PBSmapping}
+\author{Jon Schnute, Nick Boers, Rowan Haigh, and Alex Couture-Beil}
+\maketitle
+
+\section{What is PBSmapping?}
+
+\pbsm{} contains software designed to facilitate the compilation and analysis of fishery data, particularly data referenced by spatial coordinates. Our research stems from experiences with information on Canada's Pacific groundfish fisheries compiled at the Pacific Biological Station (PBS). Despite its origins in fishery data analysis, our software has broad applicability. The package \pbsm{} extends the R language to include two-dimensional plotting features similar to those commonly available in a Geographic Information System (GIS). Embedded C code speeds algorithms from computational geometry, such as finding polygons that contain specified point events or converting between longitude-latitude and Universal Transverse Mercator (UTM) coordinates.
+
+\section{What is PBS?}
+
+The initials \bold{PBS} refer to the \href{https://www.pac.dfo-mpo.gc.ca/science/facilities-installations/index-eng.html#pbs}{Pacific Biological Station}, a major fisheries laboratory operated by by Fisheries and Oceans Canada on the Pacific coast in Nanaimo, British Columbia, Canada.
+
+\section{Where is the User's Guide?}
+
+The user's R library directory \code{./library/PBSmapping/doc} includes a complete User's Guide \code{PBSmapping-UG.pdf}. To use this package effectively, please consult the Guide.
+
+\section{Demos}
+
+\pbsm{} includes ten demos that appear as figures in the User's Guide. To see them, run the function \code{.PBSfigs()}. More generally, a user can view all demos available from locally installed packages with the function \code{runDemos()} in our related (and recommended) package \code{PBSmodelling}.
+
+\vspace*{4ex} \noindent \textbf{\Large Reference}
+
+\vspace*{2ex} \noindent Schnute, J.T., Boers, N.M., Haigh, R., and Couture-Beil, A. 2017. PBSmapping 2.70.3: user's guide revised from \emph{Canadian Technical Report of Fisheries and Aquatic Sciences} \bold{2549}: vi + 43 p. Last updated Jun 22, 2017.
+
+\end{document}

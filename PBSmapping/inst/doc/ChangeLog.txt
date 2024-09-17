@@ -14,7 +14,14 @@ CRAN:
     UL = Uwe Ligges
 --------------------------------------------------
 
-2.73.7 (2024-09-05) [Rcheck=T, Rbuild=F]
+2.73.8 (2024-09-17) [Rcheck=T, Rbuild=T]
+  * Documentation
+    + Attempt to add a path containing `pdflatex' onto path for Sweave vignette. (RH 240909)
+      - various attempts but Rhub still craps out on missing 'pdflatex'
+    + Adding R code into Rnw vignette raised another issue about missing tangle (RH 240916)
+      + Followed example of package `gglasso' by adding Rnw, R and PDF into `inst/doc' directory
+
+2.73.7 (2024-09-05) [Rcheck=T, Rbuild=T]
   * C code
     + Managed to see the PBR error message running the R-devel check on Linux with the help of CG (RH 240905)
       - CG update the Linux C-compiler : upgraded gcc and g++ from 11.4.0 to version 14.1.0
@@ -23,6 +30,7 @@ CRAN:
       - changing `#include <Rdefines.h>' to `#include <Rinternals.h>' did not work
       - adding `#include <Rinternals.h>' before `#include <Rdefines.h>' did not work
       - changed `mkChar' to `Rf_mkChar', `classgets' to `RF_classgets', and `error' to `perror' as per suggestions in `00install.out' report.
+      - ran `.PBSfigs()' in R-devel for Windows 10 Enterprise 22H2 and Linux Ubuntu 22.04 LTS (aka Jammy Jellyfish) without errors.
 
 2.73.6 (2024-09-03) [Rcheck=T, Rbuild=F]
   * C code
