@@ -38,7 +38,7 @@
 \begin{document}
 
 <<pdflatex, echo=FALSE, results=hide>>= # hide the results 
-## Dummy R code for stupid R check
+## Dummy R code for stupid R check (240924)
 os = Sys.info()['sysname']
 pdftex = dirname(Sys.which("pdflatex"))
 ## Windows attempt
@@ -51,7 +51,7 @@ if (os %in% c("Windows")) {
 			if (!onpath)
 				Sys.setenv(PATH=paste(Sys.getenv("PATH"), pdftex, sep=";"))
 		} else {
-			stop("Cannot find 'pdflatex' on this system; install 'MiKTex' and try again.")
+			message("Cannot find 'pdflatex' on this system; install 'MiKTex' and try again.")
 		}
 	} else {
 		pdftex = gsub("/","\\\\",pdftex)
@@ -71,7 +71,7 @@ if (os %in% c("Linux")) {
 			if (!onpath)
 				Sys.setenv(PATH=paste(Sys.getenv("PATH"), pdftex, sep=":"))
 		} else {
-			stop("Cannot find 'pdflatex' on this system; install 'texlive-latex-base' and try again.")
+			message("Cannot find 'pdflatex' on this system; install 'texlive-latex-base' and try again.")
 		}
 	} else {
 		onpath = pdftex %in% strsplit(Sys.getenv()[["PATH"]], split=":")[[1]]
@@ -89,7 +89,7 @@ if (os %in% c("Darwin")) {
 			if (!onpath)
 				Sys.setenv(PATH=paste(Sys.getenv("PATH"), pdftex, sep=":"))
 		} else {
-			stop("Cannot find 'pdflatex' on this system; install 'texlive' and try again.")
+			message("Cannot find 'pdflatex' on this system; install 'texlive' and try again.")
 		}
 	} else {
 		onpath = pdftex %in% strsplit(Sys.getenv()[["PATH"]], split=":")[[1]]

@@ -14,6 +14,13 @@ CRAN:
     UL = Uwe Ligges
 --------------------------------------------------
 
+2.74.0 (2024-09-24) [Rcheck=T, Rbuild=T]
+  * Documentation
+    + Passes tests on Github using workflow `R-CMD-check.yaml' (RH 240924)
+      - (i) macos-latest, (ii) windows-latest (release), (iii) ubuntu-latest (devel), (iv) ubuntu-latest (release), (v) ubuntu-latest (oldrel-1)
+    + Cannot find a way to check package on all operating systems using SVN
+      - Equivalent in Gitub is : pbs-mapping/.github/workflows/R-CMD-check.yaml
+
 2.73.8 (2024-09-17) [Rcheck=T, Rbuild=T]
   * Documentation
     + Attempt to add a path containing `pdflatex' onto path for Sweave vignette. (RH 240909)
