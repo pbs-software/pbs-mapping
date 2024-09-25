@@ -30,8 +30,8 @@
   Polygon data from the GSHHG (Global Self-consistent, Hierarchical,
   High-resolution Geography) Database. \cr
   Download the native binary files of shoreline polygons, rivers, and borders
-  contained in the latest zip archive (version 2.3.4 ) at 
-  \url{http://www.soest.hawaii.edu/pwessel/gshhg/}.
+  contained in the latest zip archive (version 2.3.4 ) at \cr
+  (www.soest.hawaii.edu/pwessel/gshhg).
 
 \preformatted{
 nepacLL <- importGSHHS("gshhs_h.b", xlim=c(-190,-110), ylim=c(34,72), 
@@ -54,7 +54,7 @@ worldLLhigh <- PBSmapping:::.fixGSHHSWorld(worldLLhigh)
   Wessel, P. and Smith, W.H.F. (1996) A global, self-consistent,
   hierarchical, high-resolution shoreline database. \emph{Journal of
   Geophysical Research} \bold{101}, 8741--8743. \cr
-  \url{http://www.soest.hawaii.edu/pwessel/gshhg/Wessel+Smith_1996_JGR.pdf}
+  (www.soest.hawaii.edu/pwessel/gshhg/Wessel+Smith_1996_JGR.pdf)
 }
 \author{
   \href{https://github.com/boersn/}{Nicholas M. Boers}, Staff Software Engineer\cr

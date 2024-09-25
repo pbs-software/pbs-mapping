@@ -14,6 +14,11 @@ CRAN:
     UL = Uwe Ligges
 --------------------------------------------------
 
+2.74.1 (2024-09-25) [Rcheck=T, Rbuild=T]
+  * Documentation
+    + Removed offending (forbidden) hyperlink from `addBubbles.Rd' (RH 240925)
+    + Added `dot-create.Rd' to repo (not sure how its absence passed the check in the first place) (RH 240925)
+
 2.74.0 (2024-09-24) [Rcheck=T, Rbuild=T]
   * Documentation
     + Passes tests on Github using workflow `R-CMD-check.yaml' (RH 240924)

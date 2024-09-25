@@ -73,13 +73,13 @@ addBubbles(events, type=c("perceptual","surface","volume"),
   \emph{Journal of Statistical Software} \bold{15}(5).
 }
 \author{
-  \href{https://profils-profiles.science.gc.ca/en/profile/denis-chabot}{Denis Chabot}, Research Scientist\cr
+  \href{mailto:denis.chabot@dfo-mpo.gc.ca}{Denis Chabot}, Research Scientist\cr
   Maurice-Lamontagne Institute, Fisheries & Oceans Canada (DFO), Mont-Joli QC\cr
 
   Maintainer: \href{mailto:rowan.haigh@dfo-mpo.gc.ca}{Rowan Haigh}, Program Head -- Offshore Rockfish\cr
   Pacific Biological Station (PBS), Fisheries & Oceans Canada (DFO), Nanaimo BC\cr
   \emph{locus opus}: Offsite, Vancouver BC\cr
-  Last modified \code{Rd: 2023-11-02}
+  Last modified \code{Rd: 2024-09-25}
 }
 \seealso{
 In package \pkg{PBSmapping}:\cr
