@@ -1,5 +1,5 @@
 ##==============================================================================
-## Copyright (C) 2003-2022  Fisheries and Oceans Canada
+## Copyright (C) 2003-2024 Fisheries and Oceans Canada
 ## Nanaimo, British Columbia
 ## This file is part of PBS Mapping.
 ##
@@ -103,7 +103,7 @@ PBSprint <- FALSE
 
 ## addLabels----------------------------2008-08-25
 ##  Add labels to an exist map
-##  '...' contains arguments for the 'text()' function
+##  '...' contains arguments for the 'text()'
 ##-------------------------------------------NB|RH
 addLabels <- function(data, xlim=NULL, ylim=NULL, polyProps=NULL,
    placement="DATA", polys=NULL, rollup=3,
@@ -249,7 +249,7 @@ addLabels <- function(data, xlim=NULL, ylim=NULL, polyProps=NULL,
 
 ## addLines-----------------------------2012-03-01
 ##  Add polylines to an existing map plot.
-##  '...' contains arguments for the 'lines()' function
+##  '...' contains arguments for the 'lines()'
 ## ---------------------------------------------NB
 addLines <- function(polys, xlim=NULL, ylim=NULL, polyProps=NULL,
    lty=NULL, col=NULL, arrows=FALSE, ...)
@@ -377,9 +377,9 @@ addLines <- function(polys, xlim=NULL, ylim=NULL, polyProps=NULL,
 }
 
 ## addPoints----------------------------2010-11-10
-##	Add points to an existing map plot.
-##	'...' contains arguments for the '.addFeature()' function,
-##	which will then pass those arguments to 'points' function.
+##  Add points to an existing map plot.
+##  '...' contains arguments for the '.addFeature()' ,
+##  which will then pass those arguments to 'points()'
 ## ---------------------------------------------NB
 addPoints <- function(data, xlim=NULL, ylim=NULL, polyProps=NULL,
    cex=NULL, col=NULL, pch=NULL, ...)
@@ -2113,13 +2113,11 @@ extractPolyData <- function(polys)
 	if (is.element(tempIDX, names(polys))) {
 		stop(paste(
 "Failed attempt to create temporary index column; column already",
-"exists.\n",
-							 sep="\n"));
+"exists.\n", sep="\n"));
 	}
 
 	polys[[tempIDX]] <- .createIDs(polys, cols=c("PID", "SID"));
-	pdata <- polys[!duplicated(polys[[tempIDX]]),
-								 intersect(names(polys), c("PID", "SID", tempIDX))];
+	pdata <- polys[!duplicated(polys[[tempIDX]]), intersect(names(polys), c("PID", "SID", tempIDX))];
 
 	## a function used to process each list element below
 	processElement <- function(a) {
@@ -2420,9 +2418,7 @@ fixPOS <- function(polys, exteriorCCW=NA)
 		}
 	}
 
-	polys <- .rollupPolys(polys, rollupMode=3, exteriorCCW=exteriorCCW,
-												closedPolys=-1, addRetrace=FALSE);
-
+	polys <- .rollupPolys(polys, rollupMode=3, exteriorCCW=exteriorCCW, closedPolys=-1, addRetrace=FALSE);
 	## .rollupPolys() result retains attributes of 'polys'
 
 	if (!is.null(polys) &&
@@ -2436,8 +2432,7 @@ fixPOS <- function(polys, exteriorCCW=NA)
 #=============================================================================
 importEvents <- function(EventData, projection=NULL, zone=NULL)
 {
-	return(as.EventData(read.table(EventData, header=TRUE),
-											projection=projection, zone=zone))
+	return(as.EventData(read.table(EventData, header=TRUE), projection=projection, zone=zone))
 }
 
 
@@ -2450,10 +2445,10 @@ importEvents <- function(EventData, projection=NULL, zone=NULL)
 importGSHHS <- function(gshhsDB, xlim, ylim, maxLevel=4, n=0, useWest=FALSE)
 {
 	## Transform all X-coordinates to lie between 0 and 360
-	normAngle = function(x){(x + 360.)%%360.}
+	normAngle <- function(x){(x + 360.)%%360.}
 
 	## Determine if the specified limits lie in the western hemisphere
-	isitWest  = function(lim){
+	isitWest  <- function(lim){
 		world = 1:360
 		if (diff(lim)>0) span = lim[1]:lim[2]
 		else span = setdiff(world,lim[2]:lim[1])
@@ -2880,7 +2875,6 @@ is.LocationSet <- function(x, fullValidation=TRUE)
 		if (is.character(msg))
 			return (FALSE)
 	}
-
 	return (inherits(x, "LocationSet", which=TRUE) == 1);
 }
 
@@ -2904,7 +2898,6 @@ is.PolySet <- function(x, fullValidation=TRUE)
 		if (is.character(msg))
 			return (FALSE)
 	}
-
 	return (inherits(x, "PolySet", which=TRUE) == 1);
 }
 
@@ -2930,16 +2923,15 @@ isConvex <- function(polys)
 
 	## call the C function
 	results <- .C("isConvex",
-								inID=as.integer(inPolysID),
-								inXY=as.double(inPolysXY),
-								inVerts=as.integer(inPolys),
-								outID=integer(2 * outCapacity),
-								outResult=integer(outCapacity),
-								outRows=as.integer(outCapacity),
-								outStatus=integer(1),
-								PACKAGE="PBSmapping");
-	## note: outRows is set to how much space is allocated -- the C function
-	##			 should consider this
+		inID=as.integer(inPolysID),
+		inXY=as.double(inPolysXY),
+		inVerts=as.integer(inPolys),
+		outID=integer(2 * outCapacity),
+		outResult=integer(outCapacity),
+		outRows=as.integer(outCapacity),
+		outStatus=integer(1),
+		PACKAGE="PBSmapping");
+	## note: outRows is set to how much space is allocated -- the C function should consider this
 
 	if (results$outStatus == 1) {
 		stop(
@@ -2949,8 +2941,7 @@ isConvex <- function(polys)
 		stop(paste(
 "Insufficient memory allocated for output.	Please upgrade to the latest",
 "version of the software, and if that does not fix this problem, please",
-"file a bug report.\n",
-							 sep="\n"));
+"file a bug report.\n", sep="\n"));
 	}
 
 	## determine the number of rows in the result
@@ -2959,8 +2950,8 @@ isConvex <- function(polys)
 	## extract the data from the C function results
 	if (outRows > 0) {
 		d <- data.frame(PID=results$outID[1:outRows],
-										SID=results$outID[(outCapacity+1):(outCapacity+outRows)],
-										convex=results$outResult[1:outRows]);
+			SID=results$outID[(outCapacity+1):(outCapacity+outRows)],
+			convex=results$outResult[1:outRows]);
 
 		## when I had this conversion in the about data.frame() call, the 'convex'
 		## column became factors...
@@ -3000,15 +2991,15 @@ isIntersecting <- function(polys, numericResult=FALSE)
 
 	## call the C function
 	results <- .C("isIntersecting",
-								inPolysID=as.integer(inPolysID),
-								inPolysXY=as.double(inPolysXY),
-								inPolys=as.integer(inPolys),
-								numericResult=as.integer(numericResult),
-								outID=integer(2 * outCapacity),
-								outResult=integer(outCapacity),
-								outRows=as.integer(outCapacity),
-								outStatus=integer(1),
-								PACKAGE="PBSmapping");
+		inPolysID=as.integer(inPolysID),
+		inPolysXY=as.double(inPolysXY),
+		inPolys=as.integer(inPolys),
+		numericResult=as.integer(numericResult),
+		outID=integer(2 * outCapacity),
+		outResult=integer(outCapacity),
+		outRows=as.integer(outCapacity),
+		outStatus=integer(1),
+		PACKAGE="PBSmapping");
 	## note: outRows is set to how much space is allocated -- the C function
 	##			 should consider this
 
@@ -3020,8 +3011,7 @@ isIntersecting <- function(polys, numericResult=FALSE)
 		stop(paste(
 "Insufficient memory allocated for output.	Please upgrade to the latest",
 "version of the software, and if that does not fix this problem, please",
-"file a bug report.\n",
-							 sep="\n"));
+"file a bug report.\n", sep="\n"));
 	}
 
 	## determine the number of rows in the result
@@ -3030,8 +3020,8 @@ isIntersecting <- function(polys, numericResult=FALSE)
 	## extract the data from the C function results
 	if (outRows > 0) {
 		d <- data.frame(PID=results$outID[1:outRows],
-										SID=results$outID[(outCapacity+1):(outCapacity+outRows)],
-										intersecting=results$outResult[1:outRows]);
+			SID=results$outID[(outCapacity+1):(outCapacity+outRows)],
+			intersecting=results$outResult[1:outRows]);
 
 		if (!numericResult)
 			d$intersecting <- as.logical(d$intersecting);
@@ -3082,18 +3072,18 @@ joinPolys <- function(polysA, polysB=NULL, operation="INT")
 
 	## call the C function
 	results <- .Call("joinPolys",
-									 operation=as.integer(op),
-									 sPID=as.integer(polysA$PID),
-									 sSID=as.integer(polysA$SID),
-									 sPOS=as.integer(polysA$POS),
-									 sX	=as.numeric(polysA$X),
-									 sY	=as.numeric(polysA$Y),
-									 cPID=as.integer(polysB$PID),
-									 cSID=as.integer(polysB$SID),
-									 cPOS=as.integer(polysB$POS),
-									 cX	=as.numeric(polysB$X),
-									 cY	=as.numeric(polysB$Y),
-									 PACKAGE="PBSmapping")
+		operation=as.integer(op),
+		sPID=as.integer(polysA$PID),
+		sSID=as.integer(polysA$SID),
+		sPOS=as.integer(polysA$POS),
+		sX	=as.numeric(polysA$X),
+		sY	=as.numeric(polysA$Y),
+		cPID=as.integer(polysB$PID),
+		cSID=as.integer(polysB$SID),
+		cPOS=as.integer(polysB$POS),
+		cX	=as.numeric(polysB$X),
+		cY	=as.numeric(polysB$Y),
+		PACKAGE="PBSmapping")
 
 	if (is.null(results)){
 		return(NULL)
@@ -3123,8 +3113,7 @@ locateEvents <- function(EID, n=512, type="p", ...)
 		if (any(!is.numeric(EID))) {
 			stop(paste(
 "When the 'EID' argument exists, it must contain a vector of numeric",
-"values.\n",
-								 sep="\n"));
+"values.\n", sep="\n"));
 		}
 		n <- length(EID);
 	}
@@ -3136,12 +3125,12 @@ locateEvents <- function(EID, n=512, type="p", ...)
 	if (!missing(EID) || (data.class(events) == "list")) {
 		if (missing(EID)) {
 			EventData <- data.frame(EID=1:length(events$x),
-															X=events$x,
-															Y=events$y);
+				X=events$x,
+				Y=events$y);
 		} else {
 			EventData <- data.frame(EID=EID,
-															X=c(events$x, rep(NA, n - length(events$x))),
-															Y=c(events$y, rep(NA, n - length(events$y))));
+				X=c(events$x, rep(NA, n - length(events$x))),
+				Y=c(events$y, rep(NA, n - length(events$y))));
 		}
 
 		if (!is.null(EventData)) {
@@ -3209,11 +3198,9 @@ locatePolys <- function(pdata, n=512, type="o", ...)
 		}
 
 		if (!is.null(SID)) {
-			output <- rbind(output, data.frame(PID=PID, SID=SID, POS=POS,
-																				 X=pts$x, Y=pts$y));
+			output <- rbind(output, data.frame(PID=PID, SID=SID, POS=POS, X=pts$x, Y=pts$y));
 		} else {
-			output <- rbind(output, data.frame(PID=PID, POS=POS,
-																				 X=pts$x, Y=pts$y));
+			output <- rbind(output, data.frame(PID=PID, POS=POS, X=pts$x, Y=pts$y));
 		}
 	}
 
@@ -3352,24 +3339,20 @@ makeGrid <- function(x, y, byrow=TRUE, addSID=TRUE,
 ##==============================================================================
 # the default value for 'propVals' is less than optimal if 'breaks' is a vector
 # of length 1...
-makeProps <- function(pdata, breaks, propName="col",
-											propVals=1:(length(breaks) - 1))
+makeProps <- function(pdata, breaks, propName="col", propVals=1:(length(breaks)-1))
 {
 	pdata <- .validatePolyData(pdata);
 	if (is.character(pdata))
 		stop(paste("Invalid PolyData 'pdata'.\n", pdata, sep=""));
 
 	if (!is.element("Z", names(pdata)))
-		stop(
-"'Z' column is missing in 'pdata'.\n");
+		stop("'Z' column is missing in 'pdata'.\n");
 
 	if ((length(breaks) == 1 && breaks < 2) || (length(breaks) == 0))
-		stop(
-"You must have at least two breaks.\n");
+		stop("You must have at least two breaks.\n");
 
 	if (is.null(propVals))
-		stop(
-"'propVals' cannot be NULL.\n");
+		stop("'propVals' cannot be NULL.\n");
 
 	if (length(breaks) == 1) {
 		numBreaks <- breaks;
@@ -3390,17 +3373,17 @@ makeProps <- function(pdata, breaks, propName="col",
 
 ##==============================================================================
 plotLines <- function(polys, xlim=NULL, ylim=NULL, projection=FALSE,
-											plt=c(0.11, 0.98, 0.12, 0.88), polyProps=NULL,
-											lty=NULL, col=NULL, bg=0, axes=TRUE,
-											tckLab=TRUE, tck=0.014, tckMinor=0.5 * tck, ...)
+   plt=c(0.11, 0.98, 0.12, 0.88), polyProps=NULL,
+   lty=NULL, col=NULL, bg=0, axes=TRUE,
+   tckLab=TRUE, tck=0.014, tckMinor=0.5 * tck, ...)
 	## The only layout graphics parameter accepted by 'plotLines()' is 'plt'.
 	## Since the function changes the plot region to satisfy the aspect ratio,
 	## it is assigned a default value to improve consistency among plots.
 {
 	r <- .plotMaps(polys=polys, xlim=xlim, ylim=ylim, projection=projection,
-								 plt=plt, polyProps=polyProps, border=NULL, lty=lty, col=col,
-								 density=NULL, angle=NULL, bg=bg, axes=axes, tckLab=tckLab,
-								 tck=tck, tckMinor=tckMinor, isType="lines", ...);
+		plt=plt, polyProps=polyProps, border=NULL, lty=lty, col=col,
+		density=NULL, angle=NULL, bg=bg, axes=axes, tckLab=tckLab,
+		tck=tck, tckMinor=tckMinor, isType="lines", ...);
 
 	if (!is.null(r) &&
 			!is.PolyData(r, fullValidation=FALSE))
@@ -3411,19 +3394,19 @@ plotLines <- function(polys, xlim=NULL, ylim=NULL, projection=FALSE,
 
 ##==============================================================================
 plotMap <- function(polys, xlim=NULL, ylim=NULL, projection=TRUE,
-										plt=c(0.11, 0.98, 0.12, 0.88), polyProps=NULL,
-										border=NULL, lty=NULL, col=NULL, colHoles=NULL,
-										density=NA, angle=NULL, bg=0, axes=TRUE,
-										tckLab=TRUE, tck=0.014, tckMinor=0.5 * tck, ...)
+   plt=c(0.11, 0.98, 0.12, 0.88), polyProps=NULL,
+   border=NULL, lty=NULL, col=NULL, colHoles=NULL,
+   density=NA, angle=NULL, bg=0, axes=TRUE,
+   tckLab=TRUE, tck=0.014, tckMinor=0.5 * tck, ...)
 	## The only layout graphics parameter accepted by 'plotMap()' is 'plt'.
 	## Since the function changes the plot region to satisfy the aspect ratio,
 	## it is assigned a default value to improve consistency among plots.
 {
 	r <- .plotMaps(polys=polys, xlim=xlim, ylim=ylim, projection=projection,
-								 plt=plt, polyProps=polyProps, border=border, lty=lty, col=col,
-								 colHoles=colHoles, density=density, angle=angle, bg=bg,
-								 axes=axes, tckLab=tckLab, tck=tck, tckMinor=tckMinor,
-								 isType="polygons", ...);
+		plt=plt, polyProps=polyProps, border=border, lty=lty, col=col,
+		colHoles=colHoles, density=density, angle=angle, bg=bg,
+		axes=axes, tckLab=tckLab, tck=tck, tckMinor=tckMinor,
+		isType="polygons", ...);
 
 	if (!is.null(r) &&
 			!is.PolyData(r, fullValidation=FALSE))
@@ -3434,22 +3417,21 @@ plotMap <- function(polys, xlim=NULL, ylim=NULL, projection=TRUE,
 
 ##==============================================================================
 plotPoints <- function(data, xlim=NULL, ylim=NULL, projection=FALSE,
-											 plt=c(0.11, 0.98, 0.12, 0.88), polyProps=NULL,
-											 cex=NULL, col=NULL, pch=NULL, axes=TRUE,
-											 tckLab=TRUE, tck=0.014, tckMinor=0.5 * tck, ...)
+   plt=c(0.11, 0.98, 0.12, 0.88), polyProps=NULL,
+   cex=NULL, col=NULL, pch=NULL, axes=TRUE,
+   tckLab=TRUE, tck=0.014, tckMinor=0.5 * tck, ...)
 	## The only layout graphics parameter accepted by 'plotPoints()' is 'plt'.
 	## Since the function changes it to satisfy the aspect ratio, it's assigned
 	## a default value.
 {
 	r <- .plotMaps(polys=data, xlim=xlim, ylim=ylim, projection=projection,
-								 plt=plt, polyProps=polyProps, border=NULL, lty=NULL, col=col,
-								 density=NULL, angle=NULL, bg=NULL,
-								 cex=cex, pch=pch, # both become part of '...'
-								 axes=axes, tckLab=tckLab, tck=tck, tckMinor=tckMinor,
-								 isType="points", ...);
+		plt=plt, polyProps=polyProps, border=NULL, lty=NULL, col=col,
+		density=NULL, angle=NULL, bg=NULL,
+		cex=cex, pch=pch, # both become part of '...'
+		axes=axes, tckLab=tckLab, tck=tck, tckMinor=tckMinor,
+		isType="points", ...);
 
-	if (!is.null(r) &&
-			!is.PolyData(r, fullValidation=FALSE))
+	if (!is.null(r) && !is.PolyData(r, fullValidation=FALSE))
 		class(r) <- c("PolyData", class(r));
 
 	invisible(r)
@@ -3457,22 +3439,21 @@ plotPoints <- function(data, xlim=NULL, ylim=NULL, projection=FALSE,
 
 ##==============================================================================
 plotPolys <- function(polys, xlim=NULL, ylim=NULL, projection=FALSE,
-											plt=c(0.11, 0.98, 0.12, 0.88), polyProps=NULL,
-											border=NULL, lty=NULL, col=NULL, colHoles=NULL,
-											density=NA, angle=NULL, bg=0, axes=TRUE,
-											tckLab=TRUE, tck=0.014, tckMinor=0.5 * tck, ...)
+   plt=c(0.11, 0.98, 0.12, 0.88), polyProps=NULL,
+   border=NULL, lty=NULL, col=NULL, colHoles=NULL,
+   density=NA, angle=NULL, bg=0, axes=TRUE,
+   tckLab=TRUE, tck=0.014, tckMinor=0.5 * tck, ...)
 	## The only layout graphics parameter accepted by 'plotPolys()' is 'plt'.
 	## Since the function changes it to satisfy the aspect ratio, it's assigned
 	## a default value.
 {
 	r <- .plotMaps(polys=polys, xlim=xlim, ylim=ylim, projection=projection,
-								 plt=plt, polyProps=polyProps, border=border, lty=lty, col=col,
-								 colHoles=colHoles, density=density, angle=angle, bg=bg,
-								 axes=axes, tckLab=tckLab, tck=tck, tckMinor=tckMinor,
-								 isType="polygons", ...);
+		plt=plt, polyProps=polyProps, border=border, lty=lty, col=col,
+		colHoles=colHoles, density=density, angle=angle, bg=bg,
+		axes=axes, tckLab=tckLab, tck=tck, tckMinor=tckMinor,
+		isType="polygons", ...);
 
-	if (!is.null(r) &&
-			!is.PolyData(r, fullValidation=FALSE))
+	if (!is.null(r) && !is.PolyData(r, fullValidation=FALSE))
 		class(r) <- c("PolyData", class(r));
 
 	invisible(r)
@@ -3528,39 +3509,22 @@ print.summary.PBS <- function(x, ...)
 	str <-
 		c(x$type, "",
 			"", "",
-			"Records				 : ", ifelse(is.null(x$records),"NULL", x$records),
-			"	Contours			: ", ifelse(x$type == "EventData",
-																	 "NA",
-																	 ifelse(is.null(x$contours), "NULL",
-																					x$contours)),
-			"		Holes			 : ", ifelse(x$type != "PolySet",
-																	 "NA",
-																	 ifelse(is.null(x$holes), "NULL", x$holes)),
-			"	Events				: ", ifelse(x$type == "EventData",
-																	 ifelse(is.null(x$events), "NULL", x$events),
-																	 "NA"),
-			"		On boundary : ", ifelse(x$type != "LocationSet",
-																	 "NA",
-																	 ifelse(is.null(x$boundary), "NULL",
-																					x$boundary)),
+			"Records : ", ifelse(is.null(x$records),"NULL", x$records),
+			"  Contours    : ", ifelse(x$type == "EventData", "NA", ifelse(is.null(x$contours), "NULL", x$contours)),
+			"  Holes       : ", ifelse(x$type != "PolySet", "NA", ifelse(is.null(x$holes), "NULL", x$holes)),
+			"  Events      : ", ifelse(x$type == "EventData", ifelse(is.null(x$events), "NULL", x$events), "NA"),
+			"  On boundary : ", ifelse(x$type != "LocationSet", "NA", ifelse(is.null(x$boundary), "NULL", x$boundary)),
 			"", "",
 			"Ranges", "",
-			"	X						 : ", ifelse(is.null(x$range.x), "NULL",
-																	 paste("[",
-																				 paste(range(x$range.x),collapse=", "),
-																				 "]", sep="")),
-			"	Y						 : ", ifelse(is.null(x$range.y), "NULL",
-																	 paste("[",
-																				 paste(range(x$range.y),collapse=", "),
-																				 "]", sep="")),
+			"  X  : ", ifelse(is.null(x$range.x), "NULL", paste("[", paste(range(x$range.x),collapse=", "), "]", sep="")),
+			"	Y  : ", ifelse(is.null(x$range.y), "NULL", paste("[", paste(range(x$range.y),collapse=", "), "]", sep="")),
 			"", "",
 			"Attributes", "",
-			"	Projection		: ", ifelse(is.null(x$attr.projection), "NULL",
-																	 x$attr.projection),
-			"	Zone					: ", ifelse(is.null(x$attr.zone), "NULL",
-																	 x$attr.zone),
+			"  Projection  : ", ifelse(is.null(x$attr.projection), "NULL", x$attr.projection),
+			"  Zone        : ", ifelse(is.null(x$attr.zone), "NULL", x$attr.zone),
 			"", "",
-			"Extra columns	 : ", ifelse(is.null(x$columns), "NULL", x$columns));
+			"Extra columns : ", ifelse(is.null(x$columns), "NULL", x$columns)
+		);
 
 	for (i in seq(1, by=2, length.out=(length(str)/2))) {
 		cat (str[i], str[i+1], "\n", sep="");
@@ -3576,9 +3540,9 @@ refocusWorld <- function(polys, xlim=NULL, ylim=NULL, clip.AN=TRUE)
 {
 	## Define a local function to assist with shifting
 	.shiftRegion <- function(polys, shift=0) {
-		npolys			 <- polys;
-		npolys$xmin	<- polys$xmin + (360 * shift);
-		npolys$xmax	<- polys$xmax + (360 * shift);
+		npolys       <- polys;
+		npolys$xmin  <- polys$xmin + (360 * shift);
+		npolys$xmax  <- polys$xmax + (360 * shift);
 		npolys$shift <- polys$shift + shift;
 		return (npolys);
 	}
@@ -3664,8 +3628,8 @@ refocusWorld <- function(polys, xlim=NULL, ylim=NULL, clip.AN=TRUE)
 	}
 	## Given relevant PIDs and their shift factors, let's create a new data
 	## frame containing only those polygons, where we've shifted the X values
-	idx <- split(1:nrow(polys), polys$IDs)		## to extract relevant polygons
-	len <- lapply(idx, length)								## num vertices in each polygon
+	idx <- split(1:nrow(polys), polys$IDs)  ## to extract relevant polygons
+	len <- lapply(idx, length)              ## num vertices in each polygon
 
 	## Indices for relevant polys
 	idx <- unlist(idx[as.character(nrng$IDs)])
@@ -3719,16 +3683,15 @@ refocusWorld <- function(polys, xlim=NULL, ylim=NULL, clip.AN=TRUE)
 summary.EventData <- function(object, ...)
 {
 	z <- list();
-	z$type <- "EventData";
+	z$type    <- "EventData";
 	z$records <- nrow(object);
-	z$events <- length(unique(object$EID));
+	z$events  <- length(unique(object$EID));
 	z$columns <- paste(setdiff(names(object), c("EID", "X", "Y")), collapse=", ");
 	z$range.x <- range(object$X);
 	z$range.y <- range(object$Y);
 	z$attr.projection <- attr(object, "projection");
 	z$attr.zone <- attr(object, "zone");
 	class(z) <- "summary.PBS";
-
 	z;
 }
 
@@ -3738,18 +3701,16 @@ summary.LocationSet <- function(object, ...)
 	## create 'IDX' vector used later for 'unique'/'duplicated'
 	IDX <- .createIDs(object, cols=c("PID", "SID"));
 
-	z <- list();
-	z$type <- "LocationSet";
-	z$events <- length(unique(object$EID));
+	z          <- list();
+	z$type     <- "LocationSet";
+	z$events   <- length(unique(object$EID));
 	z$contours <- length(unique(IDX));
-	z$records <- nrow(object);
+	z$records  <- nrow(object);
 	z$boundary <- sum(object$Bdry);
 	z$attr.projection <- attr(object, "projection");
 	z$attr.zone <- attr(object, "zone");
-	z$columns <- paste(setdiff(names(object), c("EID", "PID", "SID", "Bdry")),
-										 collapse=", ");
-	class(z) <- "summary.PBS";
-
+	z$columns <- paste(setdiff(names(object), c("EID", "PID", "SID", "Bdry")), collapse=", ");
+	class(z)  <- "summary.PBS";
 	z;
 }
 
@@ -3760,14 +3721,13 @@ summary.PolyData <- function(object, ...)
 	IDX <- .createIDs(object, cols=c("PID", "SID"));
 
 	z <- list();
-	z$type <- "PolyData";
-	z$records <- nrow(object);
+	z$type     <- "PolyData";
+	z$records  <- nrow(object);
 	z$contours <- length(unique(IDX));
-	z$columns <- paste(setdiff(names(object), c("PID", "SID")), collapse=", ");
+	z$columns  <- paste(setdiff(names(object), c("PID", "SID")), collapse=", ");
 	z$attr.projection <- attr(object, "projection");
 	z$attr.zone <- attr(object, "zone");
-	class(z) <- "summary.PBS";
-
+	class(z)    <- "summary.PBS";
 	z;
 }
 
@@ -3785,25 +3745,22 @@ summary.PolySet <- function(object, ...)
 		holes <- NULL;
 	}
 
-	z <- list();
-	z$type <- "PolySet";
-	z$records <- nrow(object);
+	z          <- list();
+	z$type     <- "PolySet";
+	z$records  <- nrow(object);
 	z$contours <- length(unique(IDX));
-	z$holes <- sum(holes);
-	z$range.x <- range(object$X);
-	z$range.y <- range(object$Y);
+	z$holes    <- sum(holes);
+	z$range.x  <- range(object$X);
+	z$range.y  <- range(object$Y);
 	z$attr.projection <- attr(object, "projection");
 	z$attr.zone <- attr(object, "zone");
-	z$columns <- paste(setdiff(names(object), c("PID", "SID", "POS", "X", "Y")),
-										 collapse=", ");
+	z$columns  <- paste(setdiff(names(object), c("PID", "SID", "POS", "X", "Y")), collapse=", ");
 	class(z) <- "summary.PBS";
-
 	z;
 }
 
 ##==============================================================================
-thickenPolys <- function(polys, tol=1, filter=3, keepOrig=TRUE,
-												 close=TRUE)
+thickenPolys <- function(polys, tol=1, filter=3, keepOrig=TRUE, close=TRUE)
 {
 	polys <- .validatePolySet(polys);
 	if (is.character(polys))
@@ -3918,32 +3875,30 @@ thickenPolys <- function(polys, tol=1, filter=3, keepOrig=TRUE,
 
 	## call the C function
 	results <- .C("thickenPolys",
-								inID=as.integer(inID),
-								inXY=as.double(inXY),
-								inVerts=as.integer(inRows),
-								tolerance=as.double(tol),
-								filter=as.integer(filter),
-								units=as.integer(proj),
-								keepOrig=as.integer(keepOrig),
-								close=as.integer(close),
-								outID=integer(3 * outCapacity),
-								outXY=double(2 * outCapacity),
-								outRows=as.integer(outCapacity),
-								outStatus=integer(1),
-								PACKAGE="PBSmapping");
+		inID=as.integer(inID),
+		inXY=as.double(inXY),
+		inVerts=as.integer(inRows),
+		tolerance=as.double(tol),
+		filter=as.integer(filter),
+		units=as.integer(proj),
+		keepOrig=as.integer(keepOrig),
+		close=as.integer(close),
+		outID=integer(3 * outCapacity),
+		outXY=double(2 * outCapacity),
+		outRows=as.integer(outCapacity),
+		outStatus=integer(1),
+		PACKAGE="PBSmapping");
 	## note: outRows is set to how much space is allocated -- the C function
-	##			 should take this into consideration
+	## should take this into consideration
 
 	if (results$outStatus == 1) {
-		stop(
-"Insufficient physical memory for processing.\n");
+		stop("Insufficient physical memory for processing.\n");
 	}
 	if (results$outStatus == 2) {
 		stop(paste(
 "Insufficient memory allocated for output.	Please upgrade to the latest",
 "version of the software, and if that does not fix this problem, please",
-"file a bug report.\n",
-							 sep="\n"));
+"file a bug report.\n", sep="\n"));
 	}
 
 	## determine the number of rows in the result
@@ -3952,10 +3907,10 @@ thickenPolys <- function(polys, tol=1, filter=3, keepOrig=TRUE,
 	## extract the data from the C function results
 	if (outRows > 0) {
 		d <- data.frame(PID=results$outID[1:outRows],
-										SID=results$outID[(outCapacity+1):(outCapacity+outRows)],
-										POS=results$outID[(2*outCapacity+1):(2*outCapacity+outRows)],
-										X=results$outXY[1:outRows],
-										Y=results$outXY[(outCapacity+1):(outCapacity+outRows)]);
+			SID=results$outID[(outCapacity+1):(outCapacity+outRows)],
+			POS=results$outID[(2*outCapacity+1):(2*outCapacity+outRows)],
+			X=results$outXY[1:outRows],
+			Y=results$outXY[(outCapacity+1):(outCapacity+outRows)]);
 
 		if (!is.element("SID", names(polys)))
 			d$SID <- NULL;
@@ -4017,19 +3972,19 @@ thinPolys <- function(polys, tol=1, filter=3)
 
 	## call the C function
 	results <- .C("thinPolys",
-								inID=as.integer(inID),
-								inXY=as.integer(inXY),
-								inVerts=as.integer(inRows),
-								tolerance=as.double(tol),
-								filter=as.integer(filter),
-								units=as.integer(proj),
-								outID=integer(3 * outCapacity),
-								outXY=integer(2 * outCapacity),
-								outRows=as.integer(outCapacity),
-								outStatus=integer(1),
-								PACKAGE="PBSmapping");
+		inID=as.integer(inID),
+		inXY=as.integer(inXY),
+		inVerts=as.integer(inRows),
+		tolerance=as.double(tol),
+		filter=as.integer(filter),
+		units=as.integer(proj),
+		outID=integer(3 * outCapacity),
+		outXY=integer(2 * outCapacity),
+		outRows=as.integer(outCapacity),
+		outStatus=integer(1),
+		PACKAGE="PBSmapping");
 	## note: outRows is set to how much space is allocated -- the C function
-	##			 should take this into consideration
+	## should take this into consideration
 
 	if (results$outStatus == 1) {
 		stop(
@@ -4039,8 +3994,7 @@ thinPolys <- function(polys, tol=1, filter=3)
 		stop(paste(
 "Insufficient memory allocated for output.	Please upgrade to the latest",
 "version of the software, and if that does not fix this problem, please",
-"file a bug report.\n",
-							 sep="\n"));
+"file a bug report.\n", sep="\n"));
 	}
 
 	## determine the number of rows in the result
@@ -4055,10 +4009,10 @@ thinPolys <- function(polys, tol=1, filter=3)
 		}
 
 		d <- data.frame(PID=results$outID[1:outRows],
-										SID=results$outID[(outCapacity+1):(outCapacity+outRows)],
-										POS=results$outID[(2*outCapacity+1):(2*outCapacity+outRows)],
-										X=results$outXY[1:outRows],
-										Y=results$outXY[(outCapacity+1):(outCapacity+outRows)]);
+			SID=results$outID[(outCapacity+1):(outCapacity+outRows)],
+			POS=results$outID[(2*outCapacity+1):(2*outCapacity+outRows)],
+			X=results$outXY[1:outRows],
+			Y=results$outXY[(outCapacity+1):(outCapacity+outRows)]);
 
 		if (!is.element("SID", names(polys)))
 			d$SID <- NULL;

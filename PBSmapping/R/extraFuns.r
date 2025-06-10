@@ -1,5 +1,5 @@
 ##================================================
-## Copyright (C) 2003-2021  Fisheries & Oceans Canada
+## Copyright (C) 2003-2023  Fisheries & Oceans Canada
 ## Nanaimo, British Columbia
 ## This file is part of PBS Mapping.
 ##================================================
@@ -206,7 +206,7 @@ addBubbles <- function(events, type=c("perceptual","surface","volume"),
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~addBubbles
 
 
-## addCompass---------------------------2021-01-04
+## addCompass---------------------------2024-12-19
 ##  Add a compass rose to a map.
 ## ---------------------------------------------RH
 addCompass <- function(X, Y, rot="magN", useWest=TRUE, year,
@@ -214,19 +214,21 @@ addCompass <- function(X, Y, rot="magN", useWest=TRUE, year,
 {
 	## Geomagnetic vs. magnetic poles (http://wdc.kugi.kyoto-u.ac.jp/poles/polesexp.html)
 	## Note: south pole shenaningans not considered yet.
+	## Updates only provide yearly values for last 10 years, every 5 years for anything earlier
 	Mpoles = data.frame(
-		EID = c(1900, 1905, 1910, 1915, 1920, 1925, 1930, 1935, 1940, 1945, 1950, 1955, 1960, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025),
-		X.magN = c(-68.8, -68.7, -68.7, -68.6, -68.4, -68.3, -68.3, -68.4, -68.5, -68.5, -68.8, -69.2, -69.5, -69.9, -70.2, -70.5, -70.8, -70.9, -71.1, -71.4, -71.6, -71.8, -72.2, -72.6, -72.6, -72.6, -72.7, -72.7, -72.7, -72.7, -72.7, -72.7, -72.6, -72.6),
-		Y.magN = c(78.7, 78.7, 78.7, 78.6, 78.6, 78.6, 78.6, 78.6, 78.5, 78.5, 78.5, 78.5, 78.6, 78.6, 78.7, 78.8, 78.9, 79, 79.2, 79.4, 79.6, 79.8, 80.1, 80.4, 80.4, 80.5, 80.5, 80.6, 80.7, 80.7, 80.7, 80.8, 80.8, 80.9),
-		X.magS = c(111.2, 111.3, 111.3, 111.4, 111.6, 111.7, 111.7, 111.6, 111.5, 111.5, 111.2, 110.8, 110.5, 110.1, 109.8, 109.5, 109.2, 109.1, 108.9, 108.6, 108.4, 108.2, 107.8, 107.4, 107.4, 107.4, 107.3, 107.3, 107.3, 107.3, 107.3, 107.3, 107.4, 107.4),
-		Y.magS = c(78.7, 78.7, 78.7, 78.6, 78.6, 78.6, 78.6, 78.6, 78.5, 78.5, 78.5, 78.5, 78.6, 78.6, 78.7, 78.8, 78.9, 79, 79.2, 79.4, 79.6, 79.8, 80.1, 80.4, 80.4, 80.5, 80.5, 80.6, 80.7, 80.7, 80.7, 80.8, 80.8, 80.9),
-		X.gmagN = c(-96.2, -96.5, -96.7, -97, -97.4, -98, -98.7, -99.3, -99.9, -100.2, -100.9, -101.4, -101, -101.3, -101, -100.6, -101.7, -102.6, -103.7, -105.3, -109.6, -118.2, -132.8, -160, -167.8, -175.5, -176.9, -169.6, -162.9, -156.8, -151.3, -146.4, -142, -138.1),
-		Y.gmagN = c(70.5, 70.7, 70.8, 71, 71.3, 71.8, 72.3, 72.8, 73.3, 73.9, 74.6, 75.2, 75.3, 75.6, 75.9, 76.2, 76.9, 77.4, 78.1, 79, 81, 83.2, 85, 86.3, 86.5, 86.6, 86.6, 86.6, 86.5, 86.4, 86.3, 86.1, 86, 85.8),
-		X.gmagS = c(148.3, 148.5, 148.6, 148.5, 148.2, 147.6, 146.8, 145.8, 144.6, 144.4, 143.5, 141.5, 140.2, 139.5, 139.4, 139.5, 139.3, 139.2, 138.9, 138.7, 138.3, 137.8, 137.3, 136.6, 136.4, 136.3, 136.2, 136, 135.9, 135.7, 135.5, 135.4, 135.2, 135.1),
-		Y.gmagS = c(71.7, 71.5, 71.2, 70.8, 70.4, 70, 69.5, 69.1, 68.6, 68.2, 67.9, 67.2, 66.7, 66.3, 66, 65.7, 65.4, 65.1, 64.9, 64.8, 64.7, 64.5, 64.4, 64.3, 64.2, 64.2, 64.2, 64.1, 64.1, 64, 64, 63.9, 63.9, 63.9)
+		EID = c(1900, 1905, 1910, 1915, 1920, 1925, 1930, 1935, 1940, 1945, 1950, 1955, 1960, 1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030),
+		X.magN = c(-68.8, -68.7, -68.7, -68.6, -68.4, -68.3, -68.3, -68.4, -68.5, -68.5, -68.8, -69.2, -69.5, -69.9, -70.2, -70.5, -70.8, -70.9, -71.1, -71.4, -71.6, -71.8, -72.2, -72.6, -72.7, -72.7, -72.7, -72.7, -72.7, -72.8, -72.8, -72.8, -72.9, -72.9, -73),
+		Y.magN = c(78.7, 78.7, 78.7, 78.6, 78.6, 78.6, 78.6, 78.6, 78.5, 78.5, 78.5, 78.5, 78.6, 78.6, 78.7, 78.8, 78.9, 79, 79.2, 79.4, 79.6, 79.8, 80.1, 80.4, 80.6, 80.7, 80.7, 80.8, 80.8, 80.8, 80.9, 80.9, 81, 81, 81.1),
+		X.magS = c(111.2, 111.3, 111.3, 111.4, 111.6, 111.7, 111.7, 111.6, 111.5, 111.5, 111.2, 110.8, 110.5, 110.1, 109.8, 109.5, 109.2, 109.1, 108.9, 108.6, 108.4, 108.2, 107.8, 107.4, 107.3, 107.3, 107.3, 107.3, 107.3, 107.2, 107.2, 107.2, 107.1, 107.1, 107),
+		Y.magS = c(78.7, 78.7, 78.7, 78.6, 78.6, 78.6, 78.6, 78.6, 78.5, 78.5, 78.5, 78.5, 78.6, 78.6, 78.7, 78.8, 78.9, 79, 79.2, 79.4, 79.6, 79.8, 80.1, 80.4, 80.6, 80.7, 80.7, 80.8, 80.8, 80.8, 80.9, 80.9, 81, 81, 81.1),
+		X.gmagN = c(-96.2, -96.5, -96.7, -97, -97.4, -98, -98.7, -99.3, -99.9, -100.2, -100.9, -101.4, -101, -101.3, -101, -100.6, -101.7, -102.6, -103.7, -105.3, -109.6, -118.2, -132.8, -160.3, -162.9, -156.8, -151.4, -146.6, -142.3, -138.6, -135.4, -132.6, -130.1, -127.9, -125.9),
+		Y.gmagN = c(70.5, 70.7, 70.8, 71, 71.3, 71.8, 72.3, 72.8, 73.3, 73.9, 74.6, 75.2, 75.3, 75.6, 75.9, 76.2, 76.9, 77.4, 78.1, 79, 81, 83.2, 85, 86.3, 86.5, 86.4, 86.2, 86.1, 85.9, 85.7, 85.5, 85.3, 85.1, 84.9, 84.7),
+		X.gmagS = c(148.3, 148.5, 148.6, 148.5, 148.2, 147.6, 146.8, 145.8, 144.6, 144.4, 143.5, 141.5, 140.2, 139.5, 139.4, 139.5, 139.3, 139.2, 138.9, 138.7, 138.3, 137.8, 137.3, 136.6, 135.9, 135.7, 135.5, 135.4, 135.2, 135.1, 134.9, 134.7, 134.6, 134.4, 134.3),
+		Y.gmagS = c(71.7, 71.5, 71.2, 70.8, 70.4, 70, 69.5, 69.1, 68.6, 68.2, 67.9, 67.2, 66.7, 66.3, 66, 65.7, 65.4, 65.1, 64.9, 64.8, 64.7, 64.5, 64.4, 64.3, 64.1, 64, 64, 63.9, 63.9, 63.9, 63.8, 63.8, 63.7, 63.7, 63.7)
 	)
+#browser();return()
 	## Borrow PBStools function 'findPV'
-	findPV = function (p, v) {
+	findPV <- function (p, v) {
 		sapply(p, function(x, v) {
 		which(abs(v - x) == min(abs(v - x)))[1] }, v=v)
 	}
@@ -252,7 +254,6 @@ addCompass <- function(X, Y, rot="magN", useWest=TRUE, year,
 			rot  = -calcGCdist(X,Y,Nmag$X,Nmag$Y)$theta
 		}
 	}
-
 	oldcex  = par(cex=cex, no.readonly=TRUE); on.exit(par(oldcex))
 	mheight = strheight("M")
 	xylim   = par("usr")
@@ -294,8 +295,8 @@ addCompass <- function(X, Y, rot="magN", useWest=TRUE, year,
 	## Add NEWS labels
 	txtxpoints = cos(rotate.angles) * 1.25 * rspans[1] * xmult + X
 	txtypoints = sin(rotate.angles) * 1.25 * rspans[1] + Y
-#browser();return()
 	text(txtxpoints,txtypoints,c("E","N","W","S"),...)
+#browser();return()
 }
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~addCompass
 
@@ -327,7 +328,7 @@ addCompass <- function(X, Y, rot="magN", useWest=TRUE, year,
 ##  theta = atan2( sin(lam2-lam1)cos(ph12), cos(ph1)sin(ph2) - sin(phi1)cos(ph2)cos(lam2-lam1) )
 ##
 ## ---------------------------------------------RH
-calcGCdist = function(lon1, lat1, lon2, lat2, R=6371.2)
+calcGCdist <- function(lon1, lat1, lon2, lat2, R=6371.2)
 {
 	#if (length(lon1)>1 || length(lat1)>1)
 	#	stop("Start coordinate must be a single point (multiple end points allowed)")
@@ -367,7 +368,7 @@ makeTopography <- function (dat, digits=2, func=NULL) {
 	X   = round(dat[[1]],digits); Y  = round(dat[[2]],digits)
 	ID  = complex(length.out=N,real=X,imaginary=Y)
 	tmp = split(dat[[3]], ID)
-	if (is.null(func)) func = function(x){mean(x,na.rm=TRUE)} # mean value
+	if (is.null(func)) func <- function(x){mean(x,na.rm=TRUE)} # mean value
 	z1  = unlist(sapply(tmp,func,simplify=FALSE))
 	id  = as.complex(names(z1))
 	x1  = Re(id); y1 = Im(id)
@@ -389,14 +390,14 @@ makeTopography <- function (dat, digits=2, func=NULL) {
 ##  Place holes under correct solids.
 ##  Store orphaned holes as an attribute.
 ## ---------------------------------------------RH
-placeHoles = function(polyset, minVerts=3, 
+placeHoles <- function(polyset, minVerts=3, 
    orient=FALSE, show.progress=FALSE, unique.pid=FALSE)
 {
 	## initialization
 	newpoly = oddpoly = NULL
 
 	## Re-create PBStools' function (2011-09-30) -- flush the cat down the console
-	.flush.cat = function(...) { cat(...); flush.console(); invisible() }
+	.flush.cat <- function(...) { cat(...); flush.console(); invisible() }
 
 	## Remove small polygons before starting
 	ipoly = polyset
@@ -507,7 +508,7 @@ placeHoles = function(polyset, minVerts=3,
 ## rotateEvents--------------------------2018-11-15
 ## Rotate EventData clockwise around a central point.
 ## ---------------------------------------------RH
-rotateEvents = function(data, angle=40, centroid=c(500,5700),
+rotateEvents <- function(data, angle=40, centroid=c(500,5700),
    proj.out, zone, plot=FALSE, keep.extra=FALSE, ...)
 {
 	data = .validateEventData(data)
@@ -579,7 +580,7 @@ rotateEvents = function(data, angle=40, centroid=c(500,5700),
 ## rotatePolys--------------------------2018-11-15
 ## Rotate PolySet clockwise around a central point.
 ## ---------------------------------------------RH
-rotatePolys = function(polys, angle=40, centroid=c(500,5700),
+rotatePolys <- function(polys, angle=40, centroid=c(500,5700),
    proj.out, zone, xlim=c(-135,-121.5), ylim=c(47,56), plot=FALSE, keep.extra=FALSE, ...)
 {
 	polys  = .validatePolySet(polys)
@@ -680,7 +681,7 @@ rotatePolys = function(polys, angle=40, centroid=c(500,5700),
 ## [http://nishitalab.org/user/UEI/publication/Sugita_IWAIT2015.pdf]
 ## [https://danielhaim.com/research/downloads/Computational%20RYB%20Color%20Model%20and%20its%20Applications.pdf]
 ## ---------------------------------------------RH
-RGB2RYB = function(RGBmat)
+RGB2RYB <- function(RGBmat)
 {
 	if (is.null(dim(RGBmat))) if (length(RGBmat)>2) RGBmat<-matrix(RGBmat, ncol=3,byrow=TRUE)
 	if (nrow(RGBmat)==3 && ncol(RGBmat)!=3) RGBmat = t(RGBmat)
@@ -723,7 +724,7 @@ RGB2RYB = function(RGBmat)
 ## [http://nishitalab.org/user/UEI/publication/Sugita_IWAIT2015.pdf]
 ## [https://danielhaim.com/research/downloads/Computational%20RYB%20Color%20Model%20and%20its%20Applications.pdf]
 ## ---------------------------------------------RH
-RYB2RGB = function(RYBmat)
+RYB2RGB <- function(RYBmat)
 {
 	if (is.null(dim(RYBmat))) if (length(RYBmat)>2) RYBmat<-matrix(RYBmat, ncol=3,byrow=TRUE)
 	if (nrow(RYBmat)==3 && ncol(RYBmat)!=3) RYBmat = t(RYBmat)

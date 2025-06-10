@@ -13,6 +13,17 @@ CRAN:
    PBR = Prof Brian Ripley
     UL = Uwe Ligges
 --------------------------------------------------
+CRAN package version numbers follow a "major.minor.patch" format (e.g., 1.2.3), where: 
+	Major: Indicates a significant change that might break existing code.
+	Minor: Indicates the addition of new features or improvements, while generally maintaining backward compatibility.
+	Patch: Indicates bug fixes and minor improvements that do not introduce new features.
+--------------------------------------------------
+
+2.74.2 (2025-06-10) [Rcheck=T, Rbuild=T]
+  * R code
+    + Updated function `addCompass' to use the latest geomagnetic declinations out to 2030 (RH 241219)
+    + Made numerous changes to code layout in `PBSmapping.r' (RH 241220)
+    + Added `Magnetic-Poles.xlsx' to doucumentation folder (not R package) (RH 250610)
 
 2.74.1 (2024-09-25) [Rcheck=T, Rbuild=T]
   * Documentation
@@ -41,7 +52,7 @@ CRAN:
     + Changed `clipperWrapper' code
       - changing `#include <Rdefines.h>' to `#include <Rinternals.h>' did not work
       - adding `#include <Rinternals.h>' before `#include <Rdefines.h>' did not work
-      - changed `mkChar' to `Rf_mkChar', `classgets' to `RF_classgets', and `error' to `perror' as per suggestions in `00install.out' report.
+      - changed `mkChar' to `Rf_mkChar', `classgets' to `Rf_classgets', and `error' to `perror' as per suggestions in `00install.out' report.
       - ran `.PBSfigs()' in R-devel for Windows 10 Enterprise 22H2 and Linux Ubuntu 22.04 LTS (aka Jammy Jellyfish) without errors.
 
 2.73.6 (2024-09-03) [Rcheck=T, Rbuild=F]
